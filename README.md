@@ -1,4 +1,4 @@
-# moodle-tool_deprovitionuser *(Alpha_candidate)*
+# moodle-tool_deprovisionuser *(Alpha_candidate)*
 </br>
 A Moodle Admin tool to enable Deprovisioning of Users.
 
