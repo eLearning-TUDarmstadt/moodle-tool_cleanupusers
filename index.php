@@ -32,17 +32,3 @@ $contextid = optional_param('context', $systemcontext->id, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 require_capability('moodle/site:config', $context);
-
-// Print the header.
-admin_externalpage_setup('toolcapability');
-
-// Prepare the list of capabilities to choose from.
-$capabilitychoices = array();
-foreach ($context->get_capabilities() as $cap) {
-    $capabilitychoices[$cap->name] = $cap->name . ': ' . get_capability_string($cap->name);
-}
-
-function print_user_form(){
-    global $OUTPUT;
-    echo $OUTPUT->header();
-}
