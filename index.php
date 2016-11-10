@@ -25,10 +25,12 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 // Get URL parameters.
-$systemcontext = context_system::instance();
-$contextid = optional_param('context', $systemcontext->id, PARAM_INT);
-
+/*$contextid = optional_param('context', $systemcontext->id, PARAM_INT);*/
+$PAGE->set_context(context_system::instance());
+$context = context_system::instance();
 // Check permissions.
-list($context, $course, $cm) = get_context_info_array($contextid);
-require_login($course, false, $cm);
+require_login();
 require_capability('moodle/site:config', $context);
+
+admin_externalpage_setup('tooldeprovisionuser');
+echo 'something';

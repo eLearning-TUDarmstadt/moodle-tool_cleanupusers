@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
     $ADMIN->add('users', new admin_externalpage(
-        'tooldeprovision',
+        'tooldeprovisionuser',
         get_string('pluginname', 'tool_deprovisionuser'),
         "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
     ));
