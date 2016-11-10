@@ -26,6 +26,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once(dirname(__FILE__).'/user_status_checker.php');
 
 // Get URL parameters.
+
 $PAGE->set_context(context_system::instance());
 $context = context_system::instance();
 // Check permissions.
@@ -47,3 +48,4 @@ $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
 $content = $renderer->render_index_page($myarray, $arrayneverloggedin);
 
 echo $content;
+
