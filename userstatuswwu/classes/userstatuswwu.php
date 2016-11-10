@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,17 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- * @package tool_deprovisionuser
- * @copyright 2016 N Herrmann
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Subplugin userstatuswwu.
+ *
+ * @package   tool_deprovisionuser
+ * @copyright 2016 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_deprovisionuser\plugininfo;
+use core\plugininfo\base, moodle_url, part_of_admin_tree, admin_settingpage;
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2016111003;     // The current plugin version (Date: YYYYMMDDXX).
-// TODO Check for requirements
-$plugin->requires  = 2015111000;     // Requires this Moodle version.
-$plugin->component = 'tool_deprovisionuser'; // Full name of the plugin (used for diagnostics).
-$plugin->release = 'v1.0-r0';
-$plugin->maturity = MATURITY_ALPHA;
+class userstatuswwu extends base{}
