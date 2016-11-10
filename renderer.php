@@ -13,18 +13,30 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * This file contains language strings used in the group block
+ * Renderer for the Web interface of deprovisionuser
  *
- * @package tool_deprovisionuser
- * @copyright 2016 N Herrmann
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_deprovisionuser
+ * @copyright  2016 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'deprovisionuser';
-$string['notready'] = 'Plugin still in Progress';
-$string['subplugintype_userstatuswwu'] = 'Returns the Status of Students from the University of Muenster';
-//TODO is plural neccessary?
-$string['subplugintype_userstatuswwu_plural'] = 'Returns the Status of Students from the University of Muenster';
-$string['failedtoactivate'] = 'The tool failed to activate a user';
-$string['plugininfo'] = 'This plugin deletes users to custom settings';
+defined('MOODLE_INTERNAL') || die;
+
+
+class tool_deprovisionuser_renderer extends plugin_renderer_base {
+
+    /**
+     * Defer to template.
+     * @return string html for the page
+     */
+    public function render_index_page() {
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->heading(get_string('pluginname','tool_deprovisionuser'));
+        $output .= $this->footer();
+
+        return $output;
+    }
+}

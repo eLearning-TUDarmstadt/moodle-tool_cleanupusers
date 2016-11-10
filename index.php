@@ -33,4 +33,17 @@ require_login();
 require_capability('moodle/site:config', $context);
 
 admin_externalpage_setup('tooldeprovisionuser');
-echo 'something';
+
+$pagetitle = get_string('pluginname','tool_deprovisionuser');
+$PAGE->set_title(get_string('pluginname','tool_deprovisionuser'));
+$PAGE->set_heading(get_string('pluginname','tool_deprovisionuser'));
+$PAGE->set_pagelayout('standard');
+
+$renderer = $PAGE->get_renderer('tool_deprovisionuser');
+
+$content = $renderer->render_index_page();
+
+echo $content;
+
+
+//echo html_writer::tag('info-deprovisionuser', get_string('plugininfo','tool_deprovisionuser'));
