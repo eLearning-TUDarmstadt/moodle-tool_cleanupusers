@@ -34,7 +34,9 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     public function render_index_page() {
         $output = '';
         $output .= $this->header();
-        $output .= $this->heading(get_string('pluginname','tool_deprovisionuser'));
+        $output .= $this->heading(get_string('plugintitel','tool_deprovisionuser'));
+        $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
+        $output .= html_writer::div(get_string('inprogress', 'tool_deprovisionuser'));
         $output .= $this->footer();
 
         return $output;

@@ -22,9 +22,11 @@
  */
 
 $string['pluginname'] = 'deprovisionuser';
+$string['plugintitel'] = 'Deprovision of Users';
 $string['notready'] = 'Plugin still in Progress';
 $string['subplugintype_userstatuswwu'] = 'Returns the Status of Students from the University of Muenster';
 //TODO is plural neccessary?
 $string['subplugintype_userstatuswwu_plural'] = 'Returns the Status of Students from the University of Muenster';
 $string['failedtoactivate'] = 'The tool failed to activate a user';
-$string['plugininfo'] = 'This plugin deletes users to custom settings';
+$string['plugininfo'] = 'This plugin deletes users to custom settings.';
+$string['inprogress'] = 'The development of the plugin is still in progress.';
