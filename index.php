@@ -44,6 +44,7 @@ $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
 $userstatuschecker = new user_status_checker();
 $myarray = $userstatuschecker->get_last_login();
-$content = $renderer->render_index_page($myarray);
+$arrayneverloggedin = $userstatuschecker->get_never_logged_in();
+$content = $renderer->render_index_page($myarray, $arrayneverloggedin);
 
 echo $content;

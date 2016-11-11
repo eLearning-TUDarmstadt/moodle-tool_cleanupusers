@@ -37,15 +37,17 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * Renders the index page
      * @return string html for the page
      */
-    public function render_index_page($myarray) {
+    public function render_index_page($myarray, $usersneverloggedin) {
         global $OUTPUT,$DB;
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(get_string('plugintitel','tool_deprovisionuser'));
         $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
         $output .= html_writer::div(get_string('inprogress', 'tool_deprovisionuser'));
-        $table = $this->render_table_of_users($myarray);
-        $output .= html_writer::table($table);
+        $tablearchivedusers = $this->render_table_of_users($myarray);
+        $output .= html_writer::table($tablearchivedusers);
+        $tableneverloggedin = $this->render_table_not_logged_in($usersneverloggedin);
+        $output .= html_writer::table($tableneverloggedin);
         $href = new moodle_url('/admin/tool/deprovisionuser/archiveuser.php');
         $output .= $OUTPUT->single_button($href, get_string("archive", 'tool_deprovisionuser'), 'post' );
         $output .= $this->footer();
@@ -61,7 +63,17 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     private function render_table_of_users($myarray){
         $table = new html_table();
         $table->head = array(get_string('oldusers','tool_deprovisionuser'), get_string('lastaccess','tool_deprovisionuser'),
-            get_string('Archived','tool_deprovisionuser'));
+            get_string('Archived','tool_deprovisionuser'), get_string('Willbe','tool_deprovisionuser'));
+        $table->attributes['class'] = 'admintable deprovisionuser generaltable';
+        $table->data = array();
+        foreach($myarray as $key => $user) {
+            $table->data[$key] = $user;
+        }
+        return $table;
+    }
+    private function render_table_not_logged_in($myarray){
+        $table = new html_table();
+        $table->head = array(get_string('Neverloggedin','tool_deprovisionuser'));
         $table->attributes['class'] = 'admintable deprovisionuser generaltable';
         $table->data = array();
         foreach($myarray as $key => $user) {
