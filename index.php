@@ -23,6 +23,7 @@
  */
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once(dirname(__FILE__).'/user_status_checker.php');
 
 // Get URL parameters.
 /*$contextid = optional_param('context', $systemcontext->id, PARAM_INT);*/
@@ -41,7 +42,9 @@ $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
-$content = $renderer->render_index_page();
+$userstatuschecker = new user_status_checker();
+$myarray = $userstatuschecker->get_last_login();
+$content = $renderer->render_index_page($myarray);
 
 echo $content;
 

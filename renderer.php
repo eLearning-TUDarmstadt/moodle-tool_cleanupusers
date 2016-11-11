@@ -31,14 +31,34 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * Defer to template.
      * @return string html for the page
      */
-    public function render_index_page() {
+    public function render_index_page($myarray) {
+        global $OUTPUT,$DB;
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(get_string('plugintitel','tool_deprovisionuser'));
         $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
         $output .= html_writer::div(get_string('inprogress', 'tool_deprovisionuser'));
+        $table = $this->render_table_of_users($myarray);
+        $output .= html_writer::table($table);
+        $href = new moodle_url('/admin/tool/deprovisionuser/archiveuser.php');
+        echo '<p>';
+        echo print_r($myarray);
+        echo '</p>';
+        $output .= $OUTPUT->single_button($href, get_string("archive", 'tool_deprovisionuser'), 'post' );
         $output .= $this->footer();
 
         return $output;
+    }
+    private function render_table_of_users($myarray)
+    {
+        $table = new html_table();
+        $table->head = array(get_string('oldusers','tool_deprovisionuser'), get_string('lastaccess','tool_deprovisionuser'),
+            get_string('Archived','tool_deprovisionuser'));
+        $table->attributes['class'] = 'admintable deprovisionuser generaltable';
+        $table->data = array();
+        foreach($myarray as $key => $user) {
+            $table->data[$key] = $user;
+        }
+        return $table;
     }
 }

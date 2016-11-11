@@ -21,6 +21,16 @@
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+require_once('../../../config.php');
+require_login();
+
+$PAGE->set_url('/admin/tool/deprovisionuser/index.php');
+$PAGE->set_context(context_system::instance());
+
+notice(get_string('usersarchived', 'tool_deprovisionuser'),
+    $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+exit();
 class archiveuser
 {
     var $id;

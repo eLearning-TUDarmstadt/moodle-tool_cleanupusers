@@ -4,10 +4,10 @@
        xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="tool_deprovisionuser_inactive" COMMENT="deprovision user">
+        <TABLE NAME="tool_deprovisionuser" COMMENT="deprovision user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="active" TYPE="binary" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="archived" TYPE="binary" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
                 <!--<FIELD NAME="time" TYPE="datetime" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>-->
                 <!--TODO datetime not supported by xmldb-->
             </FIELDS>
