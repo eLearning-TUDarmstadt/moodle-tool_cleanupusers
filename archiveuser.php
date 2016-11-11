@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * This file contains the class for archived users
+ * File to archive users.
  *
  * @package tool_deprovision
  * @copyright 2016 N Herrmann
@@ -31,6 +31,13 @@ $PAGE->set_context(context_system::instance());
 notice(get_string('usersarchived', 'tool_deprovisionuser'),
     $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 exit();
+/**
+ * Class archiveusers to make users anonymous.
+ *
+ * @package tool_deprovision
+ * @copyright 2016 N Herrmann
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class archiveuser
 {
     var $id;

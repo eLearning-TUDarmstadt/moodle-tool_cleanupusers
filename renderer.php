@@ -24,11 +24,17 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-
+/**
+ * Class of the tool_deprovisionuser renderer.
+ *
+ * @package    tool_deprovisionuser
+ * @copyright  2016 Nina Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
     /**
-     * Defer to template.
+     * Renders the index page
      * @return string html for the page
      */
     public function render_index_page($myarray) {
@@ -41,16 +47,18 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         $table = $this->render_table_of_users($myarray);
         $output .= html_writer::table($table);
         $href = new moodle_url('/admin/tool/deprovisionuser/archiveuser.php');
-        echo '<p>';
-        echo print_r($myarray);
-        echo '</p>';
         $output .= $OUTPUT->single_button($href, get_string("archive", 'tool_deprovisionuser'), 'post' );
         $output .= $this->footer();
 
         return $output;
     }
-    private function render_table_of_users($myarray)
-    {
+
+    /**
+     * Renders a table of all users
+     * TODO Two different tables for archived users and user to delete
+     * @return string html
+     */
+    private function render_table_of_users($myarray){
         $table = new html_table();
         $table->head = array(get_string('oldusers','tool_deprovisionuser'), get_string('lastaccess','tool_deprovisionuser'),
             get_string('Archived','tool_deprovisionuser'));

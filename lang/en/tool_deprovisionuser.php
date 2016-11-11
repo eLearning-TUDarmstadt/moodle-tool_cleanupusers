@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * This file contains language strings used in the group block
+ * This file contains language strings used in the deprovisionuser admin tool.
  *
  * @package tool_deprovisionuser
  * @copyright 2016 N Herrmann

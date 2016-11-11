@@ -47,6 +47,3 @@ $myarray = $userstatuschecker->get_last_login();
 $content = $renderer->render_index_page($myarray);
 
 echo $content;
-
-
-//echo html_writer::tag('info-deprovisionuser', get_string('plugininfo','tool_deprovisionuser'));

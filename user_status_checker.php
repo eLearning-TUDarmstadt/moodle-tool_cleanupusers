@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class that checks the status of different users
+ * Checks the status of the Users
+ * TODO later calls for subplugins to let them check the status
  *
  * @package    tool_deprovisionuser
  * @copyright  2016 N Herrmann
@@ -24,11 +25,17 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-
+/**
+ * Class that checks the status of different users
+ *
+ * @package    tool_deprovisionuser
+ * @copyright  2016 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class user_status_checker {
     public function get_last_login(){
         global $USER, $DB;
-        $arrayofuser = user_get_users_by_id(array(2,3,4,5,6,7,8,9,10,11));
+        $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
         $mytimestamp = time();
         foreach($arrayofuser as $key => $user){
@@ -37,7 +44,7 @@ class user_status_checker {
                 $arrayofoldusers[$key]['username'] = $user->username;
                 $arrayofoldusers[$key]['lastaccess'] = date('Y-m-d h:i:s',$user->lastaccess);
                 $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-                
+
                 if(empty($isarchivid)) {
                     $arrayofoldusers[$key]['archived'] = get_string('No', 'tool_deprovisionuser');
                 } else {
@@ -46,5 +53,10 @@ class user_status_checker {
             } else {}
         }
         return $arrayofoldusers;
+    }
+    public function get_all_users(){
+        global $DB;
+//TODO for Performance reasons only get neccessary record
+        return $DB->get_records('user');
     }
 }
