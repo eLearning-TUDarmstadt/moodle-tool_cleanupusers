@@ -26,7 +26,6 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once(dirname(__FILE__).'/user_status_checker.php');
 
 // Get URL parameters.
-/*$contextid = optional_param('context', $systemcontext->id, PARAM_INT);*/
 $PAGE->set_context(context_system::instance());
 $context = context_system::instance();
 // Check permissions.

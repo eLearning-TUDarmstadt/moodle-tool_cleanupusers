@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once('../../../config.php');
 require_login();
 
@@ -38,12 +39,11 @@ exit();
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class archiveuser
-{
-    var $id;
-    var $archived;
+class archiveuser {
+    private $id;
+    private $archived;
 
-    public function make_archived_user($userid){
+    public function make_archived_user($userid) {
         global $DB;
         $thisuser = new archiveuser();
         $DB->insert_record('tool_deprovisionuser_inactive', $thisuser);

@@ -41,7 +41,7 @@ class user_status_checker {
         foreach($arrayofuser as $key => $user){
             if (!empty($user) && !empty($user->lastaccess)){
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
-//              Minutes a user was not logged in
+                // Minutes a user was not logged in
                 $timeinnotunixformat = $timenotloggedin ;
                 $arrayofoldusers[$key]['username'] = $user->username;
                 $arrayofoldusers[$key]['lastaccess'] = date('Y-m-d h:i:s',$user->lastaccess);

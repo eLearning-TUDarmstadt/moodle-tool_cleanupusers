@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Subplugin userstatuswwu.
  *
@@ -24,5 +22,5 @@
  */
 namespace tool_deprovisionuser\plugininfo;
 use core\plugininfo\base, moodle_url, part_of_admin_tree, admin_settingpage;
-
+defined('MOODLE_INTERNAL') || die();
 class userstatuswwu extends base{}

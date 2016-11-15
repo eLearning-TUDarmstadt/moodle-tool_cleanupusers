@@ -24,18 +24,14 @@
 namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
 
-//require_once(__DIR__.'/../../locallib.php');
-
-class cron_task extends \core\task\scheduled_task
-{
+class cron_task extends \core\task\scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).
      *
      * @return string
      */
-    public function get_name()
-    {
+    public function get_name() {
         return get_string('crontask', 'tool_deprovisionuser');
     }
 
@@ -44,15 +40,14 @@ class cron_task extends \core\task\scheduled_task
      *
      * @return string
      */
-    public function execute(){
+    public function execute() {
 
     }
 
     /**
      * Returns the status of a user
      */
-    public function get_user_status()
-    {
+    public function get_user_status() {
 
     }
 

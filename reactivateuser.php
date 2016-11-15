@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,16 +20,17 @@
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class reactivateuser
-{
-        public function remove_user_from_table($userid){
-            global $DB;
-            $transaction = $DB->start_delegated_transaction();
-                $success = $DB->delete_records('tool_deprovisionuser_inactive', array('id'=> $userid));
-            $transaction->allow_commit();
-            if($success===false){
-                throwException(get_string('failedtoactivate', 'tool_deprovisionuser'));
-//                TODO more action retry etc.?
-            }
+defined('MOODLE_INTERNAL') || die();
+
+class reactivateuser {
+    public function remove_user_from_table($userid){
+        global $DB;
+        $transaction = $DB->start_delegated_transaction();
+            $success = $DB->delete_records('tool_deprovisionuser_inactive', array('id' => $userid));
+        $transaction->allow_commit();
+        if($success === false) {
+            throwException(get_string('failedtoactivate', 'tool_deprovisionuser'));
+            // TODO more action retry etc.?
         }
+    }
 }
