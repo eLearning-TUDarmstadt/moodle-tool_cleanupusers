@@ -33,44 +33,42 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_status_checker {
-    public function get_last_login(){
+    public function get_last_login() {
         global $USER, $DB;
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
         $mytimestamp = time();
-        foreach($arrayofuser as $key => $user){
-            if (!empty($user) && !empty($user->lastaccess)){
+        foreach ($arrayofuser as $key => $user) {
+            if (!empty($user) && !empty($user->lastaccess)) {
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
                 // Minutes a user was not logged in
                 $timeinnotunixformat = $timenotloggedin ;
                 $arrayofoldusers[$key]['username'] = $user->username;
                 $arrayofoldusers[$key]['lastaccess'] = date('Y-m-d h:i:s',$user->lastaccess);
                 $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-                if(empty($isarchivid)) {
+                if (empty($isarchivid)) {
                     $arrayofoldusers[$key]['archived'] = get_string('No', 'tool_deprovisionuser');
-                } else {
-                    $arrayofoldusers[$key]['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                } else { $arrayofoldusers[$key]['archived'] = get_string('Yes', 'tool_deprovisionuser');
                 }
-                if($timeinnotunixformat> 130000){
+                if ($timeinnotunixformat > 130000) {
                     $arrayofoldusers[$key]['Willbe'] = 'to be archived';
-                } else {
-                    $arrayofoldusers[$key]['Willbe'] = 'not to be archived';
+                } else { $arrayofoldusers[$key]['Willbe'] = 'not to be archived';
                 }
-            } else {}
+            }
         }
         return $arrayofoldusers;
     }
-    public function get_all_users(){
+    public function get_all_users() {
         global $DB;
-        //TODO for Performance reasons only get neccessary record
+        // TODO for Performance reasons only get neccessary record
         return $DB->get_records('user');
     }
-    public function get_never_logged_in(){
+    public function get_never_logged_in() {
         global $USER, $DB;
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
-        foreach($arrayofuser as $key => $user){
-            if (empty($user->lastaccess)){
+        foreach ($arrayofuser as $key => $user) {
+            if (empty($user->lastaccess)) {
                 $arrayofoldusers[$key]['username'] = $user->username;
             }
         }

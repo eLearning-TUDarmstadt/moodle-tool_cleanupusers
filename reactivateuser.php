@@ -23,12 +23,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 class reactivateuser {
-    public function remove_user_from_table($userid){
+    public function remove_user_from_table($userid) {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
             $success = $DB->delete_records('tool_deprovisionuser_inactive', array('id' => $userid));
         $transaction->allow_commit();
-        if($success === false) {
+        if ($success === false) {
             throwException(get_string('failedtoactivate', 'tool_deprovisionuser'));
             // TODO more action retry etc.?
         }

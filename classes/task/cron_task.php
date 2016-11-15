@@ -54,7 +54,7 @@ class cron_task extends \core\task\scheduled_task {
     /**
      * Changes the status of a user
      */
-    public function change_user_status(){
+    public function change_user_status() {
 
     }
 }

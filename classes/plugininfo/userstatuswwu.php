@@ -28,4 +28,5 @@ use core\plugininfo\base, part_of_admin_tree, admin_settingpage;
 
 defined('MOODLE_INTERNAL') || die();
 
-class userstatuswwu extends base {}
+class userstatuswwu extends base {
+}
