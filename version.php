@@ -23,7 +23,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 $plugin->version   = 2016111007;     // The current plugin version (Date: YYYYMMDDXX).
 
 // TODO Check for requirements

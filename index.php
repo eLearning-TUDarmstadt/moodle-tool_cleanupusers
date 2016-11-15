@@ -35,6 +35,7 @@ require_capability('moodle/site:config', $context);
 
 admin_externalpage_setup('tooldeprovisionuser');
 
+
 $pagetitle = get_string('pluginname','tool_deprovisionuser');
 $PAGE->set_title(get_string('pluginname','tool_deprovisionuser'));
 $PAGE->set_heading(get_string('pluginname','tool_deprovisionuser'));
@@ -48,4 +49,3 @@ $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
 $content = $renderer->render_index_page($myarray, $arrayneverloggedin);
 
 echo $content;
-
