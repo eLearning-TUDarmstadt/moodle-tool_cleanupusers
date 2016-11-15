@@ -1,4 +1,4 @@
-image: php:5.6
+image: php:7.0
 
 services:
  - mysql:latest
@@ -8,7 +8,7 @@ cache:
  - $HOME/.composer/cache
 
 variables:
- MOODLE_BRANCH: "MOODLE_29_STABLE"
+ MOODLE_BRANCH: "MOODLE_31_STABLE"
  DB: "mysqli"
  MYSQL_ROOT_PASSWORD: "superrootpass"
  TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
