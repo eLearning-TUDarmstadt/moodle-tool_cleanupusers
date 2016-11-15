@@ -37,17 +37,16 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * Renders the index page
      * @return string html for the page
      */
-    public function render_index_page($myarray, $usersneverloggedin) {
-        global $OUTPUT,$DB;
+    public function render_index_page($myarray) {
+        global $OUTPUT;
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(get_string('plugintitel', 'tool_deprovisionuser'));
         $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
         $output .= html_writer::div(get_string('inprogress', 'tool_deprovisionuser'));
-        $tablearchivedusers = $this->render_table_of_users($myarray);
+        $tablearchivedusers = $this->render_table_of_users($myarray, array(get_string('oldusers', 'tool_deprovisionuser'), get_string('lastaccess', 'tool_deprovisionuser'),
+            get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
         $output .= html_writer::table($tablearchivedusers);
-        $tableneverloggedin = $this->render_table_not_logged_in($usersneverloggedin);
-        $output .= html_writer::table($tableneverloggedin);
         $href = new moodle_url('/admin/tool/deprovisionuser/archiveuser.php');
         $output .= $OUTPUT->single_button($href, get_string("archive", 'tool_deprovisionuser'), 'post' );
         $output .= $this->footer();
@@ -55,30 +54,34 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    public function render_never_logged_in_page($usersneverloggedin) {
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->heading(get_string('plugintitel', 'tool_deprovisionuser'));
+        $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
+        $output .= html_writer::div(get_string('inprogress', 'tool_deprovisionuser'));
+        $tableneverloggedin = $this->render_table_of_users($usersneverloggedin, array(get_string('Neverloggedin', 'tool_deprovisionuser')));
+        $output .= html_writer::table($tableneverloggedin);
+        $output .= $this->footer();
+
+        return $output;
+
+    }
     /**
      * Renders a table of all users
      * TODO Two different tables for archived users and user to delete
      * @return string html
      */
-    private function render_table_of_users($myarray) {
+    public function render_table_of_users($arrayofusers, $arrayoftableheadings) {
         $table = new html_table();
-        $table->head = array(get_string('oldusers', 'tool_deprovisionuser'), get_string('lastaccess', 'tool_deprovisionuser'),
-            get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser'));
+        $table->head = $arrayoftableheadings;
         $table->attributes['class'] = 'admintable deprovisionuser generaltable';
         $table->data = array();
-        foreach ($myarray as $key => $user) {
+        foreach ($arrayofusers as $key => $user) {
             $table->data[$key] = $user;
         }
         return $table;
     }
-    private function render_table_not_logged_in($myarray) {
-        $table = new html_table();
-        $table->head = array(get_string('Neverloggedin', 'tool_deprovisionuser'));
-        $table->attributes['class'] = 'admintable deprovisionuser generaltable';
-        $table->data = array();
-        foreach ($myarray as $key => $user) {
-            $table->data[$key] = $user;
-        }
-        return $table;
-    }
+
+
 }

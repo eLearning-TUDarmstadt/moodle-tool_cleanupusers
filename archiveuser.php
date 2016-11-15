@@ -21,31 +21,39 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
 require_once('../../../config.php');
 require_login();
+require_once($CFG->dirroot.'/user/lib.php');
 
-$PAGE->set_url('/admin/tool/deprovisionuser/index.php');
+$userid         = required_param('userid', PARAM_INT);
+$archived       = required_param('archived', PARAM_INT);
+
+$PAGE->set_url('/admin/tool/deprovisionuser/archiveuser.php');
 $PAGE->set_context(context_system::instance());
 
+global $USER;
+$user = $DB->get_record('user', array('id' => $userid));
+if ($archived == 0) {
+    // TODO require_capability('moodle/user:update', $sitecontext);
+    if (true) {
+//       TODO check if user is the same person
+        if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
+            $user->suspended = 1;
+            // Force logout.
+            \core\session\manager::kill_user_sessions($user->id);
+            user_update_user($user, false);
+        }
+    }
+} if ($archived == 1) {
+    if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
+        $user->suspended = 0;
+        user_update_user($user, false);
+    }
+}
+else { notice('notworking',
+    $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+}
 notice(get_string('usersarchived', 'tool_deprovisionuser'),
     $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 exit();
-/**
- * Class archiveusers to make users anonymous.
- *
- * @package tool_deprovision
- * @copyright 2016 N Herrmann
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class archiveuser {
-    private $id;
-    private $archived;
-
-    public function make_archived_user($userid) {
-        global $DB;
-        $thisuser = new archiveuser();
-        $DB->insert_record('tool_deprovisionuser_inactive', $thisuser);
-    }
-}

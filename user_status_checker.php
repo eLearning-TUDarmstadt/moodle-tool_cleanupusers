@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die;
  */
 class user_status_checker {
     public function get_last_login() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG, $OUTPUT;
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
         $mytimestamp = time();
@@ -50,9 +50,23 @@ class user_status_checker {
                     $arrayofoldusers[$key]['archived'] = get_string('No', 'tool_deprovisionuser');
                 } else { $arrayofoldusers[$key]['archived'] = get_string('Yes', 'tool_deprovisionuser');
                 }
-                if ($timeinnotunixformat > 130000) {
-                    $arrayofoldusers[$key]['Willbe'] = 'to be archived';
-                } else { $arrayofoldusers[$key]['Willbe'] = 'not to be archived';
+
+                if($user->suspended == 0) {
+                    if ($timeinnotunixformat > 130000) {
+                        $arrayofoldusers[$key]['Willbe'] = 'to be archived';
+                    } else {
+                        $arrayofoldusers[$key]['Willbe'] = 'not to be archived';
+                    }
+                } else { $arrayofoldusers[$key]['Willbe'] = 'Is archived';}
+
+                if ($user->suspended == 0) {
+                    $arrayofoldusers[$key]['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                        html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
+                } else {
+                    $arrayofoldusers[$key]['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                        html_writer::img($OUTPUT->pix_url('t/show'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
                 }
             }
         }

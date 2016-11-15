@@ -38,3 +38,5 @@ $string['No'] = 'No';
 $string['Archived'] = 'Archived:';
 $string['Willbe'] = 'Will be:';
 $string['Neverloggedin'] = 'User that never logged in:';
+$string['titleneverloggedin'] = 'Never logged in Users';
+
