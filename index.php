@@ -33,7 +33,7 @@ $context = context_system::instance();
 require_login();
 require_capability('moodle/site:config', $context);
 
-admin_externalpage_setup('tooldeprovisionuser');
+admin_externalpage_setup('Overview');
 
 
 $pagetitle = get_string('pluginname', 'tool_deprovisionuser');
@@ -44,7 +44,11 @@ $PAGE->set_pagelayout('standard');
 $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
 $userstatuschecker = new user_status_checker();
-$myarray = $userstatuschecker->get_last_login();
+$myarray = $userstatuschecker->get_users_for_suspending();
 $content = $renderer->render_index_page($myarray);
+$arraytodelete = $userstatuschecker->get_to_delete();
+$content .= $renderer->render_to_delete_page($arraytodelete);
+$arrayneverloggedin = $userstatuschecker->get_never_logged_in();
+$content .= $renderer->render_never_logged_in_page($arrayneverloggedin);
 
 echo $content;

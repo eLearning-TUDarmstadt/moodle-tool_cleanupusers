@@ -39,4 +39,7 @@ $string['Archived'] = 'Archived:';
 $string['Willbe'] = 'Will be:';
 $string['Neverloggedin'] = 'User that never logged in:';
 $string['titleneverloggedin'] = 'Never logged in Users';
-
+$string['titletodelete'] = 'Delete Users';
+$string['usersactivated'] = 'User has been activated';
+$string['archiveuser'] = 'Users to archive';
+$string['usersdeleted'] = 'The User has been deleted.';

@@ -14,52 +14,47 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * File to archive users.
+ * File to delete users.
  *
  * @package tool_deprovision
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 require_once('../../../config.php');
 require_login();
 require_once($CFG->dirroot.'/user/lib.php');
+require_once(dirname(__FILE__).'/classes/archiveduser.php');
+require_once($CFG->libdir.'/moodlelib.php');
 
 $userid         = required_param('userid', PARAM_INT);
-$archived       = required_param('archived', PARAM_INT);
+$deleted       = required_param('deleted', PARAM_INT);
 
 $PAGE->set_url('/admin/tool/deprovisionuser/archiveuser.php');
 $PAGE->set_context(context_system::instance());
 
 global $USER;
 $user = $DB->get_record('user', array('id' => $userid));
-if ($archived == 0) {
+if ($deleted == 0) {
     // TODO require_capability('moodle/user:update', $sitecontext);
     if (true) {
         // TODO check if user is the same person
-        if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
-            $user->suspended = 1;
+        if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
             // Force logout.
             $transaction = $DB->start_delegated_transaction();
-            $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userid, 'archived' => true), true, false, true);
+            $DB->delete_records('tool_deprovisionuser',array('id' => $userid));
             $transaction->allow_commit();
             \core\session\manager::kill_user_sessions($user->id);
-            user_update_user($user, false);
+            delete_user($user);
+        } else {
+            notice('notworking',
+                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
         }
+    } else {
+        notice('notworking',
+            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
-    notice(get_string('usersarchived', 'tool_deprovisionuser'),
-        $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-} if ($archived == 1) {
-    if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
-        $user->suspended = 0;
-        $transaction = $DB->start_delegated_transaction();
-        $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
-        $transaction->allow_commit();
-        user_update_user($user, false);
-    }
-    notice(get_string('usersactivated', 'tool_deprovisionuser'),
-        $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    notice(get_string('usersdeleted', 'tool_deprovisionuser'),
+    $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 } else {
     notice('notworking',
     $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');

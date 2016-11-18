@@ -28,13 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
     $ADMIN->add('users', new admin_externalpage(
-        'tooldeprovisionuser',
-        get_string('pluginname', 'tool_deprovisionuser'),
+        'Overview',
+        get_string('plugintitle', 'tool_deprovisionuser'),
         "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
-    ));
-    $ADMIN->add('users', new admin_externalpage(
-        'notloggedin',
-        get_string('titleneverloggedin', 'tool_deprovisionuser'),
-        "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/never_logged_in.php"
     ));
 }

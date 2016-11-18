@@ -33,59 +33,94 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_status_checker {
-    public function get_last_login() {
-        global $USER, $DB, $CFG, $OUTPUT;
+    public function get_users_for_suspending() {
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
-        $mytimestamp = time();
         foreach ($arrayofuser as $key => $user) {
-            if (!empty($user) && !empty($user->lastaccess)) {
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
-                // Minutes a user was not logged in
-                $timeinnotunixformat = $timenotloggedin ;
-                $arrayofoldusers[$key]['username'] = $user->username;
-                $arrayofoldusers[$key]['lastaccess'] = date('Y-m-d h:i:s',$user->lastaccess);
-                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-                if (empty($isarchivid)) {
-                    $arrayofoldusers[$key]['archived'] = get_string('No', 'tool_deprovisionuser');
-                } else { $arrayofoldusers[$key]['archived'] = get_string('Yes', 'tool_deprovisionuser');
-                }
-
-                if($user->suspended == 0) {
-                    if ($timeinnotunixformat > 130000) {
-                        $arrayofoldusers[$key]['Willbe'] = 'to be archived';
-                    } else {
-                        $arrayofoldusers[$key]['Willbe'] = 'not to be archived';
-                    }
-                } else { $arrayofoldusers[$key]['Willbe'] = 'Is archived';}
-
-                if ($user->suspended == 0) {
-                    $arrayofoldusers[$key]['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
-                } else {
-                    $arrayofoldusers[$key]['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        html_writer::img($OUTPUT->pix_url('t/show'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
-                }
-            }
+            // Merley users who are not deleted and not suspended are shown.
+            // TODO Show Admin or not?
+            if($user->deleted == 0 && $user->lastlogin != 0) {
+                $arrayofoldusers[$key] = $this->relevant_information($user, 'toarchive');
+            } else {}
         }
         return $arrayofoldusers;
     }
-    public function get_all_users() {
+    private function get_all_users() {
         global $DB;
         // TODO for Performance reasons only get neccessary record
         return $DB->get_records('user');
     }
     public function get_never_logged_in() {
-        global $USER, $DB;
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
         foreach ($arrayofuser as $key => $user) {
-            if (empty($user->lastaccess)) {
+            if (empty($user->lastaccess) && $user->deleted == 0) {
                 $arrayofoldusers[$key]['username'] = $user->username;
             }
         }
         return $arrayofoldusers;
+    }
+    public function get_to_delete() {
+        global $DB;
+        $arrayofarchivedusers = $DB->get_records('tool_deprovisionuser');
+        $relevantarrayofusers = array();
+        foreach($arrayofarchivedusers as $key => $user) {
+            $fulluser = $DB->get_record('user', array('id' => $user->id));
+            $relevantarrayofusers[$key] = $this->relevant_information($fulluser, 'todelete');
+        }
+        return $relevantarrayofusers;
+    }
+    private function relevant_information($user, $intention) {
+        global $DB, $OUTPUT, $CFG;
+        $mytimestamp = time();
+        $arrayofusers = array();
+        if (!empty($user) && !empty($user->lastaccess)) {
+            // Minutes a user was not logged in
+            $timenotloggedin = $mytimestamp - $user->lastaccess;
+            $timeinnotunixformat = $timenotloggedin;
+            $arrayofusers['username'] = $user->username;
+            $arrayofusers['lastaccess'] = date('Y-m-d h:i:s', $user->lastaccess);
+            $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+            // double checks for archived table Maybe removed later?
+            if (empty($isarchivid)) {
+                $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
+            } else {
+                $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+            }
+
+            // If User is not suspend checks whether last login is more than 13 0000 Minutes ago. Only for testing reasons later detailed
+            // implementation by a subplugin that realises individual rules to check whether users are supposed to be archived.
+            if($user->suspended == 0) {
+                if ($timeinnotunixformat > 130000) {
+                    $arrayofusers['Willbe'] = 'to be archived';
+                } else {
+                    $arrayofusers['Willbe'] = 'not to be archived';
+                }
+            } else {
+                $arrayofusers['Willbe'] = 'Is archived';
+            }
+            // Link to Picture is rendered to suspend users if neccessary
+            // TODO better put in other function?
+            if($intention == 'toarchive') {
+                if ($user->suspended == 0) {
+                    $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                        html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
+                } else {
+                    $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                        html_writer::img($OUTPUT->pix_url('t/show'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
+                }
+            }
+            if($intention == 'todelete'){
+                $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                    '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
+                    html_writer::img($OUTPUT->pix_url('t/delete'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
+            }
+            else {
+            }
+        } else{
+        }
+        return $arrayofusers;
     }
 }
