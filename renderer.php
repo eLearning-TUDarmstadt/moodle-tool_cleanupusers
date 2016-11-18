@@ -40,6 +40,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     public function render_user_archive($myarray) {
         global $OUTPUT;
         $output = '';
+        // TODO find a better way to set header and footer
         $output .= $this->header();
         $output .= $this->heading(get_string('archiveuser', 'tool_deprovisionuser'));
         $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
@@ -49,7 +50,8 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
         $output .= html_writer::table($tablearchivedusers);
         $href = new moodle_url('/admin/tool/deprovisionuser/archiveuser.php');
-        $output .= $OUTPUT->single_button($href, get_string("notworking", 'tool_deprovisionuser'), 'post' );
+        // TODO supposed to archive all users manually that are supposed to be archived
+        $output .= $OUTPUT->single_button($href, "notworking", 'post' );
         return $output;
     }
 

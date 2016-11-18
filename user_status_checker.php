@@ -40,7 +40,7 @@ class user_status_checker {
             // Merley users who are not deleted and not suspended are shown.
             // TODO Show Admin or not?
             // LastAccess checks for lastlogin although $user has an extra attribute lastlogin which points at the second last login
-            if($user->deleted == 0 && $user->lastaccess != 0) {
+            if($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $arrayofoldusers[$key] = $this->relevant_information($user, 'toarchive');
             } else {}
         }
