@@ -34,19 +34,19 @@ $PAGE->set_context(context_system::instance());
 
 global $USER;
 $user = $DB->get_record('user', array('id' => $userid));
+require_capability('moodle/user:update', $PAGE->context);
 if ($archived == 0) {
-    // TODO require_capability('moodle/user:update', $sitecontext);
-    if (true) {
-        // TODO check if user is the same person
-        if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
-            $user->suspended = 1;
-            // Force logout.
-            $transaction = $DB->start_delegated_transaction();
-            $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userid, 'archived' => true), true, false, true);
-            $transaction->allow_commit();
-            \core\session\manager::kill_user_sessions($user->id);
-            user_update_user($user, false);
-        }
+    if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
+        $user->suspended = 1;
+        // Force logout.
+        $transaction = $DB->start_delegated_transaction();
+        // TODO inserts not a binary but \x31 for true
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userid, 'archived' => true), true, false, true);
+        $transaction->allow_commit();
+        \core\session\manager::kill_user_sessions($user->id);
+        user_update_user($user, false);
+    } else {
+        notice('notworking', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
     notice(get_string('usersarchived', 'tool_deprovisionuser'),
         $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
@@ -57,11 +57,11 @@ if ($archived == 0) {
         $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
         $transaction->allow_commit();
         user_update_user($user, false);
+    } else {
+        notice('notworking', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
-    notice(get_string('usersactivated', 'tool_deprovisionuser'),
-        $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    notice(get_string('usersactivated', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 } else {
-    notice('notworking',
-    $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    notice('notworking', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 }
 exit();

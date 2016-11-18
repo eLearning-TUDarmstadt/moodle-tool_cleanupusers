@@ -29,7 +29,7 @@ if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
     $ADMIN->add('users', new admin_externalpage(
         'Overview',
-        get_string('plugintitle', 'tool_deprovisionuser'),
+        get_string('plugintitel', 'tool_deprovisionuser'),
         "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
     ));
 }
