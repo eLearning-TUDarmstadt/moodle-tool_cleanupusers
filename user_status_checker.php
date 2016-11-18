@@ -40,9 +40,9 @@ class user_status_checker {
             // Merley users who are not deleted and not suspended are shown.
             // TODO Show Admin or not?
             // LastAccess checks for lastlogin although $user has an extra attribute lastlogin which points at the second last login
-            if($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $arrayofoldusers[$key] = $this->relevant_information($user, 'toarchive');
-            } else {}
+            }
         }
         return $arrayofoldusers;
     }
@@ -65,7 +65,7 @@ class user_status_checker {
         global $DB;
         $arrayofarchivedusers = $DB->get_records('tool_deprovisionuser');
         $relevantarrayofusers = array();
-        foreach($arrayofarchivedusers as $key => $user) {
+        foreach ($arrayofarchivedusers as $key => $user) {
             $fulluser = $DB->get_record('user', array('id' => $user->id));
             $relevantarrayofusers[$key] = $this->relevant_information($fulluser, 'todelete');
         }
@@ -91,7 +91,7 @@ class user_status_checker {
 
             // If User is not suspend checks whether last login is more than 13 0000 Minutes ago. Only for testing reasons later detailed
             // implementation by a subplugin that realises individual rules to check whether users are supposed to be archived.
-            if($user->suspended == 0) {
+            if ($user->suspended == 0) {
                 if ($timeinnotunixformat > 130000) {
                     $arrayofusers['Willbe'] = 'to be archived';
                 } else {
@@ -102,7 +102,7 @@ class user_status_checker {
             }
             // Link to Picture is rendered to suspend users if neccessary
             // TODO better put in other function?
-            if($intention == 'toarchive') {
+            if ($intention == 'toarchive') {
                 if ($user->suspended == 0) {
                     $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                         '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
@@ -113,14 +113,11 @@ class user_status_checker {
                         html_writer::img($OUTPUT->pix_url('t/show'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
                 }
             }
-            if($intention == 'todelete'){
+            if ($intention == 'todelete'){
                 $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                     '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
                     html_writer::img($OUTPUT->pix_url('t/delete'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $user->id)));
             }
-            else {
-            }
-        } else{
         }
         return $arrayofusers;
     }
