@@ -37,16 +37,21 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
      */
     public function test_locallib() {
         global $DB, $CFG, $OUTPUT;
-//        require_once(dirname(__FILE__).'/user_status_checker.php');
+        // Require_once(dirname(__FILE__).'/user_status_checker.php');
         require_once($CFG->dirroot.'/admin/tool/deprovisionuser/user_status_checker.php');
         $data = $this->set_up();
-        $myuser_status_checker = new user_status_checker();
-        $returnarray = $myuser_status_checker->get_users_for_suspending();
+        $myuserstatuschecker = new user_status_checker();
+        $returnarray = $myuserstatuschecker->get_users_for_suspending();
         $refimgtoarchive = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
             '/tool/deprovisionuser/archiveuser.php?userid=' . $data['user']->id . '&archived=' . $data['user']->suspended,
-            html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hidegroup', 'block_groups'), array('class' => "imggroup-" . $data['user']->id)));
-        $arrayinarray = array('username' => 'user', 'lastaccess' =>  '2016-11-18 06:43:47','archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
-        $myexpectedarray = array($data['user']->id=>$arrayinarray);
+            html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['user']->id)));
+        $refimgtoactivate = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+            '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userarchived']->id . '&archived=' . $data['userarchived']->suspended,
+            html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userarchived']->id)));
+
+        $arraynotsuspended = array('username' => 'user', 'lastaccess' => '2016-11-18 06:43:47', 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
+        $arraysuspended = array('username' => 'userarchived', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'No', 'Willbe' => 'to be archived', 'link' => $refimgtoactivate);
+        $myexpectedarray = array($data['user']->id => $arraynotsuspended, $data['userarchived']->id => $arraysuspended);
         $this->assertEquals($myexpectedarray, $returnarray);
     }
     /**

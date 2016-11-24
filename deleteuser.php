@@ -41,7 +41,7 @@ if ($deleted == 0) {
         if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
             // Force logout.
             $transaction = $DB->start_delegated_transaction();
-            $DB->delete_records('tool_deprovisionuser',array('id' => $userid));
+            $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
             $transaction->allow_commit();
             \core\session\manager::kill_user_sessions($user->id);
             delete_user($user);

@@ -43,3 +43,5 @@ $string['titletodelete'] = 'Delete Users';
 $string['usersactivated'] = 'User has been activated';
 $string['archiveuser'] = 'Users to archive';
 $string['usersdeleted'] = 'The User has been deleted.';
+$string['showuser'] = 'Activate User';
+$string['hideuser'] = 'Suspend User';

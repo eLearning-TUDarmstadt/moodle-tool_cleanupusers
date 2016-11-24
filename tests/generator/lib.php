@@ -41,9 +41,12 @@ class tool_deprovisionuser_generator extends testing_block_generator {
         $data = array();
         $course = $generator->create_course(array('name' => 'Some course'));
         $data['course'] = $course;
-        $user = $generator->create_user(array('username'=>'user','lastaccess' => 1479465827));
+        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => 1479465827));
         $generator->enrol_user($user->id, $course->id);
         $data['user'] = $user;
+        $userarchived = $generator->create_user(array('username'=>'userarchived','lastaccess' => 1353249342));
+        $generator->enrol_user($userarchived->id, $course->id);
+        $data['userarchived'] = $userarchived;
         // Creates 4 Users, enroles them in course2.
         /*for ($i = 1; $i <= 4; $i++) {
             $user = $generator->create_user(array('lastaccess' => 1479465827));
