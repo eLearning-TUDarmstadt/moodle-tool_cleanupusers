@@ -37,23 +37,22 @@ class tool_deprovisionuser_generator extends testing_block_generator {
      * Creates Course, course members, groups and groupings to test the block.
      */
     public function test_create_preparation () {
+        global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
         $course = $generator->create_course(array('name' => 'Some course'));
         $data['course'] = $course;
-        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => 1479976103));
+        $mytimestamp = time();
+        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $mytimestamp));
         $generator->enrol_user($user->id, $course->id);
         $data['user'] = $user;
         $userlongnotloggedin = $generator->create_user(array('username'=>'userlongnotloggedin','lastaccess' => 1353249342));
         $generator->enrol_user($userlongnotloggedin->id, $course->id);
         $data['userlongnotloggedin'] = $userlongnotloggedin;
-        // Creates 4 Users, enroles them in course2.
-        /*for ($i = 1; $i <= 4; $i++) {
-            $user = $generator->create_user(array('lastaccess' => 1479465827));
-            $generator->enrol_user($user->id, $course->id);
-            $generator->
-            $data['user' . $i] = $user;
-        }*/
+        $userarchived = $generator->create_user(array('username'=>'userarchived','lastaccess' => 1353249342, 'suspended' => 1));
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true), true, false, true);
+        $generator->enrol_user($userarchived->id, $course->id);
+        $data['userarchived'] = $userarchived;
         return $data; // Return the user, course and group objects.
     }
 }

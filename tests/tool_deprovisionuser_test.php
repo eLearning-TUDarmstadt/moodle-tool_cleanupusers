@@ -41,19 +41,39 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         require_once($CFG->dirroot.'/admin/tool/deprovisionuser/user_status_checker.php');
         $data = $this->set_up();
         $myuserstatuschecker = new user_status_checker();
+        // Ruft die Methode auf, die mir das array zurückgibt
         $returnarray = $myuserstatuschecker->get_users_for_suspending();
+        // Erstellt mir den Link mit entweder durchgestrichenem oder normalen Auge
         $refimgtoarchive = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
             '/tool/deprovisionuser/archiveuser.php?userid=' . $data['user']->id . '&archived=' . $data['user']->suspended,
             html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['user']->id)));
-        $refimgtoactivate = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+        $refimgtoarchivelongnotloggedin = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
             '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userlongnotloggedin']->id . '&archived=' . $data['userlongnotloggedin']->suspended,
             html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userlongnotloggedin']->id)));
+        $refimgtoactivate = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+            '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userarchived']->id . '&archived=' . $data['userarchived']->suspended,
+            html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userarchived']->id)));
+        $datetime = date('Y-m-d h:i:s',$data['user']->lastaccess);
+        //Fügt dem Nutzer die Attribute zu
+        $useractive = array('username' => 'user', 'lastaccess' => $datetime, 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
+        $usertoarchive = array('username' => 'userlongnotloggedin', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'No', 'Willbe' => 'to be archived', 'link' => $refimgtoarchivelongnotloggedin);
+        $userarchived = array('username' => 'userarchived', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'Yes', 'Willbe' => 'Is archived', 'link' => $refimgtoactivate);
 
-        $arraynotsuspended = array('username' => 'user', 'lastaccess' => '2016-11-24 04:28:23', 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
-        $arraysuspended = array('username' => 'userlongnotloggedin', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'No', 'Willbe' => 'to be archived', 'link' => $refimgtoactivate);
-        $myexpectedarray = array($data['user']->id => $arraynotsuspended, $data['userlongnotloggedin']->id => $arraysuspended);
-        $this->assertEquals($myexpectedarray[$data['user']->id], $returnarray[$data['user']->id]);
-        $this->assertEquals($myexpectedarray[$data['userlongnotloggedin']->id], $returnarray[$data['userlongnotloggedin']->id]);
+        $this->assertEquals($useractive['Willbe'], $returnarray[$data['user']->id]['Willbe']);
+        $this->assertEquals($useractive['lastaccess'], $returnarray[$data['user']->id]['lastaccess']);
+        $this->assertEquals($useractive['link'], $returnarray[$data['user']->id]['link']);
+        $this->assertEquals($useractive['archived'], $returnarray[$data['user']->id]['archived']);
+
+        $this->assertEquals($usertoarchive['Willbe'], $returnarray[$data['userlongnotloggedin']->id]['Willbe']);
+        $this->assertEquals($usertoarchive['lastaccess'], $returnarray[$data['userlongnotloggedin']->id]['lastaccess']);
+        $this->assertEquals($usertoarchive['link'], $returnarray[$data['userlongnotloggedin']->id]['link']);
+        $this->assertEquals($usertoarchive['archived'], $returnarray[$data['userlongnotloggedin']->id]['archived']);
+
+        $this->assertEquals($userarchived['Willbe'], $returnarray[$data['userarchived']->id]['Willbe']);
+        $this->assertEquals($userarchived['lastaccess'], $returnarray[$data['userarchived']->id]['lastaccess']);
+        $this->assertEquals($userarchived['link'], $returnarray[$data['userarchived']->id]['link']);
+        $this->assertEquals($userarchived['archived'], $returnarray[$data['userarchived']->id]['archived']);
+
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
