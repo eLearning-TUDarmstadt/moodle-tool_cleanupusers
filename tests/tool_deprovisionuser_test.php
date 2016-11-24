@@ -46,13 +46,14 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
             '/tool/deprovisionuser/archiveuser.php?userid=' . $data['user']->id . '&archived=' . $data['user']->suspended,
             html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['user']->id)));
         $refimgtoactivate = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-            '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userarchived']->id . '&archived=' . $data['userarchived']->suspended,
-            html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userarchived']->id)));
+            '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userlongnotloggedin']->id . '&archived=' . $data['userlongnotloggedin']->suspended,
+            html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userlongnotloggedin']->id)));
 
-        $arraynotsuspended = array('username' => 'user', 'lastaccess' => '2016-11-18 06:43:47', 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
-        $arraysuspended = array('username' => 'userarchived', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'No', 'Willbe' => 'to be archived', 'link' => $refimgtoactivate);
-        $myexpectedarray = array($data['user']->id => $arraynotsuspended, $data['userarchived']->id => $arraysuspended);
-        $this->assertEquals($myexpectedarray, $returnarray);
+        $arraynotsuspended = array('username' => 'user', 'lastaccess' => '2016-11-24 04:28:23', 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
+        $arraysuspended = array('username' => 'userlongnotloggedin', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'No', 'Willbe' => 'to be archived', 'link' => $refimgtoactivate);
+        $myexpectedarray = array($data['user']->id => $arraynotsuspended, $data['userlongnotloggedin']->id => $arraysuspended);
+        $this->assertEquals($myexpectedarray[$data['user']->id], $returnarray[$data['user']->id]);
+        $this->assertEquals($myexpectedarray[$data['userlongnotloggedin']->id], $returnarray[$data['userlongnotloggedin']->id]);
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
