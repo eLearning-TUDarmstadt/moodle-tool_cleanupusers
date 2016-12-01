@@ -26,6 +26,8 @@ namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
 global $CFG;
 require_once($CFG->dirroot.'/admin/tool/deprovisionuser/user_status_checker.php');
+require_once($CFG->dirroot.'/user/lib.php');
+
 
 class archive_user_task extends \core\task\scheduled_task {
 
@@ -44,10 +46,10 @@ class archive_user_task extends \core\task\scheduled_task {
      * Only supposed to execute Logic. Admin is supposed to see the last result of the Cron-Job. We need to save the data of users
      * in Databases to display the results of the last cronjob.
      *
-     * @return ?
+     * @return true
      */
     public function execute() {
-        global $DB, $USER;
+        global $DB;
         $users = $DB->get_records('user');
         foreach ($users as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
@@ -56,11 +58,13 @@ class archive_user_task extends \core\task\scheduled_task {
                 if ($timenotloggedin > 130000) {
                     $transaction = $DB->start_delegated_transaction();
                     // TODO inserts not a binary but \x31 for true
-                    $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => true), true, false, true);
-//                    $user->suspend = 1;
+                    if(empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
+                        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => true), true, false, true);
+                    }
                     $transaction->allow_commit();
-//                    \core\session\manager::kill_user_sessions($user->id);
-//                    user_update_user($user, false);
+                    $user->suspended = 1;
+                    \core\session\manager::kill_user_sessions($user->id);
+                    user_update_user($user, false);
                 }
             }
         }
