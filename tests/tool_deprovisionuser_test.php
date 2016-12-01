@@ -53,11 +53,13 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $refimgtoactivate = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
             '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userarchived']->id . '&archived=' . $data['userarchived']->suspended,
             html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userarchived']->id)));
-        $datetime = date('Y-m-d h:i:s',$data['user']->lastaccess);
-        //Fügt dem Nutzer die Attribute zu
+        $datetime = date('Y-m-d h:i:s', $data['user']->lastaccess);
+        // Fügt dem Nutzer die Attribute zu
         $useractive = array('username' => 'user', 'lastaccess' => $datetime, 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
-        $usertoarchive = array('username' => 'userlongnotloggedin', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'No', 'Willbe' => 'to be archived', 'link' => $refimgtoarchivelongnotloggedin);
-        $userarchived = array('username' => 'userarchived', 'lastaccess' =>  '2012-11-18 10:35:42','archived' => 'Yes', 'Willbe' => 'Is archived', 'link' => $refimgtoactivate);
+        $usertoarchive = array('username' => 'userlongnotloggedin', 'lastaccess' => '2012-11-18 10:35:42', 'archived' => 'No',
+            'Willbe' => 'to be archived', 'link' => $refimgtoarchivelongnotloggedin);
+        $userarchived = array('username' => 'userarchived', 'lastaccess' => '2012-11-18 10:35:42', 'archived' => 'Yes', 'Willbe' => 'Is archived',
+            'link' => $refimgtoactivate);
 
         $this->assertEquals($useractive['Willbe'], $returnarray[$data['user']->id]['Willbe']);
         $this->assertEquals($useractive['lastaccess'], $returnarray[$data['user']->id]['lastaccess']);

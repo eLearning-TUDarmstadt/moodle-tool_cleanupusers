@@ -25,13 +25,14 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = array(
     array(
-        'classname' => 'tool_deprovisionuser\task\cron_task',
+        'classname' => 'tool_deprovisionuser\task\archive_user_task',
         'blocking' => 0,
-        'minute' => '',
-        'hour' => '',
-        'day' => '1',
+        // Temporary runs every 5 min for development reasons
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
         'month' => '*',
-        'dayofweek' => '',
-        'faildelay' => 1,
+        'dayofweek' => '*',
+        'faildelay' => 0,
     )
 );

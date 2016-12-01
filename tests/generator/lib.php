@@ -46,10 +46,10 @@ class tool_deprovisionuser_generator extends testing_block_generator {
         $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $mytimestamp));
         $generator->enrol_user($user->id, $course->id);
         $data['user'] = $user;
-        $userlongnotloggedin = $generator->create_user(array('username'=>'userlongnotloggedin','lastaccess' => 1353249342));
+        $userlongnotloggedin = $generator->create_user(array('username' => 'userlongnotloggedin', 'lastaccess' => 1353249342));
         $generator->enrol_user($userlongnotloggedin->id, $course->id);
         $data['userlongnotloggedin'] = $userlongnotloggedin;
-        $userarchived = $generator->create_user(array('username'=>'userarchived','lastaccess' => 1353249342, 'suspended' => 1));
+        $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => 1353249342, 'suspended' => 1));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true), true, false, true);
         $generator->enrol_user($userarchived->id, $course->id);
         $data['userarchived'] = $userarchived;

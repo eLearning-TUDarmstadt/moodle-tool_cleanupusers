@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_status_checker {
+
     public function get_users_for_suspending() {
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
@@ -51,26 +52,40 @@ class user_status_checker {
         // TODO for Performance reasons only get neccessary record
         return $DB->get_records('user');
     }
-    public function get_never_logged_in() {
+    /**
+     * Methode to get users to suspend for cron.
+     *
+     * @return array
+     */
+    public function get_to_suspend_for_cron() {
         $arrayofuser = $this->get_all_users();
-        $arrayofoldusers = array();
         foreach ($arrayofuser as $key => $user) {
-            if (empty($user->lastaccess) && $user->deleted == 0) {
-                $arrayofoldusers[$key]['username'] = $user->username;
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $mytimestamp = time();
+                $timenotloggedin = $mytimestamp - $user->lastaccess;
+                if($this->check_suspend($user->id, $timenotloggedin)) {
+                    $arrayofoldusers[$user->id] = $user;
+                }
             }
         }
         return $arrayofoldusers;
     }
-    public function get_to_delete() {
-        global $DB;
-        $arrayofarchivedusers = $DB->get_records('tool_deprovisionuser');
-        $relevantarrayofusers = array();
-        foreach ($arrayofarchivedusers as $key => $user) {
-            $fulluser = $DB->get_record('user', array('id' => $user->id));
-            $relevantarrayofusers[$key] = $this->relevant_information($fulluser, 'todelete');
+
+    /**
+     * Methode to return archived true or false, later checks for subplugins.
+     *
+     * @param $id
+     * @param $time
+     * @return bool
+     */
+    private function check_suspend($id, $time) {
+        if ($time > 130000) {
+            return true;
+        } else {
+            return false;
         }
-        return $relevantarrayofusers;
     }
+
     private function relevant_information($user, $intention) {
         global $DB, $OUTPUT, $CFG;
         $mytimestamp = time();
@@ -78,7 +93,7 @@ class user_status_checker {
         if (!empty($user) && !empty($user->lastaccess)) {
             // Minutes a user was not logged in
             $timenotloggedin = $mytimestamp - $user->lastaccess;
-            $timeinnotunixformat = $timenotloggedin;
+
             $arrayofusers['username'] = $user->username;
             $arrayofusers['lastaccess'] = date('Y-m-d h:i:s', $user->lastaccess);
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
@@ -92,7 +107,7 @@ class user_status_checker {
             // If User is not suspend checks whether last login is more than 13 0000 Minutes ago. Only for testing reasons later detailed
             // implementation by a subplugin that realises individual rules to check whether users are supposed to be archived.
             if ($user->suspended == 0) {
-                if ($timeinnotunixformat > 130000) {
+                if ($this->check_suspend($user->id, $timenotloggedin)) {
                     $arrayofusers['Willbe'] = 'to be archived';
                 } else {
                     $arrayofusers['Willbe'] = 'not to be archived';
@@ -120,5 +135,26 @@ class user_status_checker {
             }
         }
         return $arrayofusers;
+    }
+
+    public function get_never_logged_in() {
+        $arrayofuser = $this->get_all_users();
+        $arrayofoldusers = array();
+        foreach ($arrayofuser as $key => $user) {
+            if (empty($user->lastaccess) && $user->deleted == 0) {
+                $arrayofoldusers[$key]['username'] = $user->username;
+            }
+        }
+        return $arrayofoldusers;
+    }
+    public function get_to_delete() {
+        global $DB;
+        $arrayofarchivedusers = $DB->get_records('tool_deprovisionuser');
+        $relevantarrayofusers = array();
+        foreach ($arrayofarchivedusers as $key => $user) {
+            $fulluser = $DB->get_record('user', array('id' => $user->id));
+            $relevantarrayofusers[$key] = $this->relevant_information($fulluser, 'todelete');
+        }
+        return $relevantarrayofusers;
     }
 }

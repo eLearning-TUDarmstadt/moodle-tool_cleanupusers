@@ -45,9 +45,6 @@ $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
 $userstatuschecker = new user_status_checker();
 $archivearray = $userstatuschecker->get_users_for_suspending();
-$mytimestamp = time();
-$timenotloggedin = $mytimestamp - $user->lastaccess;
-$timeinnotunixformat = $timenotloggedin;
 
 $content = $renderer->render_user_archive($archivearray);
 $arraytodelete = $userstatuschecker->get_to_delete();
