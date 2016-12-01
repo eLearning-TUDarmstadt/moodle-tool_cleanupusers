@@ -9,7 +9,7 @@ cache:
 
 variables:
  MOODLE_BRANCH: "MOODLE_31_STABLE"
- DB: "mysqli"
+ DB: "pgsql"
  MYSQL_ROOT_PASSWORD: "superrootpass"
  TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
 
