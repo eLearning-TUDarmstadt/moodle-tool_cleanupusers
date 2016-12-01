@@ -48,22 +48,20 @@ class archive_user_task extends \core\task\scheduled_task {
      */
     public function execute() {
         global $DB, $USER;
-        $userstatuschecker = new user_status_checker();
-        $archivearray = $userstatuschecker->get_to_suspend_for_cron();
-
-        foreach($archivearray as $user){
-            if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $user->id) {
-                $user->suspended = 1;
-                // Force logout.
-                $transaction = $DB->start_delegated_transaction();
-                // TODO inserts not a binary but \x31 for true
-//                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => true), true, false, true);
-                $transaction->allow_commit();
-
-                \core\session\manager::kill_user_sessions($user->id);
-                user_update_user($user, false);
-            } else {
-                // senseful exception
+        $users = $DB->get_records('user');
+        foreach ($users as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $mytimestamp = time();
+                $timenotloggedin = $mytimestamp - $user->lastaccess;
+                if ($timenotloggedin > 130000) {
+                    $transaction = $DB->start_delegated_transaction();
+                    // TODO inserts not a binary but \x31 for true
+                    $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => true), true, false, true);
+//                    $user->suspend = 1;
+                    $transaction->allow_commit();
+//                    \core\session\manager::kill_user_sessions($user->id);
+//                    user_update_user($user, false);
+                }
             }
         }
         return true;
