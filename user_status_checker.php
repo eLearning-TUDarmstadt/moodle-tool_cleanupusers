@@ -78,11 +78,16 @@ class user_status_checker {
      * @param $time
      * @return bool
      */
-    private function check_suspend($id, $time) {
-        if ($time > 130000) {
-            return true;
-        } else {
-            return false;
+    private function check_suspend($suspend, $time) {
+        if($suspend == 1) {
+            return 'is archived';
+        }
+        if($suspend == 0) {
+            if ($time > 130000) {
+                return 'to be archived';
+            } else {
+                return 'not to be archived';
+            }
         }
     }
 
@@ -90,7 +95,7 @@ class user_status_checker {
         global $DB, $OUTPUT, $CFG;
         $mytimestamp = time();
         $arrayofusers = array();
-        if (!empty($user) && !empty($user->lastaccess)) {
+        if (!empty($user)) {
             // Minutes a user was not logged in.
             $timenotloggedin = $mytimestamp - $user->lastaccess;
 
@@ -105,15 +110,8 @@ class user_status_checker {
                 $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
             }
 
-            if ($user->suspended == 0) {
-                if ($this->check_suspend($user->id, $timenotloggedin)) {
-                    $arrayofusers['Willbe'] = 'to be archived';
-                } else {
-                    $arrayofusers['Willbe'] = 'not to be archived';
-                }
-            } else {
-                $arrayofusers['Willbe'] = 'Is archived';
-            }
+            $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
+
             // Link to Picture is rendered to suspend users if neccessary.
             // TODO better put in other function?
             if ($intention == 'toarchive') {
@@ -127,7 +125,7 @@ class user_status_checker {
                         html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
                 }
             }
-            if ($intention == 'todelete') {
+            if ($intention == 'todelete' || $intention == 'neverloggedin') {
                 $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                     '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
                     html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
@@ -137,11 +135,13 @@ class user_status_checker {
     }
 
     public function get_never_logged_in() {
+        global $DB;
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
         foreach ($arrayofuser as $key => $user) {
             if (empty($user->lastaccess) && $user->deleted == 0) {
-                $arrayofoldusers[$key]['username'] = $user->username;
+                $fulluser = $DB->get_record('user', array('id' => $user->id));
+                $arrayofoldusers[$key] = $this->relevant_information($fulluser, 'neverloggedin');
             }
         }
         return $arrayofoldusers;
