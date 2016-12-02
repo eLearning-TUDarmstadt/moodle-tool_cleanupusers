@@ -15,9 +15,14 @@ variables:
 
 before_script:
  - apt-get update
+    
+ENV LC_ALL en_US.UTF-8
  # Add Australian locale
- - apt-get install -y language-pack-en
+ - apt-get install -y locales
+ - echo "en_AU.UTF-8 UTF-8" > /etc/locale.gen
  - locale-gen en_AU.UTF-8
+ - dpkg-reconfigure locales
+ - /usr/sbin/update-locale LANG=en_AU.UTF-8
  # Several tools complain about xdebug slowdown.
  #- phpenv config-rm xdebug.ini
  # Install php-gd
