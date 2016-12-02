@@ -16,7 +16,7 @@ variables:
 before_script:
  - apt-get update
  # Add Australian locale
- - apt-get install -y locales
+ - apt-get install -y language-pack-en
  - locale-gen en_AU.UTF-8
  # Several tools complain about xdebug slowdown.
  #- phpenv config-rm xdebug.ini
