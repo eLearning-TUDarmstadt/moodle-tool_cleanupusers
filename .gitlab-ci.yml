@@ -1,7 +1,7 @@
 image: php:7.0
 
 services:
- - postgresql
+ - postgres
 
 cache:
  paths:
