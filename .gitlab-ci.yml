@@ -1,7 +1,7 @@
 image: php:7.0
 
 services:
- - mysql:latest
+ - postgresql:latest
 
 cache:
  paths:
@@ -34,7 +34,7 @@ before_script:
  - chmod u+x /builds/ci/bin/moodle-plugin-ci
  - chmod u+x /builds/ci/bin/*
  - umask u+x
- - moodle-plugin-ci install --db-user=root --db-pass=superrootpass --db-host=pgsql -vvv
+ - moodle-plugin-ci install --db-user=root --db-pass=superrootpass --db-host=postgres -vvv
 
 job1:
  script:
