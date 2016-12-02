@@ -20,6 +20,9 @@
  * @copyright 2016 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_deprovisionuser;
+require_once($CFG->dirroot.'/user/lib.php');
+
 class archiveduser {
 
     public $id, $archived;
@@ -29,8 +32,7 @@ class archiveduser {
     }
 
     public function archive_me() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot.'/user/lib.php');
+        global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->suspended == 0) {
             $user->suspended = 1;
@@ -51,8 +53,7 @@ class archiveduser {
     }
 
     public function activate_me() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot.'/user/lib.php');
+        global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->suspended == 1) {
             $user->suspended = 0;

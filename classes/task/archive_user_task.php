@@ -25,7 +25,6 @@
 namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
 global $CFG;
-require_once($CFG->dirroot.'/admin/tool/deprovisionuser/classes/archiveduser.php');
 
 class archive_user_task extends \core\task\scheduled_task {
 
@@ -53,7 +52,7 @@ class archive_user_task extends \core\task\scheduled_task {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
-                $archiveduser = new \archiveduser($user->id, $user->suspended);
+                $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 if ($timenotloggedin > 130000) {
                     $archiveduser->archive_me();
                 }

@@ -79,10 +79,10 @@ class user_status_checker {
      * @return bool
      */
     private function check_suspend($suspend, $time) {
-        if($suspend == 1) {
+        if ($suspend == 1) {
             return 'is archived';
         }
-        if($suspend == 0) {
+        if ($suspend == 0) {
             if ($time > 130000) {
                 return 'to be archived';
             } else {
