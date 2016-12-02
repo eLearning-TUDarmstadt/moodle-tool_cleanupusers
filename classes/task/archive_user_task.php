@@ -58,7 +58,7 @@ class archive_user_task extends \core\task\scheduled_task {
                 if ($timenotloggedin > 130000) {
                     $transaction = $DB->start_delegated_transaction();
                     // TODO inserts not a binary but \x31 for true
-                    if(empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
+                    if (empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => true), true, false, true);
                     }
                     $transaction->allow_commit();

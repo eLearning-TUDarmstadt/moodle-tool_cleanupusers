@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Created by IntelliJ IDEA.
  * User: nina
@@ -14,7 +13,7 @@ class archiveduser {
         $this->archived = $archived;
     }
 
-    public function archive_me(){
+    public function archive_me() {
         global $DB, $CFG;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($this->archived == 0) {
@@ -28,10 +27,12 @@ class archiveduser {
                 $transaction->allow_commit();
                 user_update_user($user, false);
             } else {
+                throwException('Something went wrong');
                 // Adequat exception
             }
             // Return Statement
         } else {
+            throwException('Something went wrong');
             // Insert User already archived exception
         }
         exit();
@@ -47,9 +48,11 @@ class archiveduser {
                 $transaction->allow_commit();
                 user_update_user($user, false);
             } else {
+                throwException('Something went wrong');
                 // Throw adequat exception
             }
         } else {
+            throwException('Something went wrong');
             // Insert User already archived exception
         }
         exit();
@@ -66,10 +69,12 @@ class archiveduser {
                 \core\session\manager::kill_user_sessions($user->id);
                 delete_user($user);
             } else {
+                throwException('Something went wrong');
                 // Throw Exception
             }
             // Success
         } else {
+            throwException('Something went wrong');
             // Throw Exception
         }
         exit();

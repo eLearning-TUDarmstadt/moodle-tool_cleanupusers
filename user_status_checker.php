@@ -63,7 +63,7 @@ class user_status_checker {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
-                if($this->check_suspend($user->id, $timenotloggedin)) {
+                if ($this->check_suspend($user->id, $timenotloggedin)) {
                     $arrayofoldusers[$user->id] = $user;
                 }
             }
