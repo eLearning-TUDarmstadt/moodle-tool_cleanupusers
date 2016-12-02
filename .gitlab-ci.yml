@@ -15,6 +15,7 @@ variables:
 
 before_script:
  # Add Australian locale
+ - locale -a
  - locale-gen en_AU.UTF-8
  # Several tools complain about xdebug slowdown.
  #- phpenv config-rm xdebug.ini
