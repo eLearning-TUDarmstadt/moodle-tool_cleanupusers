@@ -40,7 +40,7 @@ class user_status_checker {
         foreach ($arrayofuser as $key => $user) {
             // Merley users who are not deleted and not suspended are shown.
             // TODO Show Admin or not?
-            // LastAccess checks for lastlogin although $user has an extra attribute lastlogin which points at the second last login
+            // LastAccess checks for lastlogin although $user has an extra attribute lastlogin which points at the second last login.
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $arrayofoldusers[$key] = $this->relevant_information($user, 'toarchive');
             }
@@ -91,21 +91,20 @@ class user_status_checker {
         $mytimestamp = time();
         $arrayofusers = array();
         if (!empty($user) && !empty($user->lastaccess)) {
-            // Minutes a user was not logged in
+            // Minutes a user was not logged in.
             $timenotloggedin = $mytimestamp - $user->lastaccess;
 
             $arrayofusers['username'] = $user->username;
             $arrayofusers['lastaccess'] = date('Y-m-d h:i:s', $user->lastaccess);
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
             // double checks for archived table Maybe removed later?
+
             if (empty($isarchivid)) {
                 $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
             } else {
                 $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
             }
 
-            // If User is not suspend checks whether last login is more than 13 0000 Minutes ago. Only for testing reasons later detailed
-            // implementation by a subplugin that realises individual rules to check whether users are supposed to be archived.
             if ($user->suspended == 0) {
                 if ($this->check_suspend($user->id, $timenotloggedin)) {
                     $arrayofusers['Willbe'] = 'to be archived';
@@ -115,7 +114,7 @@ class user_status_checker {
             } else {
                 $arrayofusers['Willbe'] = 'Is archived';
             }
-            // Link to Picture is rendered to suspend users if neccessary
+            // Link to Picture is rendered to suspend users if neccessary.
             // TODO better put in other function?
             if ($intention == 'toarchive') {
                 if ($user->suspended == 0) {

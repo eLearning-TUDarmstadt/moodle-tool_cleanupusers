@@ -30,48 +30,47 @@ class archiveduser {
 
     public function archive_me() {
         global $DB, $CFG;
+        require_once($CFG->dirroot.'/user/lib.php');
         $user = $DB->get_record('user', array('id' => $this->id));
-        if ($this->archived == 0) {
-            if (!is_siteadmin($user) and $user->suspended != 1) {
-                $user->suspended = 1;
-                // Force logout.
-                \core\session\manager::kill_user_sessions($user->id);
+        if ($user->suspended == 0) {
+            $user->suspended = 1;
+            if (empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $transaction = $DB->start_delegated_transaction();
-                // TODO inserts not a binary but \x31 for true
-                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $this->id, 'archived' => true), true, false, true);
+                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
-                user_update_user($user, false);
-            } else {
+            } /*else {
                 throwException('Something went wrong');
-                // TODO Adequat exception
-            }
-            // Return Statement
-        } else {
-            throwException('Something went wrong');
-            // Insert User already archived exception
-        }
-        exit();
+                // Insert User already archived exception.
+            }*/
+            \core\session\manager::kill_user_sessions($user->id);
+            user_update_user($user, false);
+        } /*else {
+                throwException('Something went wrong');
+                // TODO Adequat exception.
+        }*/
     }
+
     public function activate_me() {
         global $DB, $CFG;
+        require_once($CFG->dirroot.'/user/lib.php');
         $user = $DB->get_record('user', array('id' => $this->id));
-        if ($this->archived == 1) {
-            if (!is_siteadmin($user) and $user->suspended != 0) {
-                $user->suspended = 0;
+        if ($user->suspended == 1) {
+            $user->suspended = 0;
+            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $transaction = $DB->start_delegated_transaction();
                 $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
                 $transaction->allow_commit();
-                user_update_user($user, false);
-            } else {
+            } /*else {
                 throwException('Something went wrong');
-                // TODO Throw adequat exception
-            }
-        } else {
-            throwException('Something went wrong');
-            // Insert User already archived exception
-        }
-        exit();
+                // Insert User already archived exception.
+            }*/
+            user_update_user($user, false);
+        } /*else {
+            throwException('Not able to activate user');
+            // TODO Adequat exception.
+        }*/
     }
+
     public function delete_me() {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
@@ -85,12 +84,12 @@ class archiveduser {
                 delete_user($user);
             } else {
                 throwException('Something went wrong');
-                // TODO Throw Exception
+                // TODO Throw Exception.
             }
-            // Success
+            // Success.
         } else {
             throwException('Something went wrong');
-            // TODO Throw Exception
+            // TODO Throw Exception.
         }
         exit();
     }

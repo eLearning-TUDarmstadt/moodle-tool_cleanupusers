@@ -37,7 +37,7 @@ $user = $DB->get_record('user', array('id' => $userid));
 if ($deleted == 0) {
     // TODO require_capability('moodle/user:update', $sitecontext);
     if (true) {
-        // TODO check if user is the same person
+        // TODO check if user is the same person.
         if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
             // Force logout.
             $transaction = $DB->start_delegated_transaction();

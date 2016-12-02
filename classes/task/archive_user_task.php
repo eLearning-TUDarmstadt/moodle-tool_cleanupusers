@@ -25,7 +25,7 @@
 namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
 global $CFG;
-require_once($CFG->dirroot.'/admin/tool/deprovisionuser/user_status_checker.php');
+require_once($CFG->dirroot.'/admin/tool/deprovisionuser/classes/archiveduser.php');
 require_once($CFG->dirroot.'/user/lib.php');
 
 
@@ -56,15 +56,9 @@ class archive_user_task extends \core\task\scheduled_task {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
                 if ($timenotloggedin > 130000) {
-                    $transaction = $DB->start_delegated_transaction();
-                    // TODO inserts not a binary but \x31 for true
-                    if (empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => true), true, false, true);
-                    }
-                    $transaction->allow_commit();
-                    $user->suspended = 1;
-                    \core\session\manager::kill_user_sessions($user->id);
-                    user_update_user($user, false);
+                    $archiveduser = new \archiveduser($user->id, $user->suspended);
+                    // $archiveduser->activate_me();
+                    $archiveduser->archive_me();
                 }
             }
         }
