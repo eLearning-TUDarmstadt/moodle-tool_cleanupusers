@@ -43,7 +43,7 @@ class archiveduser {
                 user_update_user($user, false);
             } else {
                 throwException('Something went wrong');
-                // Adequat exception
+                // TODO Adequat exception
             }
             // Return Statement
         } else {
@@ -64,7 +64,7 @@ class archiveduser {
                 user_update_user($user, false);
             } else {
                 throwException('Something went wrong');
-                // Throw adequat exception
+                // TODO Throw adequat exception
             }
         } else {
             throwException('Something went wrong');
@@ -85,12 +85,12 @@ class archiveduser {
                 delete_user($user);
             } else {
                 throwException('Something went wrong');
-                // Throw Exception
+                // TODO Throw Exception
             }
             // Success
         } else {
             throwException('Something went wrong');
-            // Throw Exception
+            // TODO Throw Exception
         }
         exit();
     }
