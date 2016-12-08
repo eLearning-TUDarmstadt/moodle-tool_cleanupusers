@@ -49,4 +49,4 @@ $string['archive_user_task'] = 'Archive Users';
 $string['deletedin'] = 'is archived, will be deleted on the: {$a}';
 $string['willbe_archived'] = 'to be archived';
 $string['willbe_notchanged'] = 'not to be archived';
-
+$string['shouldbedelted'] = 'will be deleted in the next cron_job';

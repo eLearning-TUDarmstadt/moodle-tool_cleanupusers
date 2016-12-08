@@ -80,11 +80,15 @@ class user_status_checker {
      */
     private function check_suspend($suspend, $timenotloggedin) {
         if ($suspend == 1) {
-            $additionaltime = 31536000 - $timenotloggedin;
-            $mytimestamp = time();
-            $deletedinunixtime = $mytimestamp + $additionaltime;
-            $deletedinrealtime = date('d.m.Y h:i:s', $deletedinunixtime);
-            return get_string('deletedin', 'tool_deprovisionuser', $deletedinrealtime);
+            if($timenotloggedin < 31536000) {
+                $additionaltime = 31536000 - $timenotloggedin;
+                $mytimestamp = time();
+                $deletedinunixtime = $mytimestamp + $additionaltime;
+                $deletedinrealtime = date('d.m.Y h:i:s', $deletedinunixtime);
+                return get_string('deletedin', 'tool_deprovisionuser', $deletedinrealtime);
+            } else {
+                return get_string('shouldbedelted', 'tool_deprovisionuser');
+            }
         }
         if ($suspend == 0) {
             if ($timenotloggedin > 8035200) {
