@@ -54,11 +54,11 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
             '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userarchived']->id . '&archived=' . $data['userarchived']->suspended,
             html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userarchived']->id)));
         $datetime = date('d.m.Y h:i:s', $data['user']->lastaccess);
-        // Fügt dem Nutzer die Attribute zu
+        // Fügt dem Nutzer die Attribute zu.
         $useractive = array('username' => 'user', 'lastaccess' => $datetime, 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
-        $usertoarchive = array('username' => 'userlongnotloggedin', 'lastaccess' => '2012-11-18 10:35:42', 'archived' => 'No',
+        $usertoarchive = array('username' => 'userlongnotloggedin', 'lastaccess' => '18.11.2012 10:35:42', 'archived' => 'No',
             'Willbe' => 'to be archived', 'link' => $refimgtoarchivelongnotloggedin);
-        $userarchived = array('username' => 'userarchived', 'lastaccess' => '2012-11-18 10:35:42', 'archived' => 'Yes', 'Willbe' => 'Is archived',
+        $userarchived = array('username' => 'userarchived', 'lastaccess' => '18.11.2012 10:35:42', 'archived' => 'Yes', 'Willbe' => 'will be deleted in the next cron_job',
             'link' => $refimgtoactivate);
 
         $this->assertEquals($useractive['Willbe'], $returnarray[$data['user']->id]['Willbe']);
