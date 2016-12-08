@@ -60,6 +60,10 @@ class archive_user_task extends \core\task\scheduled_task {
                 if ($timenotloggedin < 130000 && $user->suspended == 1) {
                     $archiveduser->activate_me();
                 }
+                // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
+                if ($timenotloggedin > 130000 && $user->suspended == 1) {
+
+                }
             }
         }
         return true;

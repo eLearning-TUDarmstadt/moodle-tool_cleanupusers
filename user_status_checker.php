@@ -78,15 +78,19 @@ class user_status_checker {
      * @param $time
      * @return bool
      */
-    private function check_suspend($suspend, $time) {
+    private function check_suspend($suspend, $timenotloggedin) {
         if ($suspend == 1) {
-            return 'is archived';
+            $additionaltime = 31536000 - $timenotloggedin;
+            $mytimestamp = time();
+            $deletedinunixtime = $mytimestamp + $additionaltime;
+            $deletedinrealtime = date('d.m.Y h:i:s', $deletedinunixtime);
+            return get_string('deletedin', 'tool_deprovisionuser', $deletedinrealtime);
         }
         if ($suspend == 0) {
-            if ($time > 130000) {
-                return 'to be archived';
+            if ($timenotloggedin > 8035200) {
+                return get_string('willbe_archived', 'tool_deprovisionuser');
             } else {
-                return 'not to be archived';
+                return get_string('willbe_notchanged', 'tool_deprovisionuser');
             }
         }
     }
@@ -100,7 +104,7 @@ class user_status_checker {
             $timenotloggedin = $mytimestamp - $user->lastaccess;
 
             $arrayofusers['username'] = $user->username;
-            $arrayofusers['lastaccess'] = date('Y-m-d h:i:s', $user->lastaccess);
+            $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
             // double checks for archived table Maybe removed later?
 
