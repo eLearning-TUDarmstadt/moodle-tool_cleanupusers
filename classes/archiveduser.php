@@ -41,7 +41,7 @@ class archiveduser {
                 $transaction = $DB->start_delegated_transaction();
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
-            } /*else {
+            } /* else {
                 throwException('Something went wrong');
                 // Insert User already archived exception.
             }*/

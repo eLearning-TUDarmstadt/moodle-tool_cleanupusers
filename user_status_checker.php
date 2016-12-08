@@ -49,7 +49,7 @@ class user_status_checker {
     }
     private function get_all_users() {
         global $DB;
-        // TODO for Performance reasons only get neccessary record
+        // TODO for Performance reasons only get neccessary record.
         return $DB->get_records('user');
     }
     /**
@@ -80,7 +80,7 @@ class user_status_checker {
      */
     private function check_suspend($suspend, $timenotloggedin) {
         if ($suspend == 1) {
-            if($timenotloggedin < 31536000) {
+            if ($timenotloggedin < 31536000) {
                 $additionaltime = 31536000 - $timenotloggedin;
                 $mytimestamp = time();
                 $deletedinunixtime = $mytimestamp + $additionaltime;
@@ -110,7 +110,7 @@ class user_status_checker {
             $arrayofusers['username'] = $user->username;
             $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-            // double checks for archived table Maybe removed later?
+            // Double checks for archived table Maybe removed later?
 
             if (empty($isarchivid)) {
                 $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
@@ -126,11 +126,13 @@ class user_status_checker {
                 if ($user->suspended == 0) {
                     $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                         '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                        html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
+                            array('class' => "imggroup-" . $user->id)));
                 } else {
                     $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                         '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                        html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
+                            array('class' => "imggroup-" . $user->id)));
                 }
             }
             if ($intention == 'todelete' || $intention == 'neverloggedin') {
