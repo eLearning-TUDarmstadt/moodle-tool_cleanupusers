@@ -34,17 +34,17 @@ interface userstatusinterface {
      *
      * @return array of users that are supposed to be suspended.
      */
-     public function get_users_for_suspending();
+    public function get_users_for_suspending();
     /**
      * Function which returns an array of all users to be deleted by the next cron_job.
      *
      * @return array of users that are supposed to be deleted.
      */
-     public function get_to_delete();
+    public function get_to_delete();
     /**
      * Function which returns an array of all users that never logged in.
      *
      * @return array of users that never logged in.
      */
-     public function get_never_logged_in();
+    public function get_never_logged_in();
 }
