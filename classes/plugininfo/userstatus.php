@@ -32,8 +32,7 @@ use core\plugininfo\base;
 defined('MOODLE_INTERNAL') || die();
 
 class userstatus extends base {
-
-
+    
     /**
      * Function determines whether uninstalling is allowed.
      * By now returns false for a standard plugin
@@ -47,12 +46,4 @@ class userstatus extends base {
         }
         return true;
     }
-
-    /**
-     * Function returns what actions are appropiate for a specific user.
-     *
-     * @todo Appropriately implement that ever subplugin has to define this function. Abstract?
-     * @return String which determines to reactivate, archive, delete or do nothing with the given user.
-     */
-//     protected function get_user_status($user) {}
 }
