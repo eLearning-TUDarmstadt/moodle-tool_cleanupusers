@@ -122,7 +122,7 @@ class user_status_checker {
                 $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
             }
 
-            if (empty($user->lastaccess)){
+            if (empty($user->lastaccess)) {
                 $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
             } else {
                 $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
