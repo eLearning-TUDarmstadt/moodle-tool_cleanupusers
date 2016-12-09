@@ -52,24 +52,6 @@ class user_status_checker {
         // TODO for Performance reasons only get neccessary record.
         return $DB->get_records('user');
     }
-    /**
-     * Methode to get users to suspend for cron.
-     *
-     * @return array
-     */
-    public function get_to_suspend_for_cron() {
-        $arrayofuser = $this->get_all_users();
-        foreach ($arrayofuser as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
-                $mytimestamp = time();
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
-                if ($this->check_suspend($user->id, $timenotloggedin)) {
-                    $arrayofoldusers[$user->id] = $user;
-                }
-            }
-        }
-        return $arrayofoldusers;
-    }
 
     /**
      * Methode to return archived true or false, later checks for subplugins.

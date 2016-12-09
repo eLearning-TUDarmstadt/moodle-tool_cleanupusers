@@ -24,29 +24,27 @@
  * @copyright 2016 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_deprovisionuser\plugininfo;
-
-use core\plugininfo\base;
+namespace tool_deprovisionuser;
 
 defined('MOODLE_INTERNAL') || die();
 
-abstract class userstatusinterface extends base {
+interface userstatusinterface {
     /**
      * Function which returns an array of all users to be suspended by the next cron_job.
      *
      * @return array of users that are supposed to be suspended.
      */
-    abstract public function get_users_for_suspending();
+     public function get_users_for_suspending();
     /**
      * Function which returns an array of all users to be deleted by the next cron_job.
      *
      * @return array of users that are supposed to be deleted.
      */
-    abstract public function get_to_delete();
+     public function get_to_delete();
     /**
      * Function which returns an array of all users that never logged in.
      *
      * @return array of users that never logged in.
      */
-    abstract public function get_never_logged_in();
+     public function get_never_logged_in();
 }
