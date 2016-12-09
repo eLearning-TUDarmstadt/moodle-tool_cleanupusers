@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Subplugin userstatuswwu.
  *
@@ -21,9 +22,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_deprovisionuser\plugininfo;
-// Use core\plugininfo\base, moodle_url, part_of_admin_tree, admin_settingpage.
-defined('MOODLE_INTERNAL') || die();
-class userstatuswwu extends userstatus {
 
-    public function get_user_status($user) {}
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * Class that checks the status of different users
+ *
+ * @package    tool_deprovisionuser
+ * @copyright  2016 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+class userstatuswwu extends userstatus {
 }

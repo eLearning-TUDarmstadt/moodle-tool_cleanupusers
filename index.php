@@ -35,7 +35,6 @@ require_capability('moodle/site:config', $context);
 
 admin_externalpage_setup('Overview');
 
-
 $pagetitle = get_string('pluginname', 'tool_deprovisionuser');
 $PAGE->set_title(get_string('pluginname', 'tool_deprovisionuser'));
 $PAGE->set_heading(get_string('pluginname', 'tool_deprovisionuser'));
