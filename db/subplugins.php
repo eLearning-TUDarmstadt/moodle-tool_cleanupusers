@@ -23,4 +23,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array('userstatuswwu' => 'admin/tool/deprovisionuser/userstatuswwu');
+$subplugins = array('userstatus' => 'admin/tool/deprovisionuser/userstatus');
