@@ -37,19 +37,16 @@ abstract class userstatusinterface extends base {
      * @return array of users that are supposed to be suspended.
      */
     abstract public function get_users_for_suspending();
-
     /**
      * Function which returns an array of all users to be deleted by the next cron_job.
      *
      * @return array of users that are supposed to be deleted.
      */
     abstract public function get_to_delete();
-    
     /**
      * Function which returns an array of all users that never logged in.
      *
      * @return array of users that never logged in.
      */
     abstract public function get_never_logged_in();
-
 }
