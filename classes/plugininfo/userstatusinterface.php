@@ -15,34 +15,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin userstatuswwu.
+ * Interface for the Subplugin userstatus.
  *
- * The Plugins of the type userstatus must return values whether users should be deleted archived or reactivated.
+ * The Plugins of the type userstatus must return values whether users should be deleted archived, reactivated or no action is required.
  * This Plugin will be used by the cron_job and manually bz the admin to determine the appropriate actions for users.
  *
  * @package   tool_deprovisionuser
  * @copyright 2016 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace tool_deprovisionuser\plugininfo;
 
 use core\plugininfo\base;
 
 defined('MOODLE_INTERNAL') || die();
 
-class userstatus extends base {
+abstract class userstatusinterface extends base {
     /**
-     * Function determines whether uninstalling is allowed.
-     * By now returns false for a standard plugin
+     * Function which returns an array of all users to be suspended by the next cron_job.
      *
-     * @todo Return false when there is only one plugin
-     * @return bool A status indicating permission or denial
+     * @return array of users that are supposed to be suspended.
      */
-    public function is_uninstall_allowed() {
-        if ($this->is_standard()) {
-            return false;
-        }
-        return true;
-    }
+    abstract public function get_users_for_suspending();
+
+    /**
+     * Function which returns an array of all users to be deleted by the next cron_job.
+     *
+     * @return array of users that are supposed to be deleted.
+     */
+    abstract public function get_to_delete();
+    
+    /**
+     * Function which returns an array of all users that never logged in.
+     *
+     * @return array of users that never logged in.
+     */
+    abstract public function get_never_logged_in();
+
 }
