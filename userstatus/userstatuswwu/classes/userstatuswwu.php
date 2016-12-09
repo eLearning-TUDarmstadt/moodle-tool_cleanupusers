@@ -23,6 +23,7 @@
 namespace tool_deprovisionuser\plugininfo;
 // Use core\plugininfo\base, moodle_url, part_of_admin_tree, admin_settingpage.
 defined('MOODLE_INTERNAL') || die();
-class userstatuswwu extends base {
+class userstatuswwu extends userstatus {
 
+    public function get_user_status($user) {}
 }

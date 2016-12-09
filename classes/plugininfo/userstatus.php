@@ -17,6 +17,9 @@
 /**
  * Subplugin userstatuswwu.
  *
+ * The Plugins of the type userstatus must return values whether users should be deleted archived or reactivated.
+ * This Plugin will be used by the cron_job and manually bz the admin to determine the appropriate actions for users.
+ *
  * @package   tool_deprovisionuser
  * @copyright 2016 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,4 +32,27 @@ use core\plugininfo\base;
 defined('MOODLE_INTERNAL') || die();
 
 class userstatus extends base {
+
+
+    /**
+     * Function determines whether uninstalling is allowed.
+     * By now returns false for a standard plugin
+     *
+     * @todo Return false when there is only one plugin
+     * @return bool A status indicating success or failure
+     */
+    public function is_uninstall_allowed() {
+        if ($this->is_standard()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Function returns what actions are appropiate for a specific user.
+     *
+     * @todo Appropriately implement that ever subplugin has to define this function. Abstract?
+     * @return String which determines to reactivate, archive, delete or do nothing with the given user.
+     */
+//     protected function get_user_status($user) {}
 }
