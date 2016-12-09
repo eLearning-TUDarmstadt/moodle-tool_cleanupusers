@@ -15,19 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The class contains a test script for the moodle tool_deprovisionuser
+ * The class contains a test script for the moodle userstatus_userstatuswwu
  *
- * @package tool_deprovisionuser
+ * @package userstatus_userstatuswwu
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-class tool_deprovisionuser_testcase extends advanced_testcase {
+use userstatus_userstatuswwu\userstatuswwu;
+
+class userstatus_userstatuswwu_testcase extends advanced_testcase {
 
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_deprovisionuser');
+        $generator = $this->getDataGenerator()->get_plugin_generator('userstatus_userstatuswwu');
         $data = $generator->test_create_preparation();
         $this->resetAfterTest(true);
         return $data;
@@ -37,10 +39,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
      */
     public function test_locallib() {
         global $DB, $CFG, $OUTPUT;
-        // Require_once(dirname(__FILE__).'/user_status_checker.php');
-        require_once($CFG->dirroot.'/admin/tool/deprovisionuser/user_status_checker.php');
         $data = $this->set_up();
-        $myuserstatuschecker = new user_status_checker();
+        $myuserstatuschecker = new userstatuswwu();
         // Ruft die Methode auf, die mir das array zurückgibt
         $returnarray = $myuserstatuschecker->get_users_for_suspending();
         // Erstellt mir den Link mit entweder durchgestrichenem oder normalen Auge

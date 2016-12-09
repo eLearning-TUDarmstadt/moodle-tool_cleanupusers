@@ -1,0 +1,12 @@
+status of users outsourced in subplugin
+# Bitte geben Sie eine Commit-Beschreibung für Ihre Änderungen ein. Zeilen,
+# die mit '#' beginnen, werden ignoriert, und eine leere Beschreibung
+# bricht den Commit ab.
+# Auf Branch development
+# Ihr Branch ist auf dem selben Stand wie 'origin/development'.
+#
+# zum Commit vorgemerkte Änderungen:
+#	geändert:       index.php
+#	gelöscht:       user_status_checker.php
+#	geändert:       userstatus/userstatuswwu/classes/userstatuswwu.php
+#

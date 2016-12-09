@@ -24,6 +24,7 @@
  */
 namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
+use userstatus_userstatuswwu\userstatuswwu;
 
 class archive_user_task extends \core\task\scheduled_task {
 

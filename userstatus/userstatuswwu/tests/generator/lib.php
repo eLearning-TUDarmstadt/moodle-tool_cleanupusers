@@ -16,7 +16,7 @@
 
 /**
  *
- * @package    tool_deprovisionuser
+ * @package    userstatus_userstatuswwu
  * @category   test
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,12 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  *
  *
- * @package    tool_deprovisionuser
+ * @package    userstatus_userstatuswwu
  * @category   test
  * @copyright
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_deprovisionuser_generator extends testing_block_generator {
+class userstatus_userstatuswwu_generator extends testing_block_generator {
     /**
      * Creates Course, course members, groups and groupings to test the block.
      */

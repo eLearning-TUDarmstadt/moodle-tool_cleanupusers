@@ -13,7 +13,8 @@ This plugin should go into `admin/tool/deprovisionuser`.
 The Plugin executes a cron job which deletes, archives and reactivates archived users automatically.
 
 ## TODO
-- Show a warning message for admins before users are archived or deleted
+- [ ] Show a warning message for admins before users are archived or deleted
+- [ ] Outsource renderer from subplugin
 
 ## Subplugins
 The Plugin requires at least one subplugin that returns the status of all users. The intention is that every university can write their own subplugin
