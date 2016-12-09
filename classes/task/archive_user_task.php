@@ -47,23 +47,27 @@ class archive_user_task extends \core\task\scheduled_task {
      */
     public function execute() {
         global $DB;
-        $users = $DB->get_records('user');
-        foreach ($users as $key => $user) {
+        $userstatuschecker = new userstatuswwu();
+        $archivearray = $userstatuschecker->get_cron_to_archive();
+        foreach ($archivearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
-                $mytimestamp = time();
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
-                if ($timenotloggedin > 8035200 && $user->suspended == 0) {
-                    $archiveduser->archive_me();
-                }
-                // Never going to happen since suspended users are not able to login.
-                if ($timenotloggedin < 8035200 && $user->suspended == 1) {
-                    $archiveduser->activate_me();
-                }
+                $archiveduser->archive_me();
+            }
+        }
+        $activatearray = $userstatuschecker->get_cron_to_activate();
+        foreach ($archivearray as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
+                $archiveduser->activate_me();
+            }
+        }
+        $arraytodelete = $userstatuschecker->get_cron_to_delete();
+        foreach ($arraytodelete as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
-                if ($timenotloggedin > 31536000 && $user->suspended == 1) {
-                    $archiveduser->delete_me();
-                }
+                $archiveduser->delete_me();
             }
         }
         return true;

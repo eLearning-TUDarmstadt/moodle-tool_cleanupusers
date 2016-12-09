@@ -156,4 +156,52 @@ class userstatuswwu implements userstatusinterface {
         }
         return $relevantarrayofusers;
     }
+    public function get_cron_to_delete() {
+        $users = $this->get_all_users();
+        $todeleteusers = array();
+        foreach ($users as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $mytimestamp = time();
+                $timenotloggedin = $mytimestamp - $user->lastaccess;
+                // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
+                if ($timenotloggedin > 31536000 && $user->suspended == 1) {
+                    $todeleteusers[$key] = $user;
+                }
+            }
+        }
+        return $todeleteusers;
+    }
+    public function get_cron_to_archive() {
+        $users = $this->get_all_users();
+        $toarchive = array();
+        $toactivate = array();
+        foreach($users as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $mytimestamp = time();
+                $timenotloggedin = $mytimestamp - $user->lastaccess;
+                $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
+                if ($timenotloggedin > 8035200 && $user->suspended == 0) {
+                    $toarchive[$key] = $user;
+                }
+                if ($timenotloggedin < 8035200 && $user->suspended == 1) {
+                    $toaactivate[$key] = $user;
+                }
+            }
+        }
+        return $toarchive;
+    }
+    public function get_cron_to_activate() {
+        $users = $this->get_all_users();
+        $toactivate = array();
+        foreach($users as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $mytimestamp = time();
+                $timenotloggedin = $mytimestamp - $user->lastaccess;
+                if ($timenotloggedin < 8035200 && $user->suspended == 1) {
+                    $toaactivate[$key] = $user;
+                }
+            }
+        }
+        return $toactivate;
+    }
 }
