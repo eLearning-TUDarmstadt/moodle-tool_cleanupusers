@@ -23,7 +23,6 @@
  */
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once(dirname(__FILE__).'/userstatus/userstatuswwu/classes/userstatuswwu.php');
 
 use userstatus_userstatuswwu\userstatuswwu;
 
