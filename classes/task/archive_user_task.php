@@ -24,7 +24,6 @@
  */
 namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
-global $CFG;
 
 class archive_user_task extends \core\task\scheduled_task {
 

@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Subplugin userstatuswwu.
  *
@@ -21,12 +20,9 @@
  * @copyright 2016 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace tool_deprovisionuser\plugininfo;
-
-use core\plugininfo\base, part_of_admin_tree, admin_settingpage;
-
+// Use core\plugininfo\base, moodle_url, part_of_admin_tree, admin_settingpage.
 defined('MOODLE_INTERNAL') || die();
-
 class userstatuswwu extends base {
+
 }

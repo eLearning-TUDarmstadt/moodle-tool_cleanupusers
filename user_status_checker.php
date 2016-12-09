@@ -108,7 +108,11 @@ class user_status_checker {
             $timenotloggedin = $mytimestamp - $user->lastaccess;
 
             $arrayofusers['username'] = $user->username;
-            $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
+            if (empty($user->lastaccess)) {
+                $arrayofusers['lastaccess'] = get_string('neverlogged', 'tool_deprovisionuser');
+            } else {
+                $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
+            }
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
             // Double checks for archived table Maybe removed later?
 
@@ -118,8 +122,11 @@ class user_status_checker {
                 $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
             }
 
-            $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
-
+            if (empty($user->lastaccess)){
+                $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
+            } else {
+                $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
+            }
             // Link to Picture is rendered to suspend users if neccessary.
             // TODO better put in other function?
             if ($intention == 'toarchive') {
