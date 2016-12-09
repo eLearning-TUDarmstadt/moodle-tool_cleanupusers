@@ -114,21 +114,21 @@ class userstatuswwu implements userstatusinterface {
             // TODO better put in other function?
             if ($intention == 'toarchive') {
                 if ($user->suspended == 0) {
-                    $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                         '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
+                        \html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
                             array('class' => "imggroup-" . $user->id)));
                 } else {
-                    $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                         '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
+                        \html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
                             array('class' => "imggroup-" . $user->id)));
                 }
             }
             if ($intention == 'todelete' || $intention == 'neverloggedin') {
-                $arrayofusers['link'] = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                     '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
-                    html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                    \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
             }
         }
         return $arrayofusers;

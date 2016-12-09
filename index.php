@@ -23,7 +23,9 @@
  */
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once(dirname(__FILE__).'/user_status_checker.php');
+require_once(dirname(__FILE__).'/userstatus/userstatuswwu/classes/userstatuswwu.php');
+
+use userstatus_userstatuswwu\userstatuswwu;
 
 // Get URL parameters.
 
@@ -42,11 +44,10 @@ $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
-$userstatuschecker = new user_status_checker();
+$userstatuschecker = new userstatuswwu();
 $archivearray = $userstatuschecker->get_users_for_suspending();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
 
 $content = $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
-
 echo $content;
