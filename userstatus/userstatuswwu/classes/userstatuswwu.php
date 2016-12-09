@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class userstatuswwu extends userstatusinterface {
+class userstatuswwu implements userstatusinterface {
 
     public function get_users_for_suspending() {
         $arrayofuser = $this->get_all_users();
