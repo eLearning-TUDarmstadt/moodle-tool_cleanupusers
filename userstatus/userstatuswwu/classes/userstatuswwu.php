@@ -175,7 +175,7 @@ class userstatuswwu implements userstatusinterface {
         $users = $this->get_all_users();
         $toarchive = array();
         $toactivate = array();
-        foreach($users as $key => $user) {
+        foreach ($users as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
@@ -193,7 +193,7 @@ class userstatuswwu implements userstatusinterface {
     public function get_cron_to_activate() {
         $users = $this->get_all_users();
         $toactivate = array();
-        foreach($users as $key => $user) {
+        foreach ($users as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
