@@ -52,8 +52,6 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
-
-
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.

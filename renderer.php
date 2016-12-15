@@ -35,21 +35,21 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
     public function render_index_page($userstoarchive, $usertodelete, $usersneverloggedin) {
         global $OUTPUT;
-        if (empty($usertodelete)){
+        if (empty($usertodelete)) {
             $rendertodelete = array();
         } else {
             foreach ($usertodelete as $key => $user) {
                 $rendertodelete[$key] = $this->relevant_information($user, 'todelete');
             }
         }
-        if (empty($usersneverloggedin)){
+        if (empty($usersneverloggedin)) {
             $renderneverloggedin = array();
         } else {
             foreach ($usersneverloggedin as $key => $user) {
                 $renderneverloggedin[$key] = $this->relevant_information($user, 'neverloggedin');
             }
         }
-        if (empty($userstoarchive)){
+        if (empty($userstoarchive)) {
             $rendertoarchive = array();
         } else {
             foreach ($userstoarchive as $key => $user) {
