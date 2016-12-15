@@ -40,19 +40,28 @@ class userstatus_userstatuswwu_generator extends testing_block_generator {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
+
         $course = $generator->create_course(array('name' => 'Some course'));
         $data['course'] = $course;
         $mytimestamp = time();
-        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $mytimestamp));
+
+        $user = $generator->create_user(array('username' => 'neutraluser', 'lastaccess' => $mytimestamp));
         $generator->enrol_user($user->id, $course->id);
         $data['user'] = $user;
+
         $userlongnotloggedin = $generator->create_user(array('username' => 'userlongnotloggedin', 'lastaccess' => 1353249342));
         $generator->enrol_user($userlongnotloggedin->id, $course->id);
         $data['userlongnotloggedin'] = $userlongnotloggedin;
+
         $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => 1353249342, 'suspended' => 1));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true), true, false, true);
         $generator->enrol_user($userarchived->id, $course->id);
         $data['userarchived'] = $userarchived;
+
+        $neverloggedin = $generator->create_user(array('username' => 'neverloggedin'));
+        $generator->enrol_user($neverloggedin->id, $course->id);
+        $data['neverloggedin'] = $neverloggedin;
+
         return $data; // Return the user, course and group objects.
     }
 }

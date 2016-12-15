@@ -44,9 +44,10 @@ $PAGE->set_pagelayout('standard');
 $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
 $userstatuschecker = new userstatuswwu();
-$archivearray = $userstatuschecker->get_users_for_suspending();
+$archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
+
 
 $content = $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
 echo $content;

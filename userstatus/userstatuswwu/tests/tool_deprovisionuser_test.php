@@ -42,39 +42,17 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $data = $this->set_up();
         $myuserstatuschecker = new userstatuswwu();
         // Ruft die Methode auf, die mir das array zurückgibt
-        $returnarray = $myuserstatuschecker->get_users_for_suspending();
-        // Erstellt mir den Link mit entweder durchgestrichenem oder normalen Auge
-        $refimgtoarchive = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-            '/tool/deprovisionuser/archiveuser.php?userid=' . $data['user']->id . '&archived=' . $data['user']->suspended,
-            html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['user']->id)));
-        $refimgtoarchivelongnotloggedin = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-            '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userlongnotloggedin']->id . '&archived=' . $data['userlongnotloggedin']->suspended,
-            html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userlongnotloggedin']->id)));
-        $refimgtoactivate = html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-            '/tool/deprovisionuser/archiveuser.php?userid=' . $data['userarchived']->id . '&archived=' . $data['userarchived']->suspended,
-            html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $data['userarchived']->id)));
-        $datetime = date('d.m.Y h:i:s', $data['user']->lastaccess);
-        // Fügt dem Nutzer die Attribute zu.
-        $useractive = array('username' => 'user', 'lastaccess' => $datetime, 'archived' => 'No', 'Willbe' => 'not to be archived', 'link' => $refimgtoarchive);
-        $usertoarchive = array('username' => 'userlongnotloggedin', 'lastaccess' => '18.11.2012 10:35:42', 'archived' => 'No',
-            'Willbe' => 'to be archived', 'link' => $refimgtoarchivelongnotloggedin);
-        $userarchived = array('username' => 'userarchived', 'lastaccess' => '18.11.2012 10:35:42', 'archived' => 'Yes', 'Willbe' => 'will be deleted in the next cron_job',
-            'link' => $refimgtoactivate);
+        $returnsuspend = $myuserstatuschecker->get_to_suspend();
+        $returndelete = $myuserstatuschecker->get_to_delete();
+        $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
 
-        $this->assertEquals($useractive['Willbe'], $returnarray[$data['user']->id]['Willbe']);
-        $this->assertEquals($useractive['lastaccess'], $returnarray[$data['user']->id]['lastaccess']);
-        $this->assertEquals($useractive['link'], $returnarray[$data['user']->id]['link']);
-        $this->assertEquals($useractive['archived'], $returnarray[$data['user']->id]['archived']);
+        $this->assertEquals($data['userlongnotloggedin'], $returnsuspend[$data['userlongnotloggedin']->id]);
+        $this->assertEquals($data['userarchived'], $returndelete[$data['userarchived']->id]);
+        $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
+        $this->assertNotContains($data['user']->username, $returnsuspend);
+        $this->assertNotContains($data['user']->username, $returndelete);
+        $this->assertNotContains($data['user']->username, $returnneverloggedin);
 
-        $this->assertEquals($usertoarchive['Willbe'], $returnarray[$data['userlongnotloggedin']->id]['Willbe']);
-        $this->assertEquals($usertoarchive['lastaccess'], $returnarray[$data['userlongnotloggedin']->id]['lastaccess']);
-        $this->assertEquals($usertoarchive['link'], $returnarray[$data['userlongnotloggedin']->id]['link']);
-        $this->assertEquals($usertoarchive['archived'], $returnarray[$data['userlongnotloggedin']->id]['archived']);
-
-        $this->assertEquals($userarchived['Willbe'], $returnarray[$data['userarchived']->id]['Willbe']);
-        $this->assertEquals($userarchived['lastaccess'], $returnarray[$data['userarchived']->id]['lastaccess']);
-        $this->assertEquals($userarchived['link'], $returnarray[$data['userarchived']->id]['link']);
-        $this->assertEquals($userarchived['archived'], $returnarray[$data['userarchived']->id]['archived']);
 
     }
     /**

@@ -48,21 +48,21 @@ class archive_user_task extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
         $userstatuschecker = new userstatuswwu();
-        $archivearray = $userstatuschecker->get_cron_to_archive();
+        $archivearray = $userstatuschecker->get_to_suspend();
         foreach ($archivearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 $archiveduser->archive_me();
             }
         }
-        $activatearray = $userstatuschecker->get_cron_to_activate();
-        foreach ($archivearray as $key => $user) {
+        $activatearray = $userstatuschecker->get_to_reactivate();
+        foreach ($activatearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 $archiveduser->activate_me();
             }
         }
-        $arraytodelete = $userstatuschecker->get_cron_to_delete();
+        $arraytodelete = $userstatuschecker->get_to_delete();
         foreach ($arraytodelete as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
