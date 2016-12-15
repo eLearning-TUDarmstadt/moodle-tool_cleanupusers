@@ -40,7 +40,6 @@ class tool_deprovisionuser_generator extends testing_block_generator {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
-        
         return $data; // Return the user, course and group objects.
     }
 }

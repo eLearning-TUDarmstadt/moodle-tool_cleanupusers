@@ -14,7 +14,7 @@ The Plugin executes a cron job which deletes, archives and reactivates archived 
 
 ## TODO
 - [ ] Show a warning message for admins before users are archived or deleted
-- [ ] Outsource renderer from subplugin
+- [ ] Implement that at least one Subplugin with the interface  `userstatusinterface ` is installed
 
 ## Subplugins
 The Plugin requires at least one subplugin that returns the status of all users. The intention is that every university can write their own subplugin
