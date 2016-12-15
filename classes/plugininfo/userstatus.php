@@ -48,13 +48,13 @@ class userstatus extends base {
         }
         return false;
     }
-    public function get_all_plugins(){
+    public function get_all_plugins() {
         global $CFG;
         $dir = $CFG->dirroot .'/admin/tool/deprovisionuser/userstatus';
 
         if ($this->is_dir_empty($dir) == 1) {
             return false;
-        } elseif ($this->is_dir_empty($dir) > 1) {
+        } else if ($this->is_dir_empty($dir) > 1) {
             return true;
         }
         if ($this->is_dir_empty($dir) == true) {
@@ -63,7 +63,9 @@ class userstatus extends base {
         return parent::get_enabled_plugins();
     }
     private function is_dir_empty($dir) {
-        if (!is_readable($dir)) return null;
+        if (!is_readable($dir)) {
+            return null;
+        }
         $handle = opendir($dir);
         $numberofplugins = 0;
         while (false !== ($entry = readdir($handle))) {
@@ -71,7 +73,7 @@ class userstatus extends base {
                 $numberofplugins++;
             }
         }
-        if($numberofplugins == 0) {
+        if ($numberofplugins == 0) {
             return true;
         } else {
             return $numberofplugins;
