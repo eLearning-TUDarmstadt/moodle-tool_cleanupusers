@@ -36,13 +36,45 @@ class userstatus extends base {
      * Function determines whether uninstalling is allowed.
      * By now returns false for a standard plugin
      *
-     * @todo Return false when there is only one plugin
+     * @todo Extra checks for enabled plugins etc.
      * @return bool A status indicating permission or denial
      */
     public function is_uninstall_allowed() {
         if ($this->is_standard()) {
             return false;
         }
-        return true;
+        if ($this->get_all_plugins()) {
+            return true;
+        }
+        return false;
+    }
+    public function get_all_plugins(){
+        global $CFG;
+        $dir = $CFG->dirroot .'/admin/tool/deprovisionuser/userstatus';
+
+        if ($this->is_dir_empty($dir) == 1) {
+            return false;
+        } elseif ($this->is_dir_empty($dir) > 1) {
+            return true;
+        }
+        if ($this->is_dir_empty($dir) == true) {
+            return parent::get_enabled_plugins();
+        }
+        return parent::get_enabled_plugins();
+    }
+    private function is_dir_empty($dir) {
+        if (!is_readable($dir)) return null;
+        $handle = opendir($dir);
+        $numberofplugins = 0;
+        while (false !== ($entry = readdir($handle))) {
+            if ($entry != "." && $entry != "..") {
+                $numberofplugins++;
+            }
+        }
+        if($numberofplugins == 0) {
+            return true;
+        } else {
+            return $numberofplugins;
+        }
     }
 }
