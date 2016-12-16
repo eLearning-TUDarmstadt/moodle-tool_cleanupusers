@@ -40,59 +40,26 @@ class userstatuswwu implements userstatusinterface {
     public function get_to_suspend() {
         $users = $this->get_all_users();
         $tosuspend = array();
-        foreach ($users as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
-                $mytimestamp = time();
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
-                if ($timenotloggedin > 8035200 && $user->suspended == 0) {
-                    $tosuspend[$key] = $user;
-                }
-                if ($timenotloggedin < 8035200 && $user->suspended == 1) {
-                    $toaactivate[$key] = $user;
-                }
-            }
-        }
+
         return $tosuspend;
     }
     public function get_never_logged_in() {
         global $DB;
         $arrayofuser = $this->get_all_users();
         $arrayofoldusers = array();
-        foreach ($arrayofuser as $key => $user) {
-            if (empty($user->lastaccess) && $user->deleted == 0) {
-                $fulluser = $DB->get_record('user', array('id' => $user->id));
-                $arrayofoldusers[$key] = $fulluser;
-            }
-        }
+
         return $arrayofoldusers;
     }
     public function get_to_delete() {
         $users = $this->get_all_users();
         $todeleteusers = array();
-        foreach ($users as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
-                $mytimestamp = time();
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
-                // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
-                if ($timenotloggedin > 31536000 && $user->suspended == 1) {
-                    $todeleteusers[$key] = $user;
-                }
-            }
-        }
+
         return $todeleteusers;
     }
     public function get_to_reactivate() {
         $users = $this->get_all_users();
         $toactivate = array();
-        foreach ($users as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
-                $mytimestamp = time();
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
-                if ($timenotloggedin < 8035200 && $user->suspended == 1) {
-                    $toaactivate[$key] = $user;
-                }
-            }
-        }
+        
         return $toactivate;
     }
     private function get_all_users() {

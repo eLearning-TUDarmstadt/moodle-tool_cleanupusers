@@ -39,19 +39,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
      */
     public function test_locallib() {
         global $DB, $CFG, $OUTPUT;
-        $data = $this->set_up();
-        $myuserstatuschecker = new userstatuswwu();
-        // Ruft die Methode auf, die mir das array zurückgibt
-        $returnsuspend = $myuserstatuschecker->get_to_suspend();
-        $returndelete = $myuserstatuschecker->get_to_delete();
-        $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
 
-        $this->assertEquals($data['userlongnotloggedin'], $returnsuspend[$data['userlongnotloggedin']->id]);
-        $this->assertEquals($data['userarchived'], $returndelete[$data['userarchived']->id]);
-        $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
-        $this->assertNotContains($data['user']->username, $returnsuspend);
-        $this->assertNotContains($data['user']->username, $returndelete);
-        $this->assertNotContains($data['user']->username, $returnneverloggedin);
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.

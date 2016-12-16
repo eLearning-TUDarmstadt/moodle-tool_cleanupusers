@@ -24,7 +24,7 @@
  */
 namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
-use userstatus_userstatuswwu\userstatuswwu;
+use userstatus_timechecker\timechecker;
 
 class archive_user_task extends \core\task\scheduled_task {
 
@@ -47,7 +47,7 @@ class archive_user_task extends \core\task\scheduled_task {
      */
     public function execute() {
         global $DB;
-        $userstatuschecker = new userstatuswwu();
+        $userstatuschecker = new timechecker();
         $archivearray = $userstatuschecker->get_to_suspend();
         foreach ($archivearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {

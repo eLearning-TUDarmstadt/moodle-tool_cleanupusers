@@ -62,6 +62,7 @@ class userstatus extends base {
 
     /**
      * Checks whether Subplugins have settings.php and adds them to the admin menu.
+     *
      * @param \part_of_admin_tree $adminroot
      * @param string $parentnodename
      * @param bool $hassiteconfig

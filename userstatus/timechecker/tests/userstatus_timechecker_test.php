@@ -22,9 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-use userstatus_userstatuswwu\userstatuswwu;
+use userstatus_timechecker\timechecker;
 
-class userstatus_userstatuswwu_testcase extends advanced_testcase {
+class userstatus_timechecker_testcase extends advanced_testcase {
 
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
@@ -40,7 +40,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
     public function test_locallib() {
         global $DB, $CFG, $OUTPUT;
         $data = $this->set_up();
-        $myuserstatuschecker = new userstatuswwu();
+        $myuserstatuschecker = new timechecker();
         // Ruft die Methode auf, die mir das array zurückgibt
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
