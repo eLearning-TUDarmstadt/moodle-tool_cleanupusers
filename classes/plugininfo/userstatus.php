@@ -27,56 +27,60 @@
 
 namespace tool_deprovisionuser\plugininfo;
 
+use admin_settingpage;
 use core\plugininfo\base;
 
 defined('MOODLE_INTERNAL') || die();
 
 class userstatus extends base {
+
     /**
-     * Function determines whether uninstalling is allowed.
-     * By now returns false for a standard plugin
+     * Returns true when subplugin can be deleted false when not
      *
-     * @todo Extra checks for enabled plugins etc.
-     * @return bool A status indicating permission or denial
+     * By now returns false when only one plugin avaiulable otherwise all plugins can be uninstalled if they are not standard
+     * @todo have different uninstall values for each plugin?
+     * @return bool
      */
     public function is_uninstall_allowed() {
+        global $CFG;
         if ($this->is_standard()) {
             return false;
         }
-        if ($this->get_all_plugins()) {
+        $pluginmanager = \core_plugin_manager::instance();
+        $type = $pluginmanager->get_plugins_of_type('userstatus');
+        if (empty($type)) {
+            return false;
+        }
+
+        if (count($type) == 1) {
+            return false;
+               } else if (count($type) > 1) {
             return true;
         }
         return false;
     }
-    public function get_all_plugins() {
-        global $CFG;
-        $dir = $CFG->dirroot .'/admin/tool/deprovisionuser/userstatus';
+    public function load_settings($adminroot, $parentnodename, $hassiteconfig) {
+        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        $ADMIN = $adminroot; // May be used in settings.php.
+        $plugininfo = $this; // Also can be used inside settings.php.
 
-        if ($this->is_dir_empty($dir) == 1) {
-            return false;
-        } else if ($this->is_dir_empty($dir) > 1) {
-            return true;
+        if (!$this->is_installed_and_upgraded()) {
+            return;
         }
-        if ($this->is_dir_empty($dir) == true) {
-            return parent::get_enabled_plugins();
+
+        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+            return;
         }
-        return parent::get_enabled_plugins();
+
+        $section = $this->get_settings_section_name();
+        $settings = new admin_settingpage($section, $this->name, 'moodle/site:config', $this->is_enabled() === false);
+        include($this->full_path('settings.php')); // This may also set $settings to null.
+
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
     }
-    private function is_dir_empty($dir) {
-        if (!is_readable($dir)) {
-            return null;
-        }
-        $handle = opendir($dir);
-        $numberofplugins = 0;
-        while (false !== ($entry = readdir($handle))) {
-            if ($entry != "." && $entry != "..") {
-                $numberofplugins++;
-            }
-        }
-        if ($numberofplugins == 0) {
-            return true;
-        } else {
-            return $numberofplugins;
-        }
+    public function get_settings_section_name() {
+        return 'deprovisionuser_userstatus' . $this->name;
     }
 }

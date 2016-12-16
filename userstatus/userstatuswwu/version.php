@@ -30,3 +30,5 @@ $plugin->requires  = 2015111000;     // Requires this Moodle version.
 $plugin->component = 'userstatus_userstatuswwu'; // Full name of the plugin (used for diagnostics).
 $plugin->release = 'v1.0-r0';
 $plugin->maturity = MATURITY_ALPHA;
+$plugin->dependencies = array(
+    'tool_deprovisionuser' => ANY_VERSION);
