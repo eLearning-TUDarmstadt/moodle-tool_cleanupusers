@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016120902;     // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2016121601;     // The current plugin version (Date: YYYYMMDDXX).
 // TODO Check for requirements
 $plugin->requires  = 2015111000;     // Requires this Moodle version.
 $plugin->component = 'userstatus_timechecker'; // Full name of the plugin (used for diagnostics).

@@ -15,21 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The class contains a test script for the moodle userstatus_userstatuswwu
+ * The class contains a test script for the moodle userstatus_timechecker
  *
  * @package userstatus_userstatuswwu
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 use userstatus_timechecker\timechecker;
+
+defined('MOODLE_INTERNAL') || die();
 
 class userstatus_timechecker_testcase extends advanced_testcase {
 
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;
-        $generator = $this->getDataGenerator()->get_plugin_generator('userstatus_userstatuswwu');
+        $generator = $this->getDataGenerator()->get_plugin_generator('userstatus_timechecker');
         $data = $generator->test_create_preparation();
         $this->resetAfterTest(true);
         return $data;
