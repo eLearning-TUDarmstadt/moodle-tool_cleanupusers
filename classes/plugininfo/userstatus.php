@@ -54,7 +54,7 @@ class userstatus extends base {
 
         if (count($type) == 1) {
             return false;
-               } else if (count($type) > 1) {
+        } else if (count($type) > 1) {
             return true;
         }
         return false;

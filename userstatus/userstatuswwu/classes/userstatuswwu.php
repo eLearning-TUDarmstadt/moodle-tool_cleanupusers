@@ -59,7 +59,6 @@ class userstatuswwu implements userstatusinterface {
     public function get_to_reactivate() {
         $users = $this->get_all_users();
         $toactivate = array();
-        
         return $toactivate;
     }
     private function get_all_users() {
