@@ -13,20 +13,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Version details
- * @package tool_deprovisionuser
+ * This file contains language strings used in the timechecker subplugin.
+ *
+ * @package deprovisionuser_userstatus_timechecker
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$string['pluginname'] = 'Timechecker';
+$string['plugintitel'] = 'Timechecker';
+$string['timechecker_time_to_archive'] = 'Number of Days not logged in, until a user is archived';
+$string['timechecker_time_to_delete'] = 'Number of Days a user is archived, until the user is deleted';
 
-$plugin->version   = 2016121501;     // The current plugin version (Date: YYYYMMDDXX).
 
-// TODO Check for requirements.
-$plugin->requires  = 2015112902;     // Requires this Moodle version.
-$plugin->component = 'tool_deprovisionuser'; // Full name of the plugin (used for diagnostics).
-$plugin->release = 'v1.0-r0';
-$plugin->maturity = MATURITY_ALPHA;

@@ -13,27 +13,28 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Adds tool_deprovisionuser link in admin tree
- * TODO Submenüs?
+ * PHPUnit data generator tests
  *
- * @package    tool_deprovisionuser
- * @copyright  2016 N Herrmann
+ * @package    block_groups
+ * @category   phpunit
+ * @copyright  2016 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
-if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
-    $ADMIN->add('users', new admin_externalpage(
-        'deprovisionuser',
-        get_string('plugintitel', 'tool_deprovisionuser'),
-        "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
-    ));
-    foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
-        global $CFG;
-        $plugin->load_settings($ADMIN, 'users', $hassiteconfig);
+
+
+/**
+ * PHPUnit data generator testcase
+ *
+ * @package    block_groups
+ * @category   phpunit
+ * @copyright  2016 Nina Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class userstatus_userstatuswwu_generator_testcase extends advanced_testcase {
+    public function test_generator() {
+        $this->resetAfterTest(true);
     }
 }

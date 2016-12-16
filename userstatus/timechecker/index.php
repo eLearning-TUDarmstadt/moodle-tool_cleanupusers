@@ -15,18 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- * @package tool_deprovisionuser
+ * Index.php
+ * @package deprovisionuser_userstatus_timechecker
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once($CFG->libdir.'/adminlib.php');
 
-defined('MOODLE_INTERNAL') || die();
+$PAGE->set_context(context_system::instance());
+$context = context_system::instance();
+// Check permissions.
+require_login();
+require_capability('moodle/site:config', $context);
 
-$plugin->version   = 2016121501;     // The current plugin version (Date: YYYYMMDDXX).
+admin_externalpage_setup('timechecker');
 
-// TODO Check for requirements.
-$plugin->requires  = 2015112902;     // Requires this Moodle version.
-$plugin->component = 'tool_deprovisionuser'; // Full name of the plugin (used for diagnostics).
-$plugin->release = 'v1.0-r0';
-$plugin->maturity = MATURITY_ALPHA;
+$pagetitle = get_string('pluginname', 'timechecker');
+$PAGE->set_title(get_string('pluginname', 'timechecker'));
+$PAGE->set_heading(get_string('pluginname', 'timechecker'));
+$PAGE->set_pagelayout('standard');
+echo $content;

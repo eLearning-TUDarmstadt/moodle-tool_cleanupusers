@@ -15,25 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adds tool_deprovisionuser link in admin tree
- * TODO Submenüs?
- *
- * @package    tool_deprovisionuser
- * @copyright  2016 N Herrmann
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Settings.php
+ * @package deprovisionuser_userstatus_userstatuswwu
+ * @copyright 2016 N Herrmann
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
-    $ADMIN->add('users', new admin_externalpage(
-        'deprovisionuser',
-        get_string('plugintitel', 'tool_deprovisionuser'),
-        "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
-    ));
-    foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
-        global $CFG;
-        $plugin->load_settings($ADMIN, 'users', $hassiteconfig);
-    }
+    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/userstatuswwu/index.php';
 }

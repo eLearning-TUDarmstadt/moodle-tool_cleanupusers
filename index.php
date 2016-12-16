@@ -34,7 +34,7 @@ $context = context_system::instance();
 require_login();
 require_capability('moodle/site:config', $context);
 
-admin_externalpage_setup('Overview');
+admin_externalpage_setup('deprovisionuser');
 
 $pagetitle = get_string('pluginname', 'tool_deprovisionuser');
 $PAGE->set_title(get_string('pluginname', 'tool_deprovisionuser'));

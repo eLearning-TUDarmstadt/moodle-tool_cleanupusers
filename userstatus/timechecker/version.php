@@ -15,25 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adds tool_deprovisionuser link in admin tree
- * TODO Submenüs?
- *
- * @package    tool_deprovisionuser
- * @copyright  2016 N Herrmann
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Version details
+ * @package deprovisionuser_userstatus_timechecker
+ * @copyright 2016 N Herrmann
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
-if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
-    $ADMIN->add('users', new admin_externalpage(
-        'deprovisionuser',
-        get_string('plugintitel', 'tool_deprovisionuser'),
-        "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
-    ));
-    foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
-        global $CFG;
-        $plugin->load_settings($ADMIN, 'users', $hassiteconfig);
-    }
-}
+
+$plugin->version   = 2016120902;     // The current plugin version (Date: YYYYMMDDXX).
+// TODO Check for requirements
+$plugin->requires  = 2015111000;     // Requires this Moodle version.
+$plugin->component = 'userstatus_timechecker'; // Full name of the plugin (used for diagnostics).
+$plugin->release = 'v1.0-r0';
+$plugin->maturity = MATURITY_ALPHA;
+$plugin->dependencies = array(
+    'tool_deprovisionuser' => ANY_VERSION);
