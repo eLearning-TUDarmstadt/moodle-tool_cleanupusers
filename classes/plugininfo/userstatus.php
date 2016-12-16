@@ -59,7 +59,14 @@ class userstatus extends base {
         }
         return false;
     }
-    public function load_settings($adminroot, $parentnodename, $hassiteconfig) {
+
+    /**
+     * Checks whether Subplugins have settings.php and adds them to the admin menu.
+     * @param \part_of_admin_tree $adminroot
+     * @param string $parentnodename
+     * @param bool $hassiteconfig
+     */
+    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
