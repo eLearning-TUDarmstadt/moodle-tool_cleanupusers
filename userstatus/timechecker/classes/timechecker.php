@@ -97,7 +97,6 @@ class timechecker implements userstatusinterface {
     }
     private function get_all_users() {
         global $DB;
-        // TODO for Performance reasons only get neccessary record.
         return $DB->get_records('user');
     }
 }

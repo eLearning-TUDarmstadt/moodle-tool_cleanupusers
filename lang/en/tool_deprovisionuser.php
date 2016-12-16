@@ -45,6 +45,7 @@ $string['archiveuser'] = 'Users to archive';
 $string['usersdeleted'] = 'The User has been deleted.';
 $string['showuser'] = 'Activate User';
 $string['hideuser'] = 'Suspend User';
+$string['deleteuser'] = 'Delete User';
 $string['archive_user_task'] = 'Archive Users';
 $string['deletedin'] = 'is archived, will be deleted on the: {$a}';
 $string['willbe_archived'] = 'to be archived';
