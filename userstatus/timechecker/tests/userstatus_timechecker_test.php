@@ -47,12 +47,15 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $returndelete = $myuserstatuschecker->get_to_delete();
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
 
-        $this->assertEquals($data['userlongnotloggedin'], $returnsuspend[$data['userlongnotloggedin']->id]);
-        $this->assertEquals($data['userarchived'], $returndelete[$data['userarchived']->id]);
+        $this->assertEquals($data['useroneyearnotlogedin'], $returnsuspend[$data['useroneyearnotlogedin']->id]);
+        $this->assertEquals($data['userarchivedoneyearnintydays'], $returndelete[$data['userarchivedoneyearnintydays']->id]);
         $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
+        $this->assertNotContains($data['userfifteendays']->username, $returnsuspend);
+        $this->assertNotContains($data['userfifteendays']->username, $returndelete);
+        $this->assertNotContains($data['userfifteendays']->username, $returnneverloggedin);
 
         // Userarchived is not in array since time is not right
         $myconfiguserstatuschecker = new timechecker(400, 730);
@@ -63,14 +66,26 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
-        $this->assertNotContains($data['userlongnotloggedin']->username, $returnsuspend);
-        $this->assertNotContains($data['userlongnotloggedin']->username, $returndelete);
-        $this->assertNotContains($data['userlongnotloggedin']->username, $returnneverloggedin);
-        $this->assertNotContains($data['userarchived']->username, $returnsuspend);
-        $this->assertNotContains($data['userarchived']->username, $returndelete);
-        $this->assertNotContains($data['userarchived']->username, $returnneverloggedin);
+        $this->assertNotContains($data['useroneyearnotlogedin']->username, $returnsuspend);
+        $this->assertNotContains($data['useroneyearnotlogedin']->username, $returndelete);
+        $this->assertNotContains($data['useroneyearnotlogedin']->username, $returnneverloggedin);
+        $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returnsuspend);
+        $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returndelete);
+        $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returnneverloggedin);
         $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
 
+        $myconfiguserstatuschecker = new timechecker(10, 20);
+        $returnsuspend = $myconfiguserstatuschecker->get_to_suspend();
+        $returndelete = $myconfiguserstatuschecker->get_to_delete();
+        $returnneverloggedin = $myconfiguserstatuschecker->get_never_logged_in();
+
+        $this->assertEquals($data['useroneyearnotlogedin'], $returnsuspend[$data['useroneyearnotlogedin']->id]);
+        $this->assertEquals($data['userfifteendays'], $returnsuspend[$data['userfifteendays']->id]);
+        $this->assertEquals($data['userarchivedoneyearnintydays'], $returndelete[$data['userarchivedoneyearnintydays']->id]);
+        $this->assertNotContains($data['user']->username, $returnsuspend);
+        $this->assertNotContains($data['user']->username, $returndelete);
+        $this->assertNotContains($data['user']->username, $returnneverloggedin);
+        $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
