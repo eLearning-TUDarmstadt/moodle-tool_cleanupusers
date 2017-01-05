@@ -37,23 +37,19 @@ defined('MOODLE_INTERNAL') || die;
 
 class timechecker implements userstatusinterface {
 
+    /** @var int seconds until a user should be suspended */
     private $timesuspend;
+    /** @var int seconds until a user should be deleted */
     private $timedelete;
 
-    public function __construct($timesuspend=null, $timedelete=null) {
+    /**
+     * This constructor sets timesuspend and timedelete to the config values
+     */
+    public function __construct() {
         $config = get_config('userstatus_timechecker');
-        if ($timesuspend === null) {
-            $this->timesuspend = $config->suspendtime * 84600;
-        } else {
-            $this->timesuspend = $timesuspend * 84600;
-        }
-        if ($timedelete === null) {
-            $this->timedelete = $config->deletetime * 84600;
-        } else {
-            $this->timedelete = $timedelete * 84600;
-        }
+        $this->timesuspend = $config->suspendtime * 84600;
+        $this->timedelete = $config->deletetime * 84600;
     }
-
 
     public function get_to_suspend() {
         $users = $this->get_all_users();
@@ -85,6 +81,7 @@ class timechecker implements userstatusinterface {
         }
         return $arrayofoldusers;
     }
+
     public function get_to_delete() {
         $users = $this->get_all_users();
         $todeleteusers = array();
