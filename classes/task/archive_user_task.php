@@ -46,13 +46,16 @@ class archive_user_task extends \core\task\scheduled_task {
      * @return true
      */
     public function execute() {
-        global $DB;
+        global $DB, $USER;
+        $userdeleted = 0;
+        $userarchived = 0;
         $userstatuschecker = new timechecker();
         $archivearray = $userstatuschecker->get_to_suspend();
         foreach ($archivearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 $archiveduser->archive_me();
+                $userarchived++;
             }
         }
         $activatearray = $userstatuschecker->get_to_reactivate();
@@ -68,8 +71,16 @@ class archive_user_task extends \core\task\scheduled_task {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
                 $archiveduser->delete_me();
+                $userdeleted++;
             }
         }
+        // TODO send e-mail to primary admin get_admin() with number of deleted and suspended users
+        $admin = get_admin();
+        $user = $DB->get_record('user', array('id' => 15));
+        // email_to_user($user, $from, $subject, $messagetext, rest optional)
+        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
+        // TODO find package to sendemails for php version, ubuntu version in normal server included
+        email_to_user($admin, $user,'Betreff', $messagetext);
         return true;
     }
 }
