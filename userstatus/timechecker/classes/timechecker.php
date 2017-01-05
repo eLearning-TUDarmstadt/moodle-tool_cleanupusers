@@ -37,6 +37,16 @@ defined('MOODLE_INTERNAL') || die;
 
 class timechecker implements userstatusinterface {
 
+    private $timesuspend;
+    private $timedelete;
+
+    public function __construct() {
+        $config = get_config('userstatus_timechecker');
+        $this->timesuspend = $config->suspendtime;
+        $this->timedelete = $config->deletetime;
+    }
+
+
     public function get_to_suspend() {
         $users = $this->get_all_users();
         $tosuspend = array();

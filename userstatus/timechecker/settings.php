@@ -24,9 +24,10 @@
 defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/timechecker/index.php';
-    $settings->add(new admin_setting_configtext('deprovisionuser_timechecker_suspend_user', get_string('hideuser', 'tool_deprovisionuser'),
-        get_string('timechecker_time_to_archive', 'userstatus_timechecker'), 90, PARAM_INT));
-    $settings->add(new admin_setting_configtext('deprovisionuser_timechecker_delete_user', get_string('deleteuser', 'tool_deprovisionuser'),
+    $settings->add(new admin_setting_configtext('userstatus_timechecker/suspendtime', get_string('suspendtime', 'tool_deprovisionuser'),
+        get_string('suspendtime', 'tool_deprovisionuser'), 90, PARAM_INT));
+    $settings->add(new admin_setting_configtext('userstatus_timechecker/deletetime', get_string('deletetime', 'tool_deprovisionuser'),
         get_string('timechecker_time_to_delete', 'userstatus_timechecker'), 365, PARAM_INT));
-// TODO look for get_config tp get values tabel mdl_config name=suspend_user bzw delete_user
+
+// TODO look for get_config tp get values tabel mdl_config name=suspend_user bzw delete_user default setzen
 }
