@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/timechecker/index.php';
     $settings->add(new admin_setting_configtext('userstatus_timechecker/suspendtime', get_string('suspendtime', 'tool_deprovisionuser'),
-        get_string('suspendtime', 'tool_deprovisionuser'), 90, PARAM_INT));
+        get_string('timechecker_time_to_archive', 'userstatus_timechecker'), 90, PARAM_INT));
     $settings->add(new admin_setting_configtext('userstatus_timechecker/deletetime', get_string('deletetime', 'tool_deprovisionuser'),
         get_string('timechecker_time_to_delete', 'userstatus_timechecker'), 365, PARAM_INT));
 }
