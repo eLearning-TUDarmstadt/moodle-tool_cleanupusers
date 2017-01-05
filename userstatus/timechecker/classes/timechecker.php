@@ -42,8 +42,8 @@ class timechecker implements userstatusinterface {
 
     public function __construct() {
         $config = get_config('userstatus_timechecker');
-        $this->timesuspend = $config->suspendtime;
-        $this->timedelete = $config->deletetime;
+        $this->timesuspend = $config->suspendtime * 84600;
+        $this->timedelete = $config->deletetime * 84600;
     }
 
 
@@ -54,16 +54,17 @@ class timechecker implements userstatusinterface {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
-                if ($timenotloggedin > 8035200 && $user->suspended == 0) {
+                if ($timenotloggedin > $this->timesuspend && $user->suspended == 0) {
                     $tosuspend[$key] = $user;
                 }
-                if ($timenotloggedin < 8035200 && $user->suspended == 1) {
+                if ($timenotloggedin < $this->timesuspend && $user->suspended == 1) {
                     $toaactivate[$key] = $user;
                 }
             }
         }
         return $tosuspend;
     }
+
     public function get_never_logged_in() {
         global $DB;
         $arrayofuser = $this->get_all_users();
@@ -84,7 +85,7 @@ class timechecker implements userstatusinterface {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
                 // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
-                if ($timenotloggedin > 31536000 && $user->suspended == 1) {
+                if ($timenotloggedin > $this->timedelete + $this->timesuspend && $user->suspended == 1) {
                     $todeleteusers[$key] = $user;
                 }
             }
