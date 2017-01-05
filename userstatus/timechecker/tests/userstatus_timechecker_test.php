@@ -53,6 +53,24 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
+
+        // Userarchived is not in array since time is not right
+        $myconfiguserstatuschecker = new timechecker(400, 730);
+        $returnsuspend = $myconfiguserstatuschecker->get_to_suspend();
+        $returndelete = $myconfiguserstatuschecker->get_to_delete();
+        $returnneverloggedin = $myconfiguserstatuschecker->get_never_logged_in();
+
+        $this->assertNotContains($data['user']->username, $returnsuspend);
+        $this->assertNotContains($data['user']->username, $returndelete);
+        $this->assertNotContains($data['user']->username, $returnneverloggedin);
+        $this->assertNotContains($data['userlongnotloggedin']->username, $returnsuspend);
+        $this->assertNotContains($data['userlongnotloggedin']->username, $returndelete);
+        $this->assertNotContains($data['userlongnotloggedin']->username, $returnneverloggedin);
+        $this->assertNotContains($data['userarchived']->username, $returnsuspend);
+        $this->assertNotContains($data['userarchived']->username, $returndelete);
+        $this->assertNotContains($data['userarchived']->username, $returnneverloggedin);
+        $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
+
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.

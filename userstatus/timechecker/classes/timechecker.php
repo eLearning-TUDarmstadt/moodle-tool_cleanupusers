@@ -40,10 +40,18 @@ class timechecker implements userstatusinterface {
     private $timesuspend;
     private $timedelete;
 
-    public function __construct() {
+    public function __construct($timesuspend=null, $timedelete=null) {
         $config = get_config('userstatus_timechecker');
-        $this->timesuspend = $config->suspendtime * 84600;
-        $this->timedelete = $config->deletetime * 84600;
+        if($timesuspend === null){
+            $this->timesuspend = $config->suspendtime * 84600;
+        } else {
+            $this->timesuspend = $timesuspend * 84600;
+        }
+        if($timedelete === null){
+            $this->timedelete = $config->deletetime * 84600;
+        } else {
+            $this->timedelete = $timedelete * 84600;
+        }
     }
 
 
