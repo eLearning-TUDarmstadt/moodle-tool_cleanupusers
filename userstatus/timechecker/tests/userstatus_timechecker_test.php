@@ -58,8 +58,8 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['userfifteendays']->username, $returnneverloggedin);
 
         // Userarchived is not in array since time is not right
-        set_config('suspendtime', 400 ,'userstatus_timechecker');
-        set_config('deletetime', 730 ,'userstatus_timechecker');
+        set_config('suspendtime', 400 , 'userstatus_timechecker');
+        set_config('deletetime', 730 , 'userstatus_timechecker');
         $myconfiguserstatuschecker = new timechecker();
         $returnsuspend = $myconfiguserstatuschecker->get_to_suspend();
         $returndelete = $myconfiguserstatuschecker->get_to_delete();
@@ -76,8 +76,8 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returnneverloggedin);
         $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
 
-        set_config('suspendtime', 10 ,'userstatus_timechecker');
-        set_config('deletetime', 20 ,'userstatus_timechecker');
+        set_config('suspendtime', 10 , 'userstatus_timechecker');
+        set_config('deletetime', 20 , 'userstatus_timechecker');
         $myconfiguserstatuschecker = new timechecker();
         $returnsuspend = $myconfiguserstatuschecker->get_to_suspend();
         $returndelete = $myconfiguserstatuschecker->get_to_delete();
