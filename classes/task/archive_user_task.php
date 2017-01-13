@@ -79,9 +79,9 @@ class archive_user_task extends \core\task\scheduled_task {
         $user = $DB->get_record('user', array('id' => 15));
         $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
         $return = email_to_user($admin, $user, 'tool_deprovisionuser', $messagetext);
-        if ($return == false) {
+        /*if ($return == false) {
             // E-Mail Notification could not be sended Error Log?
-        }
+        }*/
         return true;
     }
 }
