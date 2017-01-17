@@ -23,7 +23,7 @@
 namespace tool_deprovisionuser;
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
-require_once($CFG->dirroot.'/lib/setuplib.php');
+use coding_exception;
 
 class archiveduser {
 
@@ -36,19 +36,19 @@ class archiveduser {
     public function archive_me() {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
-        if ($user->suspended == 0) {
+        if ($user->suspended == 0 and !is_siteadmin($user)) {
             $user->suspended = 1;
             if (empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $transaction = $DB->start_delegated_transaction();
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
             } else {
-                throw new coding_exception('Insert User already archived');
+                throw new \coding_exception('Insert User already archived');
             }
             \core\session\manager::kill_user_sessions($user->id);
             user_update_user($user, false);
         } else {
-                throw new coding_exception('Insert User already archived');
+                throw new \coding_exception('Not able to archive user');
         }
     }
 
@@ -62,11 +62,11 @@ class archiveduser {
                 $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
                 $transaction->allow_commit();
             } else {
-                throw new coding_exception('Trying to activate a user, that is marked as active in the tool_deprovisionuser table.');
+                throw new \coding_exception('Not able to activate user');
             }
             user_update_user($user, false);
         } else {
-            throw new coding_exception('Trying to activate a user, that is marked as active in the user table.');
+            throw new \coding_exception('Not able to activate user');
         }
     }
 
@@ -82,12 +82,11 @@ class archiveduser {
                 \core\session\manager::kill_user_sessions($user->id);
                 delete_user($user);
             } else {
-                throw new coding_exception('User already deleted');
+                throw new \coding_exception('Not able to delete user');
             }
             // Success.
         } else {
-            throw new coding_exception('User already deleted');
+            throw new \coding_exception('Not able to delete user');
         }
-        exit();
     }
 }
