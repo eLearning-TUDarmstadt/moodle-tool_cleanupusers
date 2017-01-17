@@ -43,12 +43,12 @@ class archiveduser {
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
             } else {
-                throw new \coding_exception('Insert User already archived');
+                throw new deprovisionuser_exception('Insert User already archived');
             }
             \core\session\manager::kill_user_sessions($user->id);
             user_update_user($user, false);
         } else {
-                throw new \coding_exception('Not able to archive user');
+                throw new deprovisionuser_exception('Not able to archive user');
         }
     }
 
@@ -62,11 +62,11 @@ class archiveduser {
                 $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
                 $transaction->allow_commit();
             } else {
-                throw new \coding_exception('Not able to activate user');
+                throw new deprovisionuser_exception('Not able to activate user');
             }
             user_update_user($user, false);
         } else {
-            throw new \coding_exception('Not able to activate user');
+            throw new deprovisionuser_exception('Not able to activate user');
         }
     }
 
@@ -82,11 +82,11 @@ class archiveduser {
                 \core\session\manager::kill_user_sessions($user->id);
                 delete_user($user);
             } else {
-                throw new \coding_exception('Not able to delete user');
+                throw new deprovisionuser_exception('Not able to delete user');
             }
             // Success.
         } else {
-            throw new \coding_exception('Not able to delete user');
+            throw new deprovisionuser_exception('Not able to delete user');
         }
     }
 }
