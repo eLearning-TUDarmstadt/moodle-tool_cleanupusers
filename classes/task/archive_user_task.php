@@ -74,11 +74,9 @@ class archive_user_task extends \core\task\scheduled_task {
                 $userdeleted++;
             }
         }
-        // TODO send e-mail to primary admin get_admin() with number of deleted and suspended users
         $admin = get_admin();
-        $user = $DB->get_record('user', array('id' => 15));
         $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
-        $return = email_to_user($admin, $user, 'tool_deprovisionuser', $messagetext);
+        $return = email_to_user($admin, $admin, 'tool_deprovisionuser', $messagetext);
         /*if ($return == false) {
             // E-Mail Notification could not be sended Error Log?
         }*/
