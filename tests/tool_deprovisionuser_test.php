@@ -40,6 +40,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         global $DB, $CFG, $OUTPUT;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
+
+        // Users that are archived will be marked as suspended in the user table and in the tool_deprovisionuser table.
         $neutraltosuspended = new \tool_deprovisionuser\archiveduser($data['user']->id, 0);
         $neutraltosuspended->archive_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['user']->id));
@@ -47,6 +49,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(1, $recordtooltable->archived);
 
+        // Users that are deleted will be marked as deleted in the user table and the entry the tool_deprovisionuser table will be deleted.
         $suspendedtodelete = new \tool_deprovisionuser\archiveduser($data['suspendeduser2']->id, 0);
         $suspendedtodelete->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
@@ -54,6 +57,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
 
+        // Users that are activated will be marked as active in the user table and the entry the tool_deprovisionuser table will be deleted.
         $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, 0);
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $data['suspendeduser']->id, 'archived' => 1), true, false, true);
         $suspendedtoactive->activate_me();
@@ -62,6 +66,20 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
 
+        // Admin Users will not be deleted neither archived.
+        $this->setAdminUser($data['adminuser']);
+        $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
+        $this->setexpectedException('coding_exception', 'Coding error detected, it must be fixed by a programmer: Not able to archive user');
+        $adminaccount->archive_me();
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['adminuser']->id));
+        $this->assertEmpty($recordtooltable);
+
+        $this->setAdminUser($data['adminuser']);
+        $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
+        $this->setexpectedException('coding_exception', 'Coding error detected, it must be fixed by a programmer: Not able to delete user');
+        $adminaccount->delete_me();
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['adminuser']->id));
+        $this->assertEmpty($recordtooltable);
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
