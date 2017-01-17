@@ -47,6 +47,13 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(1, $recordtooltable->archived);
 
+        $suspendedtodelete = new \tool_deprovisionuser\archiveduser($data['suspendeduser2']->id, 0);
+        $suspendedtodelete->delete_me();
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
+        $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser2']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEmpty($recordtooltable);
+
         $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, 0);
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $data['suspendeduser']->id, 'archived' => 1), true, false, true);
         $suspendedtoactive->activate_me();
