@@ -39,12 +39,8 @@ if ($deleted == 0) {
     if (true) {
         // TODO check if user is the same person.
         if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
-            // Force logout.
-            $transaction = $DB->start_delegated_transaction();
-            $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
-            $transaction->allow_commit();
-            \core\session\manager::kill_user_sessions($user->id);
-            delete_user($user);
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+            $deprovisionuser->delete_me();
         } else {
             notice('notworking',
                 $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');

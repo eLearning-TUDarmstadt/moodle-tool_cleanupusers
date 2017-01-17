@@ -37,26 +37,16 @@ $user = $DB->get_record('user', array('id' => $userid));
 require_capability('moodle/user:update', $PAGE->context);
 if ($archived == 0) {
     if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
-        $user->suspended = 1;
-        // Force logout.
-        $transaction = $DB->start_delegated_transaction();
-        // TODO inserts not a binary but \x31 for true
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userid, 'archived' => true), true, false, true);
-        $transaction->allow_commit();
-        \core\session\manager::kill_user_sessions($user->id);
-        user_update_user($user, false);
-    } else {
-        notice('notworking', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+        $deprovisionuser->archive_me();
+        notice(get_string('usersarchived', 'tool_deprovisionuser'),
+            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
-    notice(get_string('usersarchived', 'tool_deprovisionuser'),
-        $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+
 } if ($archived == 1) {
     if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
-        $user->suspended = 0;
-        $transaction = $DB->start_delegated_transaction();
-        $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
-        $transaction->allow_commit();
-        user_update_user($user, false);
+        $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+        $deprovisionuser->activate_me();
     } else {
         notice('notworking', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
