@@ -41,16 +41,14 @@ class archiveduser {
                 $transaction = $DB->start_delegated_transaction();
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
-            } /* else {
-                throwException('Something went wrong');
-                // Insert User already archived exception.
-            }*/
+            } else {
+                throw new coding_exception('Insert User already archived');
+            }
             \core\session\manager::kill_user_sessions($user->id);
             user_update_user($user, false);
-        } /*else {
-                throwException('Something went wrong');
-                // TODO Adequat exception.
-        }*/
+        } else {
+                throw new coding_exception('Insert User already archived');
+        }
     }
 
     public function activate_me() {
@@ -62,15 +60,13 @@ class archiveduser {
                 $transaction = $DB->start_delegated_transaction();
                 $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
                 $transaction->allow_commit();
-            } /*else {
-                throwException('Something went wrong');
-                // Insert User already archived exception.
-            }*/
+            } else {
+                throw new coding_exception('Trying to activate a user, that is marked as active in the tool_deprovisionuser table.');
+            }
             user_update_user($user, false);
-        } /*else {
-            throwException('Not able to activate user');
-            // TODO Adequat exception.
-        }*/
+        } else {
+            throw new coding_exception('Trying to activate a user, that is marked as active in the user table.');
+        }
     }
 
     public function delete_me() {
@@ -85,13 +81,11 @@ class archiveduser {
                 \core\session\manager::kill_user_sessions($user->id);
                 delete_user($user);
             } else {
-                throwException('Something went wrong');
-                // TODO Throw Exception.
+                throw new coding_exception('User already deleted');
             }
             // Success.
         } else {
-            throwException('Something went wrong');
-            // TODO Throw Exception.
+            throw new coding_exception('User already deleted');
         }
         exit();
     }

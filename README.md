@@ -10,7 +10,8 @@ This plugin should go into `admin/tool/deprovisionuser`.
 
 
 ## Approach
-The Plugin executes a cron job which deletes, archives and reactivates archived users automatically.
+The Plugin executes a cron job which deletes, archives and reactivates archived users automatically. Afterwards the admin receives a notification
+e-mail about the number of archived and deleted users.
 
 ## TODO
 - [ ] Show a warning message for admins before users are archived or deleted

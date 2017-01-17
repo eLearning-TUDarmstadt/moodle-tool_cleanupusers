@@ -72,6 +72,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         $output .= $this->render_table_of_users($rendertodelete, array(get_string('titletodelete', 'tool_deprovisionuser'),
             get_string('lastaccess', 'tool_deprovisionuser'),
             get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
+
         $output .= $this->footer();
         return $output;
     }
