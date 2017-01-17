@@ -8,7 +8,6 @@
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="archived" TYPE="int" LENGTH="1" NOTNULL="true"  DEFAULT="0" SEQUENCE="false"/>
-                <!--datetime not supported by xmldb user Table uses also int-->
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
