@@ -23,7 +23,6 @@
 namespace tool_deprovisionuser;
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
-use coding_exception;
 
 class archiveduser {
 

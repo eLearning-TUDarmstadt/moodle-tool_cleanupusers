@@ -24,6 +24,7 @@
  */
 namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
+use tool_deprovisionuser\deprovisionuser_exception;
 use userstatus_timechecker\timechecker;
 
 class archive_user_task extends \core\task\scheduled_task {
@@ -51,32 +52,48 @@ class archive_user_task extends \core\task\scheduled_task {
         $userarchived = 0;
         $userstatuschecker = new timechecker();
         $archivearray = $userstatuschecker->get_to_suspend();
+        $usersunabletoarchive = array();
+        $usersunabletodelete = array();
+        $usersunabletoactivate = array();
         foreach ($archivearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
-                $archiveduser->archive_me();
-                $userarchived++;
+                try {
+                    $archiveduser->archive_me();
+                    $userarchived++;
+                } catch (deprovisionuser_exception $e) {
+                    $usersunabletoarchive[$key] = $user;
+                }
             }
         }
         $activatearray = $userstatuschecker->get_to_reactivate();
         foreach ($activatearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
-                $archiveduser->activate_me();
+                try {
+                    $archiveduser->activate_me();
+                } catch (deprovisionuser_exception $e) {
+                    $usersunabletoactivate[$key] = $user;
+                }
+
             }
         }
         $arraytodelete = $userstatuschecker->get_to_delete();
         foreach ($arraytodelete as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
-                // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
-                $archiveduser->delete_me();
-                $userdeleted++;
+                try {
+                    $archiveduser->delete_me();
+                    $userdeleted++;
+                } catch (deprovisionuser_exception $e) {
+                    $usersunabletodelete[$key] = $user;
+                }
             }
         }
         $admin = get_admin();
         $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
         $return = email_to_user($admin, $admin, 'tool_deprovisionuser', $messagetext);
+        // TODO define Events and throw when e-mail cannot be sended and show "problematic users" somewhere
         /*if ($return == false) {
             // E-Mail Notification could not be sended Error Log?
         }*/
