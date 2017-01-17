@@ -89,7 +89,6 @@ class timechecker implements userstatusinterface {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
-                // TODO: prepare user to be deleted - not delete them automatically but show them in a will be delete in ... time table
                 if ($timenotloggedin > $this->timedelete + $this->timesuspend && $user->suspended == 1) {
                     $todeleteusers[$key] = $user;
                 }
