@@ -28,7 +28,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;
-        $generator = $this->getDataGenerator()->get_plugin_generator('userstatus_userstatuswwu');
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_deprovisionuser');
         $data = $generator->test_create_preparation();
         $this->resetAfterTest(true);
         return $data;
@@ -36,9 +36,25 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     /**
      * Function to test the locallib functions.
      */
-    public function test_locallib() {
+    public function test_archiveduser() {
         global $DB, $CFG, $OUTPUT;
         $data = $this->set_up();
+        $this->assertNotEmpty($data);
+        $neutraltosuspended = new \tool_deprovisionuser\archiveduser($data['user']->id, 0);
+        $neutraltosuspended->archive_me();
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['user']->id));
+        $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEquals(1, $recordtooltable->archived);
+
+        $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, 0);
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $data['suspendeduser']->id, 'archived' => 1), true, false, true);
+        $suspendedtoactive->activate_me();
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser']->id));
+        $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
+        $this->assertEquals(0, $recordusertable->suspended);
+        $this->assertEmpty($recordtooltable);
+
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.

@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_deprovisionuser_generator extends testing_block_generator {
+class tool_deprovisionuser_generator extends testing_data_generator {
     /**
      * Creates Course, course members, groups and groupings to test the block.
      */
@@ -40,6 +40,31 @@ class tool_deprovisionuser_generator extends testing_block_generator {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
+
+        $course = $generator->create_course(array('name' => 'Some course'));
+        $data['course'] = $course;
+        $mytimestamp = time();
+
+        $user = $generator->create_user(array('username' => 'neutraluser', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
+        $generator->enrol_user($user->id, $course->id);
+        $data['user'] = $user;
+
+        $suspendeduser = $generator->create_user(array('username' => 'suspendeduser', 'suspended' => '1'));
+        $generator->enrol_user($suspendeduser->id, $course->id);
+        $data['suspendeduser'] = $suspendeduser;
+
+        $suspendeduser2 = $generator->create_user(array('username' => 'suspendeduser2', 'suspended' => '1'));
+        $generator->enrol_user($suspendeduser2->id, $course->id);
+        $data['suspendeduser2'] = $suspendeduser2;
+
+        $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1'));
+        $generator->enrol_user($deleteduser->id, $course->id);
+        $data['deleteduser'] = $deleteduser;
+
+        $adminuser = $generator->create_user(array('username' => 'adminuser', 'suspended' => '1'));
+        $generator->enrol_user($adminuser->id, $course->id);
+        $data['adminuser'] = $adminuser;
+
         return $data; // Return the user, course and group objects.
     }
 }
