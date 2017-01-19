@@ -85,7 +85,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders a table of all users
+     * Renders a table for a array of users.
      * @param $arrayofusers
      * @param $arrayoftableheadings
      * @return string html
@@ -103,7 +103,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Formats information for users that are defined by the Subplugin for deletion.
+     * Formats information for users that are identified by the subplugin for deletion.
      * @param $user a Object of the user std_class
      * @return array
      */
@@ -126,8 +126,9 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         }
         return $arrayofusers;
     }
+
     /**
-     * Safes relevant information for users that are defined by the Subplugin for suspending.
+     * Safes relevant information for users that are identified by the Subplugin for suspending.
      * @param $user a Object of the user std_class
      * @return array
      */
@@ -160,6 +161,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         }
         return $arrayofusers;
     }
+
     /**
      * Safes relevant information for users who never logged in.
      * @param $user a Object of the user std_class

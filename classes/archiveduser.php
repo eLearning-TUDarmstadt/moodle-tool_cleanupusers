@@ -27,11 +27,20 @@ require_once($CFG->dirroot.'/lib/moodlelib.php');
 class archiveduser {
 
     public $id, $archived;
+
     public function __construct($id, $archived) {
         $this->id = $id;
         $this->archived = $archived;
     }
 
+    /**
+     * Suspends the user.
+     *
+     * Therefore makes an entry in the tool_deprovisionuser table and throws an error when user that should be suspended has an
+     * entry in the table.
+     *
+     * @throws deprovisionuser_exception
+     */
     public function archive_me() {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
@@ -42,6 +51,7 @@ class archiveduser {
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
             } else {
+                // TODO Wie fange ich hier Fehler am besten ab? Fall ich möchte user suspendieren aber er ist in Tabelle.
                 throw new deprovisionuser_exception('Insert User already archived');
             }
             \core\session\manager::kill_user_sessions($user->id);
@@ -51,6 +61,13 @@ class archiveduser {
         }
     }
 
+    /**
+     * Reactivates the user.
+     *
+     * Therefore deletes the entry in the tool_deprovisionuser table and throws an error when no entry is available.
+     *
+     * @throws deprovisionuser_exception
+     */
     public function activate_me() {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
@@ -61,6 +78,7 @@ class archiveduser {
                 $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
                 $transaction->allow_commit();
             } else {
+                // TODO Wie fange ich hier Fehler am besten ab? Fall ich möchte user wieder aktivieren aber er ist nicht in tabelle
                 throw new deprovisionuser_exception('Not able to activate user');
             }
             user_update_user($user, false);
@@ -69,20 +87,24 @@ class archiveduser {
         }
     }
 
+    /**
+     * Deletes the user.
+     *
+     * Therefore deletes the entry in the tool_deprovisionuser table and call the moodle core delete_user function.
+     * Throws an error when the side admin should be deleted or user is already flagged as deleted.
+     *
+     * @throws deprovisionuser_exception
+     */
     public function delete_me() {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
-        if ($user->deleted == 0) {
-            if (!is_siteadmin($user) and $user->deleted != 1) {
-                // Force logout.
-                $transaction = $DB->start_delegated_transaction();
-                $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
-                $transaction->allow_commit();
-                \core\session\manager::kill_user_sessions($user->id);
-                delete_user($user);
-            } else {
-                throw new deprovisionuser_exception('Not able to delete user');
-            }
+        if ($user->deleted == 0 and !is_siteadmin($user)) {
+            // Force logout.
+            $transaction = $DB->start_delegated_transaction();
+            $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
+            $transaction->allow_commit();
+            \core\session\manager::kill_user_sessions($user->id);
+            delete_user($user);
             // Success.
         } else {
             throw new deprovisionuser_exception('Not able to delete user');
