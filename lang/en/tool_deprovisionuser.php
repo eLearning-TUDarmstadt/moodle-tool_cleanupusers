@@ -56,3 +56,7 @@ $string['neverlogged'] = 'Never logged in';
 $string['nothinghappens'] = 'Not handled since they never logged in';
 $string['e-mail-archived'] = 'In the last cron job {$a} users were archived.';
 $string['e-mail-deleted'] = 'In the last cron job {$a} users were deleted.';
+$string['errormessagenotactive'] = 'Not able to activate user.';
+$string['errormessagenotdelete'] = 'Not able to delete user.';
+$string['errormessagenotsuspend'] = 'Not able to suspend user';
+

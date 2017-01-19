@@ -57,7 +57,7 @@ class archiveduser {
             \core\session\manager::kill_user_sessions($user->id);
             user_update_user($user, false);
         } else {
-                throw new deprovisionuser_exception('Not able to archive user');
+                throw new deprovisionuser_exception(get_string('errormessagenotsuspend', 'tool_deprovisionuser'));
         }
     }
 
@@ -79,11 +79,11 @@ class archiveduser {
                 $transaction->allow_commit();
             } else {
                 // TODO Wie fange ich hier Fehler am besten ab? Fall ich möchte user wieder aktivieren aber er ist nicht in tabelle
-                throw new deprovisionuser_exception('Not able to activate user');
+                throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
             }
             user_update_user($user, false);
         } else {
-            throw new deprovisionuser_exception('Not able to activate user');
+            throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
         }
     }
 
@@ -107,7 +107,7 @@ class archiveduser {
             delete_user($user);
             // Success.
         } else {
-            throw new deprovisionuser_exception('Not able to delete user');
+            throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
         }
     }
 }

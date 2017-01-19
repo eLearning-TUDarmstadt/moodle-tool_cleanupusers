@@ -34,7 +34,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         return $data;
     }
     /**
-     * Function to test the locallib functions.
+     * Function to test the the archiveduser class.
      */
     public function test_archiveduser() {
         global $DB, $CFG, $OUTPUT;
