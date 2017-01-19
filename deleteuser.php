@@ -27,7 +27,7 @@ require_once(dirname(__FILE__).'/classes/archiveduser.php');
 require_once($CFG->libdir.'/moodlelib.php');
 
 $userid         = required_param('userid', PARAM_INT);
-$deleted       = required_param('deleted', PARAM_INT);
+$deleted        = required_param('deleted', PARAM_INT);
 
 $PAGE->set_url('/admin/tool/deprovisionuser/archiveuser.php');
 $PAGE->set_context(context_system::instance());

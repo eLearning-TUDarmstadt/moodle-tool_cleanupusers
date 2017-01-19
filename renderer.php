@@ -39,30 +39,29 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             $rendertodelete = array();
         } else {
             foreach ($usertodelete as $key => $user) {
-                $rendertodelete[$key] = $this->relevant_information($user, 'todelete');
+                $rendertodelete[$key] = $this->information_user_delete($user);
             }
         }
         if (empty($usersneverloggedin)) {
             $renderneverloggedin = array();
         } else {
             foreach ($usersneverloggedin as $key => $user) {
-                $renderneverloggedin[$key] = $this->relevant_information($user, 'neverloggedin');
+                $renderneverloggedin[$key] = $this->information_user_notloggedind($user);
             }
         }
         if (empty($userstoarchive)) {
             $rendertoarchive = array();
         } else {
             foreach ($userstoarchive as $key => $user) {
-                $rendertoarchive[$key] = $this->relevant_information($user, 'toarchive');
+                $rendertoarchive[$key] = $this->information_user_suspend($user);
+
             }
         }
 
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(get_string('plugintitel', 'tool_deprovisionuser'));
-        // TODO remove when finished.
         $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
-        $output .= html_writer::div(get_string('inprogress', 'tool_deprovisionuser'));
         $output .= $this->render_table_of_users($rendertoarchive, array(get_string('oldusers', 'tool_deprovisionuser'),
             get_string('lastaccess', 'tool_deprovisionuser'),
             get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
@@ -121,56 +120,79 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             }
         }
     }
-
-    private function relevant_information($user, $intention) {
+    private function information_user_delete($user) {
         global $DB, $OUTPUT, $CFG;
         $mytimestamp = time();
         $arrayofusers = array();
         if (!empty($user)) {
-            // Minutes a user was not logged in.
+            $arrayofusers['username'] = $user->username;
+            $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
             $timenotloggedin = $mytimestamp - $user->lastaccess;
 
-            $arrayofusers['username'] = $user->username;
-            if (empty($user->lastaccess)) {
-                $arrayofusers['lastaccess'] = get_string('neverlogged', 'tool_deprovisionuser');
-            } else {
-                $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
-            }
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-
             if (empty($isarchivid)) {
                 $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
             } else {
                 $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
             }
+            $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
 
-            if (empty($user->lastaccess)) {
-                $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
-            } else {
-                $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
-            }
-            // Link to Picture is rendered to suspend users if neccessary.
-            // TODO better put in other function?
-            if ($intention == 'toarchive') {
-                if ($user->suspended == 0) {
-                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        \html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
-                            array('class' => "imggroup-" . $user->id)));
-                } else {
-                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                        '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
-                        \html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
-                            array('class' => "imggroup-" . $user->id)));
-                }
-            }
-            if ($intention == 'todelete' || $intention == 'neverloggedin') {
-                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                    '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
-                    \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
-            }
+            $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
+                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
         }
         return $arrayofusers;
     }
 
+    private function information_user_suspend($user) {
+        global $DB, $OUTPUT, $CFG;
+        $mytimestamp = time();
+        $arrayofusers = array();
+        if (!empty($user)) {
+            $arrayofusers['username'] = $user->username;
+            $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
+            $timenotloggedin = $mytimestamp - $user->lastaccess;
+
+            $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+            if (empty($isarchivid)) {
+                $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
+            } else {
+                $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+            }
+            $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
+
+            if ($user->suspended == 0) {
+                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                    '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                    \html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
+                        array('class' => "imggroup-" . $user->id)));
+            } else {
+                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                    '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                    \html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
+                        array('class' => "imggroup-" . $user->id)));
+            }
+        }
+        return $arrayofusers;
+    }
+    private function information_user_notloggedind($user) {
+        global $DB, $OUTPUT, $CFG;
+        $mytimestamp = time();
+        $arrayofusers = array();
+        if (!empty($user)) {
+            $arrayofusers['username'] = $user->username;
+            $arrayofusers['lastaccess'] = get_string('neverlogged', 'tool_deprovisionuser');
+            $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+            if (empty($isarchivid)) {
+                $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
+            } else {
+                $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+            }
+            $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
+            $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
+                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+        }
+        return $arrayofusers;
+    }
 }

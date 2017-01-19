@@ -23,7 +23,6 @@
 
 $string['pluginname'] = 'deprovisionuser';
 $string['plugintitel'] = 'Deprovision of Users';
-$string['notready'] = 'Plugin still in Progress';
 $string['subplugintype_userstatus'] = 'Returns the Status of Students';
 $string['subplugintype_userstatus_plural'] = 'Returns the Status of Students';
 $string['failedtoactivate'] = 'The tool failed to activate a user';
