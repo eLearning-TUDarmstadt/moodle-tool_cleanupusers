@@ -96,13 +96,10 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
     private function information_user_delete($user) {
         global $DB, $OUTPUT, $CFG;
-        $mytimestamp = time();
         $arrayofusers = array();
         if (!empty($user)) {
             $arrayofusers['username'] = $user->username;
             $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
-            // Will maybe be used later
-            $timenotloggedin = $mytimestamp - $user->lastaccess;
 
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
             if (empty($isarchivid)) {
@@ -122,12 +119,10 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
     private function information_user_suspend($user) {
         global $DB, $OUTPUT, $CFG;
-        $mytimestamp = time();
         $arrayofusers = array();
         if (!empty($user)) {
             $arrayofusers['username'] = $user->username;
             $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
-            $timenotloggedin = $mytimestamp - $user->lastaccess;
 
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
             if (empty($isarchivid)) {
@@ -151,9 +146,9 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         }
         return $arrayofusers;
     }
+
     private function information_user_notloggedind($user) {
         global $DB, $OUTPUT, $CFG;
-        $mytimestamp = time();
         $arrayofusers = array();
         if (!empty($user)) {
             $arrayofusers['username'] = $user->username;
