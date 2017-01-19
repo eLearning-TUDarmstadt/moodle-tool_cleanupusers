@@ -93,33 +93,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         $htmltable = html_writer::table($table);
         return $htmltable;
     }
-    /**
-     * Methode to return archived true or false, later checks for subplugins.
-     *
-     * @param $suspend
-     * @param $timenotloggedin
-     * @return string that indicates what happens next to the user
-     */
-    private function check_suspend($suspend, $timenotloggedin) {
-        if ($suspend == 1) {
-            if ($timenotloggedin < 31536000) {
-                $additionaltime = 31536000 - $timenotloggedin;
-                $mytimestamp = time();
-                $deletedinunixtime = $mytimestamp + $additionaltime;
-                $deletedinrealtime = date('d.m.Y h:i:s', $deletedinunixtime);
-                return get_string('deletedin', 'tool_deprovisionuser', $deletedinrealtime);
-            } else {
-                return get_string('shouldbedelted', 'tool_deprovisionuser');
-            }
-        }
-        if ($suspend == 0) {
-            if ($timenotloggedin > 8035200) {
-                return get_string('willbe_archived', 'tool_deprovisionuser');
-            } else {
-                return get_string('willbe_notchanged', 'tool_deprovisionuser');
-            }
-        }
-    }
+
     private function information_user_delete($user) {
         global $DB, $OUTPUT, $CFG;
         $mytimestamp = time();
@@ -127,6 +101,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         if (!empty($user)) {
             $arrayofusers['username'] = $user->username;
             $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
+            // Will maybe be used later
             $timenotloggedin = $mytimestamp - $user->lastaccess;
 
             $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
@@ -135,7 +110,8 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             } else {
                 $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
             }
-            $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
+            $arrayofusers['Willbe'] = get_string('shouldbedelted', 'tool_deprovisionuser');
+;
 
             $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                 '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
@@ -159,7 +135,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             } else {
                 $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
             }
-            $arrayofusers['Willbe'] = $this->check_suspend($user->suspended, $timenotloggedin);
+            $arrayofusers['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
 
             if ($user->suspended == 0) {
                 $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
