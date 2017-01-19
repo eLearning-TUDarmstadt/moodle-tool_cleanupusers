@@ -69,7 +69,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Admin Users will not be deleted neither archived.
         $this->setAdminUser($data['adminuser']);
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
-        $this->setexpectedException('tool_deprovisionuser\deprovisionuser_exception', 'Not able to archive user');
+        $this->setexpectedException('tool_deprovisionuser\deprovisionuser_exception', 'Not able to suspend user');
         $adminaccount->archive_me();
         $recordtooltable = $DB->get_record('moodle_deprovisionuser', array('id' => $data['adminuser']->id));
         $this->assertEmpty($recordtooltable);
