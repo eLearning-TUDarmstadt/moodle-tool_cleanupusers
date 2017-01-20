@@ -51,7 +51,7 @@ class archiveduser {
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
             } else {
-                // TODO Wie fange ich hier Fehler am besten ab? Fall ich möchte user suspendieren aber er ist in Tabelle.
+                // TODO Notice User is already in table?
                 throw new deprovisionuser_exception('Insert User already archived');
             }
             \core\session\manager::kill_user_sessions($user->id);
@@ -74,11 +74,9 @@ class archiveduser {
         if ($user->suspended == 1) {
             $user->suspended = 0;
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                $transaction = $DB->start_delegated_transaction();
-                $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
-                $transaction->allow_commit();
+                $this->delete_record_table($this->id);
             } else {
-                // TODO Wie fange ich hier Fehler am besten ab? Fall ich möchte user wieder aktivieren aber er ist nicht in tabelle
+                // TODO Wie fange ich hier Fehler am besten ab? Fall ich möchte user wieder aktivieren aber er ist nicht in Tabelle
                 throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
             }
             user_update_user($user, false);
@@ -99,15 +97,25 @@ class archiveduser {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->deleted == 0 and !is_siteadmin($user)) {
-            // Force logout.
-            $transaction = $DB->start_delegated_transaction();
-            $DB->delete_records('tool_deprovisionuser', array('id' => $this->id));
-            $transaction->allow_commit();
-            \core\session\manager::kill_user_sessions($user->id);
-            delete_user($user);
-            // Success.
+            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
+                $this->delete_record_table($this->id);
+                \core\session\manager::kill_user_sessions($user->id);
+                delete_user($user);
+            } else {
+                \core\session\manager::kill_user_sessions($user->id);
+                delete_user($user);
+                // Notice no entry in table?
+            }
         } else {
             throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
         }
+    }
+
+    private function delete_record_table($userid) {
+        global $DB;
+        $transaction = $DB->start_delegated_transaction();
+        // DML Exception is thrown for any failures.
+        $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
+        $transaction->allow_commit();
     }
 }

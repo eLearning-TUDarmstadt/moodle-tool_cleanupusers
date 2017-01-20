@@ -37,6 +37,7 @@ defined('MOODLE_INTERNAL') || die;
 
 class userstatuswwu implements userstatusinterface {
 
+    // TODO integrate xml
     public function get_to_suspend() {
         $users = $this->get_all_users();
         $tosuspend = array();
