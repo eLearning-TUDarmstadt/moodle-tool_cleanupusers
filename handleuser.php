@@ -49,7 +49,7 @@ if ($action == 0) {
         notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
 
-} elseif ($action == 1) {
+} else if ($action == 1) {
     if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
         $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
         try {
@@ -61,7 +61,7 @@ if ($action == 0) {
         notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
     // User is supposed to be deleted.
-} elseif ($action == 3) {
+} else if ($action == 3) {
     if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
         $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
         try {
@@ -73,8 +73,7 @@ if ($action == 0) {
     } else {
         notice('errormessagenoaction', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
-}
-else {
+} else {
     notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 }
 exit();
