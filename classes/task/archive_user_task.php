@@ -93,6 +93,13 @@ class archive_user_task extends \core\task\scheduled_task {
         }
         $admin = get_admin();
         $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
+        if(empty($usersunabletoactivate) and empty($usersunabletoarchive) and empty($usersunabletodelete)) {
+            $messagetext .= get_string('e-mail-noproblem', 'tool_deprovisionuser');
+        } else {
+            $messagetext .= get_string('e-mail-problematic_delete', 'tool_deprovisionuser', count($usersunabletodelete)) .
+                get_string('e-mail-problematic_suspend', 'tool_deprovisionuser', count($usersunabletoarchive)) .
+                get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser', count($usersunabletoactivate));
+        }
         $return = email_to_user($admin, $admin, 'tool_deprovisionuser', $messagetext);
         // TODO define Events and throw when e-mail cannot be sended and show "problematic users" somewhere
         /*if ($return == false) {
