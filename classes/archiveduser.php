@@ -46,16 +46,14 @@ class archiveduser {
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->suspended == 0 and !is_siteadmin($user)) {
             $user->suspended = 1;
+            \core\session\manager::kill_user_sessions($user->id);
+            user_update_user($user, false);
             if (empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $transaction = $DB->start_delegated_transaction();
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
                 $transaction->allow_commit();
-            } else {
-                // TODO Notice User is already in table?
-                throw new deprovisionuser_exception('Insert User already archived');
             }
-            \core\session\manager::kill_user_sessions($user->id);
-            user_update_user($user, false);
+            // No error here since user was maybe manually suspended in user table.
         } else {
                 throw new deprovisionuser_exception(get_string('errormessagenotsuspend', 'tool_deprovisionuser'));
         }
