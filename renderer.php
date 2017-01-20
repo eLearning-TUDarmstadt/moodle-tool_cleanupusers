@@ -121,7 +121,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             }
             $arrayofusers['Willbe'] = get_string('shouldbedelted', 'tool_deprovisionuser');
             $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
+                '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
                 \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
         }
         return $arrayofusers;
@@ -149,12 +149,12 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
             if ($user->suspended == 0) {
                 $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                    '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                    '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
                     \html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
                         array('class' => "imggroup-" . $user->id)));
             } else {
                 $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                    '/tool/deprovisionuser/archiveuser.php?userid=' . $user->id . '&archived=' . $user->suspended,
+                    '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
                     \html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
                         array('class' => "imggroup-" . $user->id)));
             }
@@ -181,7 +181,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             }
             $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
             $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                '/tool/deprovisionuser/deleteuser.php?userid=' . $user->id . '&deleted=' . $user->deleted,
+                '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
                 \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
         }
         return $arrayofusers;

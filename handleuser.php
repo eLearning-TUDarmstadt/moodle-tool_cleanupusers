@@ -27,15 +27,15 @@ require_login();
 require_once($CFG->dirroot.'/user/lib.php');
 // TODO put in one php file and take delete or archive?
 $userid         = required_param('userid', PARAM_INT);
-$archived       = required_param('archived', PARAM_INT);
+$action         = required_param('action', PARAM_INT);
 
-$PAGE->set_url('/admin/tool/deprovisionuser/archiveuser.php');
+$PAGE->set_url('/admin/tool/deprovisionuser/handleuser.php');
 $PAGE->set_context(context_system::instance());
 
 global $USER;
 $user = $DB->get_record('user', array('id' => $userid));
 require_capability('moodle/user:update', $PAGE->context);
-if ($archived == 0) {
+if ($action == 0) {
     if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
         $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
         try {
@@ -49,7 +49,7 @@ if ($archived == 0) {
         notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
 
-} if ($archived == 1) {
+} elseif ($action == 1) {
     if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
         $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
         try {
@@ -60,7 +60,21 @@ if ($archived == 0) {
     } else {
         notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
-} else {
+    // User is supposed to be deleted.
+} elseif ($action == 3) {
+    if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
+        $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+        try {
+            $deprovisionuser->delete_me();
+        } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        }
+        notice(get_string('usersdeleted', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    } else {
+        notice('errormessagenoaction', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    }
+}
+else {
     notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 }
 exit();
