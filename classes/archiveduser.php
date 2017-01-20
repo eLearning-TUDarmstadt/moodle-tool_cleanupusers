@@ -97,13 +97,9 @@ class archiveduser {
         if ($user->deleted == 0 and !is_siteadmin($user)) {
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $this->delete_record_table($this->id);
-                \core\session\manager::kill_user_sessions($user->id);
-                delete_user($user);
-            } else {
-                \core\session\manager::kill_user_sessions($user->id);
-                delete_user($user);
-                // Notice no entry in table?
             }
+            \core\session\manager::kill_user_sessions($user->id);
+            delete_user($user);
         } else {
             throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
         }
