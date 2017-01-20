@@ -25,7 +25,7 @@
 require_once('../../../config.php');
 require_login();
 require_once($CFG->dirroot.'/user/lib.php');
-
+// TODO put in one php file and take delete or archive?
 $userid         = required_param('userid', PARAM_INT);
 $archived       = required_param('archived', PARAM_INT);
 
@@ -38,7 +38,11 @@ require_capability('moodle/user:update', $PAGE->context);
 if ($archived == 0) {
     if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
         $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
-        $deprovisionuser->archive_me();
+        try {
+            $deprovisionuser->archive_me();
+        } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        }
         notice(get_string('usersarchived', 'tool_deprovisionuser'),
             $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     } else {
@@ -48,8 +52,11 @@ if ($archived == 0) {
 } if ($archived == 1) {
     if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
         $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
-        $deprovisionuser->activate_me();
-        notice(get_string('usersactivated', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        try {
+            $deprovisionuser->activate_me();
+        } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        }
     } else {
         notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }

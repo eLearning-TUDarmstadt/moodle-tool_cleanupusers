@@ -40,22 +40,20 @@ $sitecontext = context_system::instance();
 require_capability('moodle/user:update', $sitecontext);
 
 if ($deleted == 0) {
-    if (true) {
-        if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+    // The delete_me function executes double checks on this.
+    if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
+        $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+        try {
             $deprovisionuser->delete_me();
-        } else {
-            notice('notworking',
-                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
         }
     } else {
-        notice('notworking',
-            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        notice('errormessagenoaction', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
-    notice(get_string('usersdeleted', 'tool_deprovisionuser'),
-    $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 } else {
-    notice('notworking',
-    $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    notice('errormessagenoaction', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 }
+notice(get_string('usersdeleted', 'tool_deprovisionuser'),
+$CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 exit();

@@ -50,6 +50,7 @@ class archive_user_task extends \core\task\scheduled_task {
         global $DB, $USER;
         $userdeleted = 0;
         $userarchived = 0;
+        // TODO check for right subplugin
         $userstatuschecker = new timechecker();
         $archivearray = $userstatuschecker->get_to_suspend();
         $usersunabletoarchive = array();
