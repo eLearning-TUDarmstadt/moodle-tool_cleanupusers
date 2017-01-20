@@ -92,19 +92,20 @@ class archive_user_task extends \core\task\scheduled_task {
             }
         }
         $admin = get_admin();
-        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
+        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . "\r\n" .get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
         if (empty($usersunabletoactivate) and empty($usersunabletoarchive) and empty($usersunabletodelete)) {
-            $messagetext .= get_string('e-mail-noproblem', 'tool_deprovisionuser');
+            $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_deprovisionuser');
         } else {
-            $messagetext .= get_string('e-mail-problematic_delete', 'tool_deprovisionuser', count($usersunabletodelete)) .
-                get_string('e-mail-problematic_suspend', 'tool_deprovisionuser', count($usersunabletoarchive)) .
-                get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser', count($usersunabletoactivate));
+            $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_deprovisionuser', count($usersunabletodelete)) .
+                "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser', count($usersunabletoarchive)) .
+                "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser', count($usersunabletoactivate));
         }
-        $return = email_to_user($admin, $admin, 'tool_deprovisionuser', $messagetext);
+        $return = email_to_user($admin, $admin, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
         // TODO define Events and throw when e-mail cannot be sended and show "problematic users" somewhere
-        /*if ($return == false) {
-            // E-Mail Notification could not be sended Error Log?
-        }*/
+        if ($return == false) {
+            $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($userarchived);
+            $event->trigger;
+        }
         return true;
     }
 }

@@ -63,5 +63,5 @@ $string['errormessagenoaction'] = 'The requested action could not be executed.';
 $string['e-mail-problematic_delete'] = 'In the last cron job {$a} users caused exception and could not be deleted.';
 $string['e-mail-problematic_suspend'] = 'In the last cron job {$a} users caused exception and could not be suspended.';
 $string['e-mail-problematic_reactivate'] = 'In the last cron job {$a} users caused exception and could not be reactivated.';
-$string['e-mail-noproblem'] = 'No problems in tool_deprovisionuser in the last run!';
+$string['e-mail-noproblem'] = 'No problems occured in plugin tool_deprovisionuser in the last run.';
 
