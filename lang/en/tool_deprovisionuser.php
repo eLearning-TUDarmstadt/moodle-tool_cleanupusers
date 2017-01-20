@@ -59,4 +59,5 @@ $string['e-mail-deleted'] = 'In the last cron job {$a} users were deleted.';
 $string['errormessagenotactive'] = 'Not able to activate user.';
 $string['errormessagenotdelete'] = 'Not able to delete user.';
 $string['errormessagenotsuspend'] = 'Not able to suspend user';
+$string['errormessagenoaction'] = 'The requested action is not allowed.';
 

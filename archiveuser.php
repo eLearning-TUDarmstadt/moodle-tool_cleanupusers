@@ -41,17 +41,19 @@ if ($archived == 0) {
         $deprovisionuser->archive_me();
         notice(get_string('usersarchived', 'tool_deprovisionuser'),
             $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    } else {
+        notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
 
 } if ($archived == 1) {
     if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
         $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
         $deprovisionuser->activate_me();
+        notice(get_string('usersactivated', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     } else {
-        notice('notworking', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
-    notice(get_string('usersactivated', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 } else {
-    notice('notworking', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+    notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
 }
 exit();
