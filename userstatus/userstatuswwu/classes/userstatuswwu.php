@@ -36,7 +36,9 @@ defined('MOODLE_INTERNAL') || die;
  */
 
 class userstatuswwu implements userstatusinterface {
-
+    /**
+     * @var array
+     */
     private $zivmemberlist = array();
     /**
      * @var array
@@ -197,7 +199,7 @@ class userstatuswwu implements userstatusinterface {
      */
     private function get_users_not_suspended() {
         global $DB;
-        $select = 'suspended=0 AND deleted=0 AND lastaccess>0';
+        $select = 'deleted=0 AND lastaccess>0';
         return $DB->get_records_select('user', $select);
     }
 
