@@ -23,5 +23,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/userstatuswwu/index.php';
+    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/userstatus/userstatuswwu/index.php';
 }
