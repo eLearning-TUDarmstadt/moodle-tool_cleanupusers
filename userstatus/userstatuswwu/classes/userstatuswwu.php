@@ -107,10 +107,11 @@ class userstatuswwu implements userstatusinterface {
         if ($handle) {
             while (!feof($handle)) {
                 $buffer = fgets($handle);
-                if (strpos($buffer, $currentname) === 0) {
+                if (!empty($currentname) and strpos($buffer, $currentname) === 0) {
                     continue;
-                } else {
-                    $currentstring = explode(' ', $buffer);
+                }
+                $currentstring = explode(' ', $buffer);
+                if (array_key_exists(1, $currentstring)) {
                     $group = rtrim($currentstring[1]);
                     switch ($group) {
                         case 'sys=aix-urz':
@@ -141,7 +142,7 @@ class userstatuswwu implements userstatusinterface {
     private function order_suspend() {
         $allusers = $this->get_users_not_suspended();
         foreach ($allusers as $moodleuser) {
-            if ($admin = get_admin() == $moodleuser) {
+            if (is_siteadmin($moodleuser)) {
                 continue;
             }
             $ismember = false;
@@ -164,7 +165,7 @@ class userstatuswwu implements userstatusinterface {
         global $DB;
         $users = $DB->get_records('user');
         foreach ($users as $moodleuser) {
-            if ($admin = get_admin() == $moodleuser) {
+            if (is_siteadmin($moodleuser)) {
                 continue;
             }
             if ($moodleuser->lastaccess == 0) {
@@ -180,7 +181,7 @@ class userstatuswwu implements userstatusinterface {
     private function order_delete() {
         $allusers = $this->get_users_suspended_not_deleted();
         foreach ($allusers as $moodleuser) {
-            if ($admin = get_admin() == $moodleuser) {
+            if (is_siteadmin($moodleuser)) {
                 continue;
             }
             $timestamp = time();
