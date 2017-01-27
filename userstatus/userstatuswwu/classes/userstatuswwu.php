@@ -140,7 +140,7 @@ class userstatuswwu implements userstatusinterface {
     private function order_suspend() {
         $allusers = $this->get_users_not_suspended();
         foreach ($allusers as $moodleuser) {
-            if($admin = get_admin() == $moodleuser) {
+            if ($admin = get_admin() == $moodleuser) {
                 continue;
             }
             $ismember = false;
