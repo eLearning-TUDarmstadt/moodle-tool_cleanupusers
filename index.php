@@ -43,7 +43,7 @@ $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
-$userstatuschecker = new timechecker();
+$userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
 $archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
