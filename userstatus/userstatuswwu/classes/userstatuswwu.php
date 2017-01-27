@@ -132,15 +132,15 @@ class userstatuswwu implements userstatusinterface {
         return $zivuserarray;
     }
 
-    private function order_to_arrays(){
+    private function order_to_arrays() {
         $this->order_suspend();
         $this->order_delete();
         $this->order_never_logged_in();
     }
-    private function order_suspend(){
+    private function order_suspend() {
         $allusers = $this->get_users_not_suspended();
         foreach ($allusers as $moodleuser) {
-            if($admin = get_admin() == $moodleuser){
+            if($admin = get_admin() == $moodleuser) {
                 continue;
             }
             $ismember = false;
@@ -150,28 +150,28 @@ class userstatuswwu implements userstatusinterface {
                     continue;
                 }
             }
-            if($ismember == false) {
+            if ($ismember == false) {
                 array_push($this->tosuspend, $moodleuser);
             }
         }
     }
-    private function order_never_logged_in(){
+    private function order_never_logged_in() {
         global $DB;
         $users = $DB->get_records('user');
         foreach ($users as $moodleuser) {
-            if($admin = get_admin() == $moodleuser){
+            if ($admin = get_admin() == $moodleuser) {
                 continue;
             }
-            if($moodleuser->lastaccess == 0) {
+            if ($moodleuser->lastaccess == 0) {
                 array_push($this->neverloggedin, $moodleuser);
             }
         }
     }
 
-    private function order_delete(){
+    private function order_delete() {
         $allusers = $this->get_users_suspended_not_deleted();
         foreach ($allusers as $moodleuser) {
-            if($admin = get_admin() == $moodleuser){
+            if ($admin = get_admin() == $moodleuser) {
                 continue;
             }
             $timestamp = time();
