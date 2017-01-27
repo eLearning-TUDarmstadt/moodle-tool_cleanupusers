@@ -57,7 +57,9 @@ class userstatuswwu implements userstatusinterface {
 
     public function __construct() {
         $this->zivmemberlist = $this->get_all_ziv_users();
-        $this->order_to_arrays();
+        $this->order_suspend();
+        $this->order_delete();
+        $this->order_never_logged_in();
     }
 
     /**
@@ -132,11 +134,10 @@ class userstatuswwu implements userstatusinterface {
         return $zivuserarray;
     }
 
-    private function order_to_arrays() {
-        $this->order_suspend();
-        $this->order_delete();
-        $this->order_never_logged_in();
-    }
+    /**
+     * Checks for all users who are not suspended whether they are member of the $zivmemberlist.
+     * When they are not member the user will be saved in the tosuspend array.
+     */
     private function order_suspend() {
         $allusers = $this->get_users_not_suspended();
         foreach ($allusers as $moodleuser) {
@@ -155,6 +156,10 @@ class userstatuswwu implements userstatusinterface {
             }
         }
     }
+
+    /**
+     * Checks for all users whether they ever logged in at all.
+     */
     private function order_never_logged_in() {
         global $DB;
         $users = $DB->get_records('user');
@@ -168,6 +173,10 @@ class userstatuswwu implements userstatusinterface {
         }
     }
 
+    /**
+     * Checks for all users who are suspended the last point of time they were modified.
+     * When the last modification is at least one year ago the user will be saved in the todelete array.
+     */
     private function order_delete() {
         $allusers = $this->get_users_suspended_not_deleted();
         foreach ($allusers as $moodleuser) {
@@ -181,11 +190,20 @@ class userstatuswwu implements userstatusinterface {
         }
     }
 
+    /**
+     * Executes a DB query and returns all users who are not suspended, not deleted and logged at least once in.
+     * @return array of users
+     */
     private function get_users_not_suspended() {
         global $DB;
         $select = 'suspended=0 AND deleted=0 AND lastaccess>0';
         return $DB->get_records_select('user', $select);
     }
+
+    /**
+     * Executes a DB query and returns all users who are suspended and not deleted.
+     * @return array of users
+     */
     private function get_users_suspended_not_deleted() {
         global $DB;
         return $DB->get_records('user', array('suspended' => 1, 'deleted' => 0));
