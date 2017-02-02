@@ -26,6 +26,7 @@ namespace tool_deprovisionuser\task;
 use tool_deprovisionuser\db as this_db;
 use tool_deprovisionuser\deprovisionuser_exception;
 use userstatus_timechecker\timechecker;
+use userstatus_userstatuswwu\userstatuswwu;
 
 class archive_user_task extends \core\task\scheduled_task {
 
@@ -51,7 +52,7 @@ class archive_user_task extends \core\task\scheduled_task {
         $userdeleted = 0;
         $userarchived = 0;
         // TODO check for right subplugin
-        $userstatuschecker = new timechecker();
+        $userstatuschecker = new userstatuswwu();
         $archivearray = $userstatuschecker->get_to_suspend();
         $usersunabletoarchive = array();
         $usersunabletodelete = array();

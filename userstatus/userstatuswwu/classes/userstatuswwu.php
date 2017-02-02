@@ -181,14 +181,18 @@ class userstatuswwu implements userstatusinterface {
      * When the last modification is at least one year ago the user will be saved in the todelete array.
      */
     private function order_delete() {
+        global $DB;
         $allusers = $this->get_users_suspended_not_deleted();
         foreach ($allusers as $moodleuser) {
             if (is_siteadmin($moodleuser)) {
                 continue;
             }
             $timestamp = time();
-            if ($moodleuser->timemodified < $timestamp - 31622400) {
-                array_push($this->todelete, $moodleuser);
+            $entry = $DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id));
+            if (!empty($entry->timestamp)) {
+                if ($entry->timestamp < $timestamp - 31622400) {
+                    array_push($this->todelete, $moodleuser);
+                }
             }
         }
     }
@@ -199,7 +203,7 @@ class userstatuswwu implements userstatusinterface {
      */
     private function get_users_not_suspended() {
         global $DB;
-        $select = 'deleted=0 AND lastaccess>0';
+        $select = 'deleted=0 AND suspended=0 AND lastaccess>0';
         return $DB->get_records_select('user', $select);
     }
 

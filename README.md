@@ -14,6 +14,8 @@ The Plugin executes a cron job which deletes, archives and reactivates archived 
 e-mail about the number of archived and deleted users.
 
 ## TODO
+- [ ] TODO Nutzername @ ausschließen
+- [ ] Datenbank mit timestamp userid bzw. flag? anlegen
 - [ ] Show a warning message for admins before users are archived or deleted
 - [ ] Implement that at least one Subplugin with the interface  `userstatusinterface ` is installed
 

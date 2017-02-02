@@ -48,10 +48,16 @@ class archiveduser {
             $user->suspended = 1;
             \core\session\manager::kill_user_sessions($user->id);
             user_update_user($user, false);
-            if (empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
+            $timestamp = time();
+            $tooluser = $DB->get_record('tool_deprovisionuser', array('id' => $user->id));
+            if (empty($tooluser)) {
                 $transaction = $DB->start_delegated_transaction();
-                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended), true, false, true);
+                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended, 'timestamp' => $timestamp), true, false, true);
                 $transaction->allow_commit();
+            } else {
+                // In case an record already exist the timestamp is updated.
+                $tooluser->timestamp = $timestamp;
+                $DB->update_record('tool_deprovisionuser', $tooluser);
             }
             // No error here since user was maybe manually suspended in user table.
         } else {
@@ -73,10 +79,8 @@ class archiveduser {
             $user->suspended = 0;
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $this->delete_record_table($this->id);
-            } else {
-                // TODO Wie fange ich hier Fehler am besten ab? Fall ich möchte user wieder aktivieren aber er ist nicht in Tabelle
-                throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
             }
+            // In the else case the user is not in the table still the user should be reactivated.
             user_update_user($user, false);
         } else {
             throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
