@@ -34,8 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class deprovisionusercronjob_completed extends \core\event\base {
 
-    public function create_simple($user) {
-        return self::create(array('other' => $user));
+    public static function create_simple($context) {
+        return self::create(array('context' => $context));
     }
 
     protected function init() {
@@ -45,6 +45,5 @@ class deprovisionusercronjob_completed extends \core\event\base {
     }
 
     public static function inform_admin() {
-
     }
 }

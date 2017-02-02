@@ -48,7 +48,7 @@ class archive_user_task extends \core\task\scheduled_task {
      * @return true
      */
     public function execute() {
-        global $DB, $USER;
+        global $DB, $USER, $PAGE;
         $userdeleted = 0;
         $userarchived = 0;
         // TODO check for right subplugin
@@ -101,12 +101,12 @@ class archive_user_task extends \core\task\scheduled_task {
                 "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser', count($usersunabletoarchive)) .
                 "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser', count($usersunabletoactivate));
         }
-        $return = email_to_user($admin, $admin, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
+        email_to_user($admin, $admin, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
         // TODO define Events and throw when e-mail cannot be sended and show "problematic users" somewhere
-        if ($return == false) {
-            $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($userarchived);
-            $event->trigger;
-        }
+        $context = \context_system::instance();
+        $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($context);
+        $event->trigger();
+
         return true;
     }
 }

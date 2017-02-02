@@ -132,8 +132,8 @@ class userstatuswwu implements userstatusinterface {
                     }
                 }
             }
+            fclose($handle);
         }
-        fclose($handle);
         return $zivuserarray;
     }
 
