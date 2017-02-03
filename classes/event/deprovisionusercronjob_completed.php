@@ -53,7 +53,7 @@ class deprovisionusercronjob_completed extends \core\event\base {
         if (empty($archived) and empty($deleted)) {
             return get_string('cronjobwasrunning', 'tool_deprovisionuser');
         } else {
-            return get_string('e-mail-archived', 'tool_deprovisionuser', $archived) .
+            return get_string('e-mail-archived', 'tool_deprovisionuser', $archived) . ' ' .
                 get_string('e-mail-deleted', 'tool_deprovisionuser', $deleted);
         }
     }

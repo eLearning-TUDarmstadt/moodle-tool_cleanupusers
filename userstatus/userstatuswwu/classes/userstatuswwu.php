@@ -56,14 +56,22 @@ class userstatuswwu implements userstatusinterface {
      * @var array
      */
     private $toreactivate = array();
+    /**
+     * @var string
+     */
+    private $membertxtrout = '';
 
     public function __construct() {
+        $this->membertxtrout = '/home/nina/data/groups_excerpt_short.txt';
         $this->zivmemberlist = $this->get_all_ziv_users();
         $this->order_suspend();
         $this->order_delete();
         $this->order_never_logged_in();
     }
 
+    public function set_txt_rout($rout) {
+        $this->membertxtrout = $rout;
+    }
     /**
      * @return array
      */
@@ -105,7 +113,10 @@ class userstatuswwu implements userstatusinterface {
         $zivuserarray = array();
         $currentname = '';
         // TODO: Later right .txt file
-        $handle = @fopen("groups_excerpt_short.txt", "r");
+        if (!file_exists($this->membertxtrout)) {
+            throw new userstatus_userstatuswwu_exception(get_string('zivlistnotfound', 'userstatus_userstatuswwu'));
+        }
+        $handle = @fopen($this->membertxtrout, "r");
         if ($handle) {
             while (!feof($handle)) {
                 $buffer = fgets($handle);
@@ -133,7 +144,9 @@ class userstatuswwu implements userstatusinterface {
                 }
             }
             fclose($handle);
+
         }
+
         return $zivuserarray;
     }
 
