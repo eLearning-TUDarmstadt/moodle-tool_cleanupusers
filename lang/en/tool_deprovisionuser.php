@@ -64,4 +64,5 @@ $string['e-mail-problematic_delete'] = 'In the last cron job {$a} users caused e
 $string['e-mail-problematic_suspend'] = 'In the last cron job {$a} users caused exception and could not be suspended.';
 $string['e-mail-problematic_reactivate'] = 'In the last cron job {$a} users caused exception and could not be reactivated.';
 $string['e-mail-noproblem'] = 'No problems occured in plugin tool_deprovisionuser in the last run.';
-
+$string['cronjobcomplete'] = 'Deprovisionuser-cronjob complete';
+$string['cronjobwasrunning'] = 'The tool_deprovisionuser cron_job was running.';

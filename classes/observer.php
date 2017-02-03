@@ -29,6 +29,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tool_deprovisionuser_observer {
     public static function email_substitute() {
-        echo 'something';
+
     }
 }

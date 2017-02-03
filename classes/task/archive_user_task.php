@@ -104,7 +104,7 @@ class archive_user_task extends \core\task\scheduled_task {
         email_to_user($admin, $admin, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
         // TODO define Events and throw when e-mail cannot be sended and show "problematic users" somewhere
         $context = \context_system::instance();
-        $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($context);
+        $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($context, $userarchived, $userdeleted);
         $event->trigger();
 
         return true;

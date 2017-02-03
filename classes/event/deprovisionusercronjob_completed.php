@@ -34,16 +34,25 @@ defined('MOODLE_INTERNAL') || die();
  */
 class deprovisionusercronjob_completed extends \core\event\base {
 
-    public static function create_simple($context) {
-        return self::create(array('context' => $context));
+    public static function create_simple($context, $numberarchived, $numberdeleted) {
+        return self::create(array('context' => $context, 'other' => array('numberarchived' => $numberarchived, 'numberdeleted' => $numberdeleted)));
     }
 
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'tool_deprovisionuser';
     }
 
-    public static function inform_admin() {
+    public static function get_name() {
+        return get_string('cronjobcomplete', 'tool_deprovisionuser');
+    }
+
+    public function get_description() {
+        if (empty($this->data['other']['numberarchived']) and empty($this->data['other']['numberdeleted'])) {
+            return get_string('cronjobwasrunning', 'tool_deprovisionuser');
+        } else {
+            return get_string('e-mail-archived', 'tool_deprovisionuser', $this->data['other']['numberarchived']) .
+                get_string('e-mail-deleted', 'tool_deprovisionuser', $this->data['other']['numberdeleted']);
+        }
     }
 }
