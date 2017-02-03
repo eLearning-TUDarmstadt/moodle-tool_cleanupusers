@@ -48,11 +48,13 @@ class deprovisionusercronjob_completed extends \core\event\base {
     }
 
     public function get_description() {
-        if (empty($this->data['other']['numberarchived']) and empty($this->data['other']['numberdeleted'])) {
+        $archived = $this->data['other']['numberarchived'];
+        $deleted = $this->data['other']['numberdeleted'];
+        if (empty($archived) and empty($deleted)) {
             return get_string('cronjobwasrunning', 'tool_deprovisionuser');
         } else {
-            return get_string('e-mail-archived', 'tool_deprovisionuser', $this->data['other']['numberarchived']) .
-                get_string('e-mail-deleted', 'tool_deprovisionuser', $this->data['other']['numberdeleted']);
+            return get_string('e-mail-archived', 'tool_deprovisionuser', $archived) .
+                get_string('e-mail-deleted', 'tool_deprovisionuser', $deleted);
         }
     }
 }
