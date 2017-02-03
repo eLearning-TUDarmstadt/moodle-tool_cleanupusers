@@ -18,7 +18,7 @@
  * The class contains a test script for the moodle userstatus_userstatuswwu
  *
  * @package userstatus_userstatuswwu
- * @copyright 2016 N Herrmann
+ * @copyright 2017 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -48,9 +48,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest(true);
         $DB->delete_records('user');
-        $DB->delete_records('tool_deprovisionuser');
         $this->assertEmpty($DB->get_records('user'));
-        $this->assertEmpty($DB->get_records('tool_deprovisionuser'));
     }
     /**
      * Methodes recommended by moodle to assure database is reset.
@@ -58,6 +56,5 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
     public function test_user_table_was_reset() {
         global $DB;
         $this->assertEquals(2, $DB->count_records('user', array()));
-        $this->assertEquals(0, $DB->count_records('tool_deprovisionuser', array()));
     }
 }
