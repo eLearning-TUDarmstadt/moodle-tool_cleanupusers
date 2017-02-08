@@ -57,21 +57,34 @@ class userstatuswwu implements userstatusinterface {
      */
     private $toreactivate = array();
     /**
+     * @var array
+     */
+    private $groups = array();
+    /**
      * @var string
      */
     private $membertxtrout = '';
 
-    public function __construct() {
-        $this->membertxtrout = '/home/nina/data/groups_excerpt_short.txt';
+    public function __construct($txtrout = null, $groups = null) {
+        global $CFG;
+        if ($txtrout === null) {
+            $this->membertxtrout = '/home/nina/data/groups_excerpt_short.txt';
+        } else {
+            $this->membertxtrout = $txtrout;
+        }
+        if ($groups === null) {
+            $this->groups = null;
+        } else {
+            $this->groups = $groups;
+        }
         $this->zivmemberlist = $this->get_all_ziv_users();
+
         $this->order_suspend();
         $this->order_delete();
         $this->order_never_logged_in();
     }
 
-    public function set_txt_rout($rout) {
-        $this->membertxtrout = $rout;
-    }
+
     /**
      * @return array
      */
@@ -114,7 +127,7 @@ class userstatuswwu implements userstatusinterface {
         $currentname = '';
         // TODO: Later right .txt file
         if (!file_exists($this->membertxtrout)) {
-            throw new userstatus_userstatuswwu_exception(get_string('zivlistnotfound', 'userstatus_userstatuswwu'));
+            throw new userstatuswwu_exception(get_string('zivlistnotfound', 'userstatus_userstatuswwu'));
         }
         $handle = @fopen($this->membertxtrout, "r");
         if ($handle) {
@@ -124,22 +137,36 @@ class userstatuswwu implements userstatusinterface {
                     continue;
                 }
                 $currentstring = explode(' ', $buffer);
-                if (array_key_exists(1, $currentstring)) {
-                    $group = rtrim($currentstring[1]);
-                    switch ($group) {
-                        case 'sys=aix-urz':
-                        case 'y5lwspz':
-                        case 'y5lwzfl':
-                        case 'v0csalum':
-                        case 'sys=ad-ka':
-                        case 'y5lwext':
-                        case 'y1moodle':
-                        case 'b5lwmw':
+                if (count($currentstring) != 2) {
+                    continue;
+                }
+                if (count($this->groups) == null) {
+                    if (array_key_exists(1, $currentstring)) {
+                        $group = rtrim($currentstring[1]);
+                        switch ($group) {
+                            case 'sys=aix-urz':
+                            case 'y5lwspz':
+                            case 'y5lwzfl':
+                            case 'v0csalum':
+                            case 'sys=ad-ka':
+                            case 'y5lwext':
+                            case 'y1moodle':
+                            case 'b5lwmw':
+                                $currentname = $currentstring[0];
+                                array_push($zivuserarray, $currentname);
+                                break;
+                            default:
+                                continue;
+                        }
+                    }
+                } else {
+                    foreach ($this->groups as $membergroup) {
+                        $group = rtrim($currentstring[1]);
+                        if ($group === $membergroup) {
                             $currentname = $currentstring[0];
                             array_push($zivuserarray, $currentname);
-                            break;
-                        default:
                             continue;
+                        }
                     }
                 }
             }
@@ -168,7 +195,7 @@ class userstatuswwu implements userstatusinterface {
                 }
             }
             if ($ismember == false) {
-                array_push($this->tosuspend, $moodleuser);
+                $this->tosuspend[$moodleuser->id] =  $moodleuser;
             }
         }
     }
@@ -184,7 +211,7 @@ class userstatuswwu implements userstatusinterface {
                 continue;
             }
             if ($moodleuser->lastaccess == 0) {
-                array_push($this->neverloggedin, $moodleuser);
+                $this->neverloggedin[$moodleuser->id] =  $moodleuser;
             }
         }
     }
@@ -204,7 +231,7 @@ class userstatuswwu implements userstatusinterface {
             $entry = $DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id));
             if (!empty($entry->timestamp)) {
                 if ($entry->timestamp < $timestamp - 31622400) {
-                    array_push($this->todelete, $moodleuser);
+                    $this->todelete[$moodleuser->id] =  $moodleuser;
                 }
             }
         }

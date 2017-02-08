@@ -39,7 +39,29 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
      */
     public function test_locallib() {
         global $DB, $CFG, $OUTPUT;
+        $data = $this->set_up();
+        $this->assertFileExists($CFG->dirroot . '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/groups_excerpt_short.txt');
 
+        $myuserstatuschecker = new userstatuswwu($CFG->dirroot . '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/groups_excerpt_short.txt',
+            array('member'=> 'member', 'member_group'=> 'member_group'));
+        // Ruft die Methode auf, die mir das array zurückgibt
+        $returnsuspend = $myuserstatuschecker->get_to_suspend();
+        $returndelete = $myuserstatuschecker->get_to_delete();
+        $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
+
+        $this->assertEquals($data['userm']->id, $returnsuspend[$data['userm']->id]->id);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnsuspend);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returndelete);
+
+        $this->assertArrayNotHasKey($data['s_other07']->id, $returnsuspend);
+        $this->assertArrayNotHasKey($data['s_other07']->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($data['s_other07']->id, $returndelete);
+
+        $this->assertArrayNotHasKey($data['r_theu9']->id, $returnsuspend);
+        $this->assertEquals($data['r_theu9']->id, $returnneverloggedin[$data['r_theu9']->id]->id);
+        $this->assertArrayNotHasKey($data['r_theu9']->id, $returndelete);
+        
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.

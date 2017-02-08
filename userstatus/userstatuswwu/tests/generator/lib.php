@@ -40,7 +40,33 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
+        $course = $generator->create_course(array('name' => 'Some course'));
+        $data['course'] = $course;
+        $mytimestamp = time();
 
+        $user = $generator->create_user(array('username' => 'e_user03', 'lastaccess' => $mytimestamp));
+        $generator->enrol_user($user->id, $course->id);
+        $data['e_user03'] = $user;
+
+        $timestamponeyearago = $mytimestamp - 31536000;
+        $userlongnotloggedin = $generator->create_user(array('username' => 'user', 'lastaccess' => $timestamponeyearago));
+        $generator->enrol_user($userlongnotloggedin->id, $course->id);
+        $data['user'] = $userlongnotloggedin;
+
+        $timestampfifteendays = $mytimestamp - 1296000;
+        $userfifteendays = $generator->create_user(array('username' => 'userm', 'lastaccess' => $timestampfifteendays));
+        $generator->enrol_user($userfifteendays->id, $course->id);
+        $data['userm'] = $userfifteendays;
+
+        $timestamponeyearnintydays = $mytimestamp;
+        $userarchived = $generator->create_user(array('username' => 's_other07', 'lastaccess' => $timestamponeyearnintydays, 'suspended' => 1));
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true, 'timestamp' => $timestamponeyearnintydays), true, false, true);
+        $generator->enrol_user($userarchived->id, $course->id);
+        $data['s_other07'] = $userarchived;
+
+        $neverloggedin = $generator->create_user(array('username' => 'r_theu9'));
+        $generator->enrol_user($neverloggedin->id, $course->id);
+        $data['r_theu9'] = $neverloggedin;
         return $data; // Return the user, course and group objects.
     }
 }
