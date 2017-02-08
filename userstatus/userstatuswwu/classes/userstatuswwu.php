@@ -195,7 +195,7 @@ class userstatuswwu implements userstatusinterface {
                 }
             }
             if ($ismember == false) {
-                $this->tosuspend[$moodleuser->id] =  $moodleuser;
+                $this->tosuspend[$moodleuser->id] = $moodleuser;
             }
         }
     }
@@ -211,7 +211,7 @@ class userstatuswwu implements userstatusinterface {
                 continue;
             }
             if ($moodleuser->lastaccess == 0) {
-                $this->neverloggedin[$moodleuser->id] =  $moodleuser;
+                $this->neverloggedin[$moodleuser->id] = $moodleuser;
             }
         }
     }
@@ -231,7 +231,7 @@ class userstatuswwu implements userstatusinterface {
             $entry = $DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id));
             if (!empty($entry->timestamp)) {
                 if ($entry->timestamp < $timestamp - 31622400) {
-                    $this->todelete[$moodleuser->id] =  $moodleuser;
+                    $this->todelete[$moodleuser->id] = $moodleuser;
                 }
             }
         }

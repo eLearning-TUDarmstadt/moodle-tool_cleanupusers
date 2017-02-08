@@ -43,8 +43,7 @@ $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
-$userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu($CFG->dirroot . '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/groups_excerpt_short.txt',
-    array('member'=> 'member', 'member_group'=> 'member_group'));
+$userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
 $archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
