@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class userstatus_userstatuswwu_generator extends testing_data_generator {
     /**
-     * Creates Course, course members, groups and groupings to test the block.
+     * Creates Course and course members.
      */
     public function test_create_preparation () {
         global $DB;
@@ -73,6 +73,6 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true, 'timestamp' => $timestamponeyearnintydays), true, false, true);
         $data['d_me09'] = $deleteme;
 
-        return $data; // Return the user, course and group objects.
+        return $data; // Return the user and course objects.
     }
 }

@@ -43,7 +43,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertFileExists($CFG->dirroot . '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/groups_excerpt_short.txt');
 
         $myuserstatuschecker = new userstatuswwu($CFG->dirroot . '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/groups_excerpt_short.txt',
-            array('member' => 'member', 'member_group' => 'member_group'));
+            array('member_group' => 'member_group', 'member' => 'member'));
         // Ruft die Methode auf, die mir das array zurückgibt
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
