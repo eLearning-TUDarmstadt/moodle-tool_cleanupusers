@@ -62,7 +62,6 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertArrayNotHasKey($data['r_theu9']->id, $returnsuspend);
         $this->assertEquals($data['r_theu9']->id, $returnneverloggedin[$data['r_theu9']->id]->id);
         $this->assertArrayNotHasKey($data['r_theu9']->id, $returndelete);
-        
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
