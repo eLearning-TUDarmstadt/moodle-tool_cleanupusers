@@ -13,18 +13,18 @@ This plugin should go into `admin/tool/deprovisionuser`.
 The Plugin executes a cron job which deletes, archives and reactivates archived users automatically. Afterwards the admin receives a notification
 e-mail about the number of archived and deleted users.
 
-## TODO
-- [ ] TODO in `userstatuswwu` plugin exclude username containing @
-- [ ] Show a warning message for admins before users are archived or deleted
-- [ ] Implement that at least one Subplugin with the interface  `userstatusinterface ` is installed
+## Archive User
+The Plugin aims to make users anonymous that are suspended.
+This should include:
+1. Hide username, firstname, lastname and all contact references to other moodle users.
+2. Save necessary data in a shadow table to reactivate users when necessary.
 
 ## Subplugins
 The Plugin requires at least one subplugin that returns the status of all users. The intention is that every university can write their own subplugin
 which specifies the condition to delete archive and reactivate users. An Interface for the methods to be implemented is included in the directory
  `deprovisionuser/classes`. The default subplugin archives users when the last access is one month ago and deletes them after eleven additional months.
-
-
-
-
-
-
+ 
+## TODO
+ - [ ] TODO in `userstatuswwu` plugin exclude username containing @
+ - [ ] Research tables to adjust.
+ - [ ] Implement that at least one Subplugin with the interface  `userstatusinterface ` is installed
