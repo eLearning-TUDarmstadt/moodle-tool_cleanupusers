@@ -1,2 +1,3 @@
 userstatus/userstatuswwu/classes/control.php
-groups_excerpt_short.txt
+*.txt
+!userstatus/userstatuswwu/test/groups_excerpt_short.php
