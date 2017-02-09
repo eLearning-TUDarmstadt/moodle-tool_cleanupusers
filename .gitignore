@@ -1,3 +1,6 @@
+#ignore control.php
 userstatus/userstatuswwu/classes/control.php
+#ignore all txt files.
 *.txt
+#do not ignore test txt file.
 !userstatus/userstatuswwu/test/groups_excerpt_short.php
