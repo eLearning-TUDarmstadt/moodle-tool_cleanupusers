@@ -53,6 +53,15 @@ class archiveduser {
             if (empty($tooluser)) {
                 $transaction = $DB->start_delegated_transaction();
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended, 'timestamp' => $timestamp), true, false, true);
+                $shadowuser = $DB->get_record('user', array('id' => $user->id));
+                $success = $DB->insert_record_raw('deprovisionuser_archive', $shadowuser, true, false, true);
+                if ($success == true) {
+                    $shadowuser->username = 'anonym' . $user->id;
+                    $shadowuser->firstname = 'Anonym';
+                    $shadowuser->lastname = 'Anonym';
+                    $DB->update_record('user', $shadowuser);
+                }
+                // No else case since delegated transaction does revoke all actions in case of failure.
                 $transaction->allow_commit();
             } else {
                 // In case an record already exist the timestamp is updated.
