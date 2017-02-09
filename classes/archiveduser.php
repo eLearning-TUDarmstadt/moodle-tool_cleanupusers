@@ -123,6 +123,7 @@ class archiveduser {
         $transaction = $DB->start_delegated_transaction();
         // DML Exception is thrown for any failures.
         $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
+        $DB->delete_records('deprovisionuser_archive', array('id' => $userid));
         $transaction->allow_commit();
     }
 }
