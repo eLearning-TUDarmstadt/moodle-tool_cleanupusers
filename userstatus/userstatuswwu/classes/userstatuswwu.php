@@ -195,7 +195,13 @@ class userstatuswwu implements userstatusinterface {
                 }
             }
             if ($ismember == false) {
-                $this->tosuspend[$moodleuser->id] = $moodleuser;
+                $datauser = (object) 0;
+                $datauser->id = $moodleuser->id;
+                $datauser->username = $moodleuser->username;
+                $datauser->suspended = $moodleuser->suspended;
+                $datauser->deleted = $moodleuser->deleted;
+                $datauser->lastaccess = $moodleuser->lastaccess;
+                $this->tosuspend[$moodleuser->id] = $datauser;
             }
         }
     }
@@ -211,7 +217,13 @@ class userstatuswwu implements userstatusinterface {
                 continue;
             }
             if ($moodleuser->lastaccess == 0) {
-                $this->neverloggedin[$moodleuser->id] = $moodleuser;
+                $datauser = (object) 0;
+                $datauser->id = $moodleuser->id;
+                $datauser->username = $moodleuser->username;
+                $datauser->suspended = $moodleuser->suspended;
+                $datauser->deleted = $moodleuser->deleted;
+                $datauser->lastaccess = $moodleuser->lastaccess;
+                $this->neverloggedin[$moodleuser->id] = $datauser;
             }
         }
     }
@@ -231,7 +243,13 @@ class userstatuswwu implements userstatusinterface {
             $entry = $DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id));
             if (!empty($entry->timestamp)) {
                 if ($entry->timestamp < $timestamp - 31622400) {
-                    $this->todelete[$moodleuser->id] = $moodleuser;
+                    $datauser = (object) 0;
+                    $datauser->id = $moodleuser->id;
+                    $datauser->username = $moodleuser->username;
+                    $datauser->suspended = $moodleuser->suspended;
+                    $datauser->deleted = $moodleuser->deleted;
+                    $datauser->lastaccess = $moodleuser->lastaccess;
+                    $this->todelete[$moodleuser->id] = $datauser;
                 }
             }
         }
