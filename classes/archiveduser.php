@@ -44,29 +44,36 @@ class archiveduser
      */
     public function archive_me() {
         global $DB;
-        $user = $DB->get_record('user', array('id' => $this->id));
+        // Get the current user.
+        $thiscoreuser = new \core_user();
+        $user = $thiscoreuser->get_user($this->id);
+
         if ($user->suspended == 0 and !is_siteadmin($user)) {
+            $transaction = $DB->start_delegated_transaction();
+
+            // Suspend user and kill session.
             $user->suspended = 1;
             \core\session\manager::kill_user_sessions($user->id);
             user_update_user($user, false);
+
             $timestamp = time();
-            $transaction = $DB->start_delegated_transaction();
             $tooluser = $DB->get_record('tool_deprovisionuser', array('id' => $user->id));
+
+            // Document time of editing user in Database.
             if (empty($tooluser)) {
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended, 'timestamp' => $timestamp), true, false, true);
-                $shadowuser = $DB->get_record('user', array('id' => $user->id));
-                $success = $DB->insert_record_raw('deprovisionuser_archive', $shadowuser, true, false, true);
-                if ($success == true) {
-                    $cloneuser = clone $shadowuser;
-                    $cloneuser->username = 'anonym' . $user->id;
-                    $cloneuser->firstname = 'Anonym';
-                    $cloneuser->lastname = '';
-                    $DB->update_record('user', $cloneuser);
-                } // No else case since delegated transaction does revoke all actions in case of failure.
             } else {
                 // In case an record already exist the timestamp is updated.
                 $tooluser->timestamp = $timestamp;
                 $DB->update_record('tool_deprovisionuser', $tooluser);
+            }
+
+            // Insert copy of user in second DB and replace user in main table when entry was successfull.
+            $shadowuser = clone $user;
+            $success = $DB->insert_record_raw('deprovisionuser_archive', $shadowuser, true, false, true);
+            if ($success == true) {
+                $cloneuser = $this->give_pseudo_user($shadowuser->id, $timestamp);
+                user_update_user($cloneuser, false);
             }
             $transaction->allow_commit();
             // No error here since user was maybe manually suspended in user table.
@@ -85,16 +92,19 @@ class archiveduser
     public function activate_me() {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
-        $user = $DB->get_record('user', array('id' => $this->id));
+        $thiscoreuser = new \core_user();
+        $user = $thiscoreuser->get_user($this->id);
+
         // Is user suspended in main table?
         if ($user->suspended == 1) {
             $user->suspended = 0;
             user_update_user($user, false);
         }
-        // Delete user from table with timestamp
+        // Delete user from table with timestamp.
         if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
             $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
         }
+
         // Is user in the shadow table?
         if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
             // If there is no user, the main table can not be updated. TODO: What kind of error is adequat?
@@ -107,10 +117,11 @@ class archiveduser
             // Delete records from deprovisionuser_archive table
             $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
         }
+
         // Delete records from deprovisionuser_archive table
         $transaction->allow_commit();
-        $user = $DB->get_record('user', array('id' => $this->id));
-        // When Name is still Anonym Something went wrong.
+        $user = $thiscoreuser->get_user($this->id);
+        // When Name is still Anonym something went wrong.
         if ($user->firstname == 'Anonym') {
             throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
         }
@@ -126,7 +137,8 @@ class archiveduser
      */
     public function delete_me() {
         global $DB;
-        $user = $DB->get_record('user', array('id' => $this->id));
+        $thiscoreuser = new \core_user();
+        $user = $thiscoreuser->get_user($this->id);
         if ($user->deleted == 0 and !is_siteadmin($user)) {
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $transaction = $DB->start_delegated_transaction();
@@ -144,5 +156,49 @@ class archiveduser
         } else {
             throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
         }
+    }
+
+    private function give_pseudo_user($id, $timestamp) {
+        $thiscoreuser = new \core_user();
+
+        $cloneuser = (object) 0;
+        $cloneuser->id = $id;
+        $cloneuser->username = 'anonym' . $id;
+        $cloneuser->firstname = 'Anonym';
+        $cloneuser->lastname = '';
+        $cloneuser->suspended = 1;
+        $cloneuser->skype = '';
+        $cloneuser->icq = '';
+        $cloneuser->msn = '';
+        $cloneuser->yahoo = '';
+        $cloneuser->aim = '';
+        $cloneuser->phone1 = '';
+        $cloneuser->phone2 = '';
+        $cloneuser->institution = '';
+        $cloneuser->department = '';
+        $cloneuser->address = '';
+        $cloneuser->city = '';
+        $cloneuser->country = '';
+        $cloneuser->lang = '';
+        $cloneuser->calendartype = '';
+        // $thiscoreuser->get_property_default() does merely work for other properties.
+        $cloneuser->firstaccess = 0;
+        $cloneuser->lastaccess = 0;
+        $cloneuser->currentlogin = 0;
+        $cloneuser->lastlogin = 0;
+        $cloneuser->secret = '';
+        $cloneuser->url = '';
+        $cloneuser->picture = 0;
+        $cloneuser->description = '';
+        $cloneuser->timemodified = '';
+        $cloneuser->timecreated = $timestamp;
+        $cloneuser->imagealt = '';
+        $cloneuser->lastnamephonetic = '';
+        $cloneuser->firstnamephonetic = '';
+        $cloneuser->middlename = '';
+        $cloneuser->alternatename = '';
+        $cloneuser->imagealt = '';
+
+        return $cloneuser;
     }
 }
