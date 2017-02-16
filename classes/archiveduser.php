@@ -24,11 +24,13 @@ namespace tool_deprovisionuser;
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
 
-class archiveduser {
+class archiveduser
+{
 
     public $id, $archived;
 
-    public function __construct($id, $archived) {
+    public function __construct($id, $archived)
+    {
         $this->id = $id;
         $this->archived = $archived;
     }
@@ -41,7 +43,8 @@ class archiveduser {
      *
      * @throws deprovisionuser_exception
      */
-    public function archive_me() {
+    public function archive_me()
+    {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->suspended == 0 and !is_siteadmin($user)) {
@@ -70,7 +73,7 @@ class archiveduser {
             $transaction->allow_commit();
             // No error here since user was maybe manually suspended in user table.
         } else {
-                throw new deprovisionuser_exception(get_string('errormessagenotsuspend', 'tool_deprovisionuser'));
+            throw new deprovisionuser_exception(get_string('errormessagenotsuspend', 'tool_deprovisionuser'));
         }
     }
 
@@ -81,7 +84,8 @@ class archiveduser {
      *
      * @throws deprovisionuser_exception
      */
-    public function activate_me() {
+    public function activate_me()
+    {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
         $user = $DB->get_record('user', array('id' => $this->id));
@@ -123,28 +127,26 @@ class archiveduser {
      *
      * @throws deprovisionuser_exception
      */
-    public function delete_me() {
+    public function delete_me()
+    {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->deleted == 0 and !is_siteadmin($user)) {
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                $this->delete_record_table($this->id);
-                // TODO save transaction
+                $transaction = $DB->start_delegated_transaction();
+                // DML Exception is thrown for any failures.
+                $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
                 $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
-
+                $transaction->allow_commit();
             }
             \core\session\manager::kill_user_sessions($user->id);
             delete_user($user);
+            $transaction = $DB->start_delegated_transaction();
+            // DML Exception is thrown for any failures.
+            $DB->delete_records('user', array('id' => $user->id));
+            $transaction->allow_commit();
         } else {
             throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
         }
-    }
-
-    private function delete_record_table($userid) {
-        global $DB;
-        $transaction = $DB->start_delegated_transaction();
-        // DML Exception is thrown for any failures.
-        $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
-        $transaction->allow_commit();
     }
 }
