@@ -54,12 +54,19 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $suspendedtodelete->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser2']->id));
-        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEmpty($recordusertable);
         $this->assertEmpty($recordtooltable);
 
         // Users that are activated will be marked as active in the user table and the entry the tool_deprovisionuser table will be deleted.
         $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, 0);
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $data['suspendeduser']->id, 'archived' => 1), true, false, true);
+        $DB->insert_record_raw('deprovisionuser_archive', $data['suspendeduser'], true, false, true);
+        $cloneuser = clone $data['suspendeduser'];
+        $cloneuser->username = 'anonym' . $data['suspendeduser']->id;
+        $cloneuser->firstname = 'Anonym';
+        $cloneuser->lastname = '';
+        $DB->update_record('user', $cloneuser);
+
         $suspendedtoactive->activate_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));

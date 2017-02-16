@@ -29,8 +29,7 @@ class archiveduser
 
     public $id, $archived;
 
-    public function __construct($id, $archived)
-    {
+    public function __construct($id, $archived) {
         $this->id = $id;
         $this->archived = $archived;
     }
@@ -43,8 +42,7 @@ class archiveduser
      *
      * @throws deprovisionuser_exception
      */
-    public function archive_me()
-    {
+    public function archive_me() {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->suspended == 0 and !is_siteadmin($user)) {
@@ -84,8 +82,7 @@ class archiveduser
      *
      * @throws deprovisionuser_exception
      */
-    public function activate_me()
-    {
+    public function activate_me() {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
         $user = $DB->get_record('user', array('id' => $this->id));
@@ -127,8 +124,7 @@ class archiveduser
      *
      * @throws deprovisionuser_exception
      */
-    public function delete_me()
-    {
+    public function delete_me() {
         global $DB;
         $user = $DB->get_record('user', array('id' => $this->id));
         if ($user->deleted == 0 and !is_siteadmin($user)) {
