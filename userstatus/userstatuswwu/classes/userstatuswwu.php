@@ -173,7 +173,6 @@ class userstatuswwu implements userstatusinterface {
             fclose($handle);
 
         }
-
         return $zivuserarray;
     }
 
@@ -213,7 +212,7 @@ class userstatuswwu implements userstatusinterface {
         global $DB;
         $users = $DB->get_records('user');
         foreach ($users as $moodleuser) {
-            if (is_siteadmin($moodleuser)) {
+            if (is_siteadmin($moodleuser) || !empty($DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id)))) {
                 continue;
             }
             if ($moodleuser->lastaccess == 0) {

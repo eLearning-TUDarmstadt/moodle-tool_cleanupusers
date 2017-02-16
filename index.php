@@ -24,8 +24,6 @@
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-use userstatus_timechecker\timechecker;
-
 // Get URL parameters.
 
 $PAGE->set_context(context_system::instance());
@@ -48,6 +46,20 @@ $archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
 
+$content = '';
+echo $OUTPUT->header();
+echo $renderer->get_heading();
+$content = '';
+$mform = new \tool_deprovisionuser\subplugin_select_form();
+if ($fromform = $mform->get_data()) {
+    set_config('tool_deprovisionuser', $fromform->Subplugin);
+    $content = 'You successfully submitted the Subplugin.';
+    $content .= $mform->display();
+    //In this case you process validated data. $mform->get_data() returns data posted in form.
+} else {
+    $content .= $mform->display();
+}
 
-$content = $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
+$content .= $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
 echo $content;
+echo $OUTPUT->footer();
