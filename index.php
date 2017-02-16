@@ -55,7 +55,7 @@ if ($fromform = $mform->get_data()) {
     set_config('tool_deprovisionuser', $fromform->Subplugin);
     $content = 'You successfully submitted the Subplugin.';
     $content .= $mform->display();
-    //In this case you process validated data. $mform->get_data() returns data posted in form.
+    // In this case you process validated data. $mform->get_data() returns data posted in form.
 } else {
     $content .= $mform->display();
 }
