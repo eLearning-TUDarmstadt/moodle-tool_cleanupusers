@@ -49,25 +49,25 @@ class archiveduser {
             \core\session\manager::kill_user_sessions($user->id);
             user_update_user($user, false);
             $timestamp = time();
+            $transaction = $DB->start_delegated_transaction();
             $tooluser = $DB->get_record('tool_deprovisionuser', array('id' => $user->id));
             if (empty($tooluser)) {
-                $transaction = $DB->start_delegated_transaction();
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended, 'timestamp' => $timestamp), true, false, true);
                 $shadowuser = $DB->get_record('user', array('id' => $user->id));
                 $success = $DB->insert_record_raw('deprovisionuser_archive', $shadowuser, true, false, true);
                 if ($success == true) {
-                    $shadowuser->username = 'anonym' . $user->id;
-                    $shadowuser->firstname = 'Anonym';
-                    $shadowuser->lastname = 'Anonym';
-                    $DB->update_record('user', $shadowuser);
-                }
-                // No else case since delegated transaction does revoke all actions in case of failure.
-                $transaction->allow_commit();
+                    $cloneuser = clone $shadowuser;
+                    $cloneuser->username = 'anonym' . $user->id;
+                    $cloneuser->firstname = 'Anonym';
+                    $cloneuser->lastname = '';
+                    $DB->update_record('user', $cloneuser);
+                } // No else case since delegated transaction does revoke all actions in case of failure.
             } else {
                 // In case an record already exist the timestamp is updated.
                 $tooluser->timestamp = $timestamp;
                 $DB->update_record('tool_deprovisionuser', $tooluser);
             }
+            $transaction->allow_commit();
             // No error here since user was maybe manually suspended in user table.
         } else {
                 throw new deprovisionuser_exception(get_string('errormessagenotsuspend', 'tool_deprovisionuser'));
@@ -83,15 +83,34 @@ class archiveduser {
      */
     public function activate_me() {
         global $DB;
+        $transaction = $DB->start_delegated_transaction();
         $user = $DB->get_record('user', array('id' => $this->id));
+        // Is user suspended in main table?
         if ($user->suspended == 1) {
             $user->suspended = 0;
-            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                $this->delete_record_table($this->id);
-            }
-            // In the else case the user is not in the table still the user should be reactivated.
             user_update_user($user, false);
+        }
+        // Delete user from table with timestamp
+        if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
+            $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
+        }
+        // Is user in the shadow table?
+        if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))){
+            // If there is no user, the main table can not be updated. TODO: What kind of error is adequat?
+            throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
         } else {
+            // If user is in table replace data.
+            $shadowuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
+            $shadowuser->suspended = 0;
+            $DB->update_record('user', $shadowuser);
+            // Delete records from deprovisionuser_archive table
+            $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
+        }
+        // Delete records from deprovisionuser_archive table
+        $transaction->allow_commit();
+        $user = $DB->get_record('user', array('id' => $this->id));
+        // When Name is still Anonym Something went wrong.
+        if ($user->firstname == 'Anonym') {
             throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
         }
     }
@@ -110,6 +129,9 @@ class archiveduser {
         if ($user->deleted == 0 and !is_siteadmin($user)) {
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $this->delete_record_table($this->id);
+                // TODO save transaction
+                $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
+
             }
             \core\session\manager::kill_user_sessions($user->id);
             delete_user($user);
@@ -123,7 +145,6 @@ class archiveduser {
         $transaction = $DB->start_delegated_transaction();
         // DML Exception is thrown for any failures.
         $DB->delete_records('tool_deprovisionuser', array('id' => $userid));
-        $DB->delete_records('deprovisionuser_archive', array('id' => $userid));
         $transaction->allow_commit();
     }
 }

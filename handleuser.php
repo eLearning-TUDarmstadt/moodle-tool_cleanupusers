@@ -57,6 +57,8 @@ if ($action == 0) {
         } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
             notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
         }
+        notice(get_string('usersreactivated', 'tool_deprovisionuser'),
+            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     } else {
         notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }

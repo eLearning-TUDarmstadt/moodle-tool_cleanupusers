@@ -102,7 +102,6 @@ class archive_user_task extends \core\task\scheduled_task {
                 "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser', count($usersunabletoactivate));
         }
         email_to_user($admin, $admin, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
-        // TODO define Events and throw when e-mail cannot be sended and show "problematic users" somewhere
         $context = \context_system::instance();
         $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($context, $userarchived, $userdeleted);
         $event->trigger();

@@ -42,7 +42,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function render_index_page($userstoarchive, $usertodelete, $usersneverloggedin) {
-        global $OUTPUT;
+        global $OUTPUT, $DB;
         if (empty($usertodelete)) {
             $rendertodelete = array();
         } else {
@@ -65,21 +65,35 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
             }
         }
+        $suspendedusers = $DB->get_records('user',  array('suspended' => '1'));
+        foreach ($suspendedusers as $key => $user) {
+            $renderaresuspended[$key] = $this->information_user_suspend($user);
 
+        }
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(get_string('plugintitel', 'tool_deprovisionuser'));
         $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
-        $output .= $this->render_table_of_users($rendertoarchive, array(get_string('oldusers', 'tool_deprovisionuser'),
-            get_string('lastaccess', 'tool_deprovisionuser'),
-            get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
-        $output .= $this->render_table_of_users($renderneverloggedin, array(get_string('Neverloggedin', 'tool_deprovisionuser'),
-            get_string('lastaccess', 'tool_deprovisionuser'), get_string('Archived', 'tool_deprovisionuser'),
-            get_string('Willbe', 'tool_deprovisionuser')));
-        $output .= $this->render_table_of_users($rendertodelete, array(get_string('titletodelete', 'tool_deprovisionuser'),
-            get_string('lastaccess', 'tool_deprovisionuser'),
-            get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
-
+        if (!empty($rendertoarchive)) {
+            $output .= $this->render_table_of_users($rendertoarchive, array(get_string('oldusers', 'tool_deprovisionuser'),
+                get_string('lastaccess', 'tool_deprovisionuser'),
+                get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
+        }
+        if (!empty($renderneverloggedin)) {
+            $output .= $this->render_table_of_users($renderneverloggedin, array(get_string('Neverloggedin', 'tool_deprovisionuser'),
+                get_string('lastaccess', 'tool_deprovisionuser'), get_string('Archived', 'tool_deprovisionuser'),
+                get_string('Willbe', 'tool_deprovisionuser')));
+        }
+        if (!empty($rendertodelete)) {
+            $output .= $this->render_table_of_users($rendertodelete, array(get_string('titletodelete', 'tool_deprovisionuser'),
+                get_string('lastaccess', 'tool_deprovisionuser'),
+                get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
+        }
+        if (!empty($renderaresuspended)) {
+            $output .= $this->render_table_of_users($renderaresuspended, array('aresuspended',
+                get_string('lastaccess', 'tool_deprovisionuser'),
+                get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
+        }
         $output .= $this->footer();
         return $output;
     }
