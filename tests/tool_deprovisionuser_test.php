@@ -49,7 +49,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(1, $recordtooltable->archived);
 
-        // Users that are deleted will be marked as deleted in the user table and the entry the tool_deprovisionuser table will be deleted.
+        // Users that are deleted will be marked as deleted in the user table.
+        // The entry the tool_deprovisionuser table will be deleted.
         $suspendedtodelete = new \tool_deprovisionuser\archiveduser($data['suspendeduser2']->id, 0);
         $suspendedtodelete->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
@@ -57,9 +58,11 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEmpty($recordusertable);
         $this->assertEmpty($recordtooltable);
 
-        // Users that are activated will be marked as active in the user table and the entry the tool_deprovisionuser table will be deleted.
+        // Users that are activated will be marked as active in the user table.
+        // The entry the tool_deprovisionuser table will be deleted.
         $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, 0);
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $data['suspendeduser']->id, 'archived' => 1), true, false, true);
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $data['suspendeduser']->id, 'archived' => 1),
+            true, false, true);
         $DB->insert_record_raw('deprovisionuser_archive', $data['suspendeduser'], true, false, true);
         $cloneuser = clone $data['suspendeduser'];
         $cloneuser->username = 'anonym' . $data['suspendeduser']->id;

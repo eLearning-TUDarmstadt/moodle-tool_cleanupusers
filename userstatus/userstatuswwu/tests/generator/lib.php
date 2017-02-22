@@ -59,7 +59,8 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $data['userm'] = $userfifteendays;
 
         $userarchived = $generator->create_user(array('username' => 's_other07', 'lastaccess' => $mytimestamp, 'suspended' => 1));
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true, 'timestamp' => $mytimestamp), true, false, true);
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true,
+            'timestamp' => $mytimestamp), true, false, true);
         $generator->enrol_user($userarchived->id, $course->id);
         $data['s_other07'] = $userarchived;
 
@@ -68,9 +69,11 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $data['r_theu9'] = $neverloggedin;
 
         $timestamponeyearnintydays = $mytimestamp - 39528000;
-        $deleteme = $generator->create_user(array('username' => 'd_me09', 'lastaccess' => $timestamponeyearnintydays, 'suspended' => 1));
+        $deleteme = $generator->create_user(array('username' => 'd_me09', 'lastaccess' => $timestamponeyearnintydays,
+            'suspended' => 1));
         $generator->enrol_user($deleteme->id, $course->id);
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true, 'timestamp' => $timestamponeyearnintydays), true, false, true);
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true,
+            'timestamp' => $timestamponeyearnintydays), true, false, true);
         $data['d_me09'] = $deleteme;
 
         return $data; // Return the user and course objects.

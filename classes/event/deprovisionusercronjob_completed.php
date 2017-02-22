@@ -35,7 +35,8 @@ defined('MOODLE_INTERNAL') || die();
 class deprovisionusercronjob_completed extends \core\event\base {
 
     public static function create_simple($context, $numberarchived, $numberdeleted) {
-        return self::create(array('context' => $context, 'other' => array('numberarchived' => $numberarchived, 'numberdeleted' => $numberdeleted)));
+        return self::create(array('context' => $context, 'other' => array('numberarchived' => $numberarchived,
+            'numberdeleted' => $numberdeleted)));
     }
 
     protected function init() {

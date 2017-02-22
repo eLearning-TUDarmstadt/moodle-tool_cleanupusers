@@ -50,7 +50,8 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $data['user'] = $user;
 
         $timestamponeyearago = $mytimestamp - 31536000;
-        $userlongnotloggedin = $generator->create_user(array('username' => 'userlongnotloggedin', 'lastaccess' => $timestamponeyearago));
+        $userlongnotloggedin = $generator->create_user(array('username' => 'userlongnotloggedin',
+            'lastaccess' => $timestamponeyearago));
         $generator->enrol_user($userlongnotloggedin->id, $course->id);
         $data['useroneyearnotlogedin'] = $userlongnotloggedin;
 
@@ -60,7 +61,8 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $data['userfifteendays'] = $userfifteendays;
 
         $timestamponeyearnintydays = $mytimestamp - 39312000;
-        $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => $timestamponeyearnintydays, 'suspended' => 1));
+        $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => $timestamponeyearnintydays,
+            'suspended' => 1));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true), true, false, true);
         $generator->enrol_user($userarchived->id, $course->id);
         $data['userarchivedoneyearnintydays'] = $userarchived;

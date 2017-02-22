@@ -17,7 +17,8 @@
 /**
  * Interface for the Subplugin userstatus.
  *
- * The Plugins of the type userstatus must return values whether users should be deleted archived, reactivated or no action is required.
+ * The Plugins of the type userstatus must return values whether users should be deleted archived,
+ * reactivated or no action is required.
  * This Plugin will be used by the cron_job and manually bz the admin to determine the appropriate actions for users.
  *
  * @package   tool_deprovisionuser

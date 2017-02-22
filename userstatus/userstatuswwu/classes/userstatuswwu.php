@@ -125,7 +125,7 @@ class userstatuswwu implements userstatusinterface {
     private function get_all_ziv_users() {
         $zivuserarray = array();
         $currentname = '';
-        // TODO: Later right .txt file
+        // TODO: Later right .txt file.
         if (!file_exists($this->membertxtrout)) {
             throw new userstatuswwu_exception(get_string('zivlistnotfound', 'userstatus_userstatuswwu'));
         }

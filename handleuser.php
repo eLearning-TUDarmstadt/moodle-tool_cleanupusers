@@ -41,12 +41,14 @@ if ($action == 0) {
         try {
             $deprovisionuser->archive_me();
         } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
-            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'),
+                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
         }
         notice(get_string('usersarchived', 'tool_deprovisionuser'),
             $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     } else {
-        notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'),
+            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
 
 } else if ($action == 1) {
@@ -55,12 +57,14 @@ if ($action == 0) {
         try {
             $deprovisionuser->activate_me();
         } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
-            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'),
+                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
         }
         notice(get_string('usersreactivated', 'tool_deprovisionuser'),
             $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     } else {
-        notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        notice(get_string('errormessagenotactive', 'tool_deprovisionuser'),
+            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
     // User is supposed to be deleted.
 } else if ($action == 3) {
@@ -69,7 +73,8 @@ if ($action == 0) {
         try {
             $deprovisionuser->delete_me();
         } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
-            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'),
+                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
         }
         notice(get_string('usersdeleted', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     } else {

@@ -139,7 +139,8 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             $arrayofusers['Willbe'] = get_string('shouldbedelted', 'tool_deprovisionuser');
             $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                 '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
-                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'),
+                    array('class' => "imggroup-" . $user->id)));
         }
         return $arrayofusers;
     }
@@ -199,7 +200,8 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
             $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
                 '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
-                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'),
+                    array('class' => "imggroup-" . $user->id)));
         }
         return $arrayofusers;
     }

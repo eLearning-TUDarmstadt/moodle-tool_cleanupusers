@@ -17,12 +17,18 @@
 /**
  * A scheduled task for tool_deprovisionuser cron.
  *
- * The Class archive_user_task is supposed to show the admin a page of users which will be archived and expectes a submit or cancel reaction.
+ * The Class archive_user_task is supposed to show the admin a page of users which will be archived and expectes a submit or
+ * cancel reaction.
  * @package    tool_deprovisionuser
  * @copyright  2016 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 namespace tool_deprovisionuser\task;
+
+defined('MOODLE_INTERNAL') || die();
+
 use tool_deprovisionuser\db as this_db;
 use tool_deprovisionuser\deprovisionuser_exception;
 use userstatus_timechecker\timechecker;
@@ -98,13 +104,15 @@ class archive_user_task extends \core\task\scheduled_task {
             }
         }
         $admin = get_admin();
-        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . "\r\n" .get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
+        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . "\r\n" .get_string('e-mail-deleted',
+                'tool_deprovisionuser', $userdeleted);
         if (empty($usersunabletoactivate) and empty($usersunabletoarchive) and empty($usersunabletodelete)) {
             $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_deprovisionuser');
         } else {
-            $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_deprovisionuser', count($usersunabletodelete)) .
-                "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser', count($usersunabletoarchive)) .
-                "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser', count($usersunabletoactivate));
+            $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_deprovisionuser',
+                    count($usersunabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser',
+                    count($usersunabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser',
+                    count($usersunabletoactivate));
         }
         email_to_user($admin, $admin, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
         $context = \context_system::instance();

@@ -42,7 +42,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         global $DB, $CFG, $OUTPUT;
         $data = $this->set_up();
         $myuserstatuschecker = new timechecker();
-        // Ruft die Methode auf, die mir das array zurückgibt
+        // Calls for dubplugin methode to return arrays.
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
@@ -57,7 +57,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['userfifteendays']->username, $returndelete);
         $this->assertNotContains($data['userfifteendays']->username, $returnneverloggedin);
 
-        // Userarchived is not in array since time is not right
+        // Userarchived is not in array since time is not right.
         set_config('suspendtime', 400 , 'userstatus_timechecker');
         set_config('deletetime', 730 , 'userstatus_timechecker');
         $myconfiguserstatuschecker = new timechecker();

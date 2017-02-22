@@ -23,6 +23,7 @@
 
 namespace tool_deprovisionuser;
 
+defined('MOODLE_INTERNAL') || die();
 
 class deprovisionuser_exception extends \moodle_exception {
 

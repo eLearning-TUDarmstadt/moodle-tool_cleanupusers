@@ -23,6 +23,7 @@
 
 namespace userstatus_userstatuswwu;
 
+defined('MOODLE_INTERNAL') || die;
 
 class userstatuswwu_exception extends \moodle_exception {
 

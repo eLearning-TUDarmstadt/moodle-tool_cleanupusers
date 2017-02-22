@@ -21,6 +21,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_deprovisionuser;
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
 
@@ -61,7 +64,8 @@ class archiveduser
 
             // Document time of editing user in Database.
             if (empty($tooluser)) {
-                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended, 'timestamp' => $timestamp), true, false, true);
+                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended,
+                    'timestamp' => $timestamp), true, false, true);
             } else {
                 // In case an record already exist the timestamp is updated.
                 $tooluser->timestamp = $timestamp;
@@ -114,11 +118,11 @@ class archiveduser
             $shadowuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
             $shadowuser->suspended = 0;
             $DB->update_record('user', $shadowuser);
-            // Delete records from deprovisionuser_archive table
+            // Delete records from deprovisionuser_archive table.
             $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
         }
 
-        // Delete records from deprovisionuser_archive table
+        // Delete records from deprovisionuser_archive table.
         $transaction->allow_commit();
         $user = $thiscoreuser->get_user($this->id);
         // When Name is still Anonym something went wrong.
@@ -181,7 +185,7 @@ class archiveduser
         $cloneuser->country = '';
         $cloneuser->lang = '';
         $cloneuser->calendartype = '';
-        // $thiscoreuser->get_property_default() does merely work for other properties.
+        // Thiscoreuser->get_property_default() does merely work for other properties.
         $cloneuser->firstaccess = 0;
         $cloneuser->lastaccess = 0;
         $cloneuser->currentlogin = 0;
