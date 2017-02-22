@@ -61,9 +61,6 @@ class timechecker implements userstatusinterface {
                 if ($timenotloggedin > $this->timesuspend && $user->suspended == 0) {
                     $tosuspend[$key] = $user;
                 }
-                if ($timenotloggedin < $this->timesuspend && $user->suspended == 1) {
-                    $toaactivate[$key] = $user;
-                }
             }
         }
         return $tosuspend;
@@ -104,7 +101,7 @@ class timechecker implements userstatusinterface {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
                 if ($timenotloggedin < 8035200 && $user->suspended == 1) {
-                    $toaactivate[$key] = $user;
+                    $toactivate[$key] = $user;
                 }
             }
         }

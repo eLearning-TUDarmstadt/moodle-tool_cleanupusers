@@ -46,30 +46,21 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         if (empty($usertodelete)) {
             $rendertodelete = array();
         } else {
-            foreach ($usertodelete as $key => $user) {
-                $rendertodelete[$key] = $this->information_user_delete($user);
-            }
+            $rendertodelete = $this->information_user_delete($usertodelete);
         }
         if (empty($usersneverloggedin)) {
             $renderneverloggedin = array();
         } else {
-            foreach ($usersneverloggedin as $key => $user) {
-                $renderneverloggedin[$key] = $this->information_user_notloggedind($user);
-            }
+            $renderneverloggedin = $this->information_user_notloggedind($usersneverloggedin);
         }
         if (empty($userstoarchive)) {
             $rendertoarchive = array();
         } else {
-            foreach ($userstoarchive as $key => $user) {
-                $rendertoarchive[$key] = $this->information_user_suspend($user);
-
-            }
+            $rendertoarchive = $this->information_user_suspend($userstoarchive);
         }
         $suspendedusers = $DB->get_records('user',  array('suspended' => '1'));
-        foreach ($suspendedusers as $key => $user) {
-            $renderaresuspended[$key] = $this->information_user_suspend($user);
+        $renderaresuspended = $this->information_user_suspend($suspendedusers);
 
-        }
         $output = '';
         $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
         if (!empty($rendertoarchive)) {
@@ -124,25 +115,31 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * @param $user a Object of the user std_class
      * @return array
      */
-    private function information_user_delete($user) {
+    private function information_user_delete($users) {
         global $DB, $OUTPUT, $CFG;
-        $arrayofusers = array();
-        if (!empty($user)) {
-            $arrayofusers['username'] = $user->username;
-            $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
-            $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-            if (empty($isarchivid)) {
-                $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
-            } else {
-                $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+
+        $resultarray = array();
+        foreach ($users as $key => $user) {
+            $arrayofusers = array();
+
+            if (!empty($user)) {
+                $arrayofusers['username'] = $user->username;
+                $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
+                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+                if (empty($isarchivid)) {
+                    $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
+                } else {
+                    $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                }
+                $arrayofusers['Willbe'] = get_string('shouldbedelted', 'tool_deprovisionuser');
+                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                    '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
+                    \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'),
+                        array('class' => "imggroup-" . $user->id)));
             }
-            $arrayofusers['Willbe'] = get_string('shouldbedelted', 'tool_deprovisionuser');
-            $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
-                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'),
-                    array('class' => "imggroup-" . $user->id)));
+            $resultarray[$key] = $arrayofusers;
         }
-        return $arrayofusers;
+        return $resultarray;
     }
 
     /**
@@ -150,34 +147,38 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * @param $user a Object of the user std_class
      * @return array
      */
-    private function information_user_suspend($user) {
+    private function information_user_suspend($users) {
         global $DB, $OUTPUT, $CFG;
-        $arrayofusers = array();
-        if (!empty($user)) {
-            $arrayofusers['username'] = $user->username;
-            $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
+        $result = array();
+        foreach ($users as $key => $user) {
+            $arrayofusers = array();
+            if (!empty($user)) {
+                $arrayofusers['username'] = $user->username;
+                $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
 
-            $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-            if (empty($isarchivid)) {
-                $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
-            } else {
-                $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
-            }
-            $arrayofusers['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
+                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+                if (empty($isarchivid)) {
+                    $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
+                } else {
+                    $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                }
+                $arrayofusers['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
 
-            if ($user->suspended == 0) {
-                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                    '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
-                    \html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
-                        array('class' => "imggroup-" . $user->id)));
-            } else {
-                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                    '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
-                    \html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
-                        array('class' => "imggroup-" . $user->id)));
+                if ($user->suspended == 0) {
+                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
+                        \html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
+                            array('class' => "imggroup-" . $user->id)));
+                } else {
+                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
+                        \html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
+                            array('class' => "imggroup-" . $user->id)));
+                }
             }
+            $result[$key] = $arrayofusers;
         }
-        return $arrayofusers;
+        return $result;
     }
 
     /**
@@ -185,24 +186,28 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * @param $user a Object of the user std_class
      * @return array
      */
-    private function information_user_notloggedind($user) {
+    private function information_user_notloggedind($users) {
         global $DB, $OUTPUT, $CFG;
-        $arrayofusers = array();
-        if (!empty($user)) {
-            $arrayofusers['username'] = $user->username;
-            $arrayofusers['lastaccess'] = get_string('neverlogged', 'tool_deprovisionuser');
-            $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
-            if (empty($isarchivid)) {
-                $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
-            } else {
-                $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+        $result = array();
+        foreach ($users as $key => $user) {
+            $arrayofusers = array();
+            if (!empty($user)) {
+                $arrayofusers['username'] = $user->username;
+                $arrayofusers['lastaccess'] = get_string('neverlogged', 'tool_deprovisionuser');
+                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+                if (empty($isarchivid)) {
+                    $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
+                } else {
+                    $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                }
+                $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
+                $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                    '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
+                    \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'),
+                        array('class' => "imggroup-" . $user->id)));
             }
-            $arrayofusers['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
-            $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
-                '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=3',
-                \html_writer::img($OUTPUT->pix_url('t/delete'), get_string('showuser', 'tool_deprovisionuser'),
-                    array('class' => "imggroup-" . $user->id)));
+            $result[$key] = $arrayofusers;
         }
-        return $arrayofusers;
+        return $result;
     }
 }
