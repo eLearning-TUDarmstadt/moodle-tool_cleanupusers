@@ -37,3 +37,14 @@ class deprovisionuser_exception extends \moodle_exception {
         parent::__construct($errorcode, 'tool_deprovisionuser', '', $a, $debuginfo);
     }
 }
+class deprovisionuser_subplugin_exception extends \moodle_exception {
+    /**
+     * Constructor
+     * @param string $errorcode The name of the string from webservice.php to print
+     * @param string $a The name of the parameter
+     * @param string $debuginfo Optional information to aid debugging
+     */
+    public function __construct($errorcode, $a = '', $debuginfo = null) {
+        parent::__construct($errorcode, 'tool_deprovisionuser', '', $a, $debuginfo);
+    }
+}

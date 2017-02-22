@@ -52,6 +52,9 @@ class subplugin_select_form extends moodleform {
                 $issubplugin = true;
             }
         }
+        if ($issubplugin == false) {
+            throw new deprovisionuser_subplugin_exception(get_string('errormessagesubplugin', 'tool_deprovisionuser'));
+        }
         return $issubplugin;
     }
 }

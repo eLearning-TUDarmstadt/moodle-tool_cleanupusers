@@ -61,6 +61,7 @@ $string['errormessagenotactive'] = 'Not able to activate user.';
 $string['errormessagenotdelete'] = 'Not able to delete user.';
 $string['errormessagenotsuspend'] = 'Not able to suspend user';
 $string['errormessagenoaction'] = 'The requested action could not be executed.';
+$string['errormessagesubplugin'] = 'The Subplugin you selected is not available. The default will be used.';
 $string['e-mail-problematic_delete'] = 'In the last cron job {$a} users caused exception and could not be deleted.';
 $string['e-mail-problematic_suspend'] = 'In the last cron job {$a} users caused exception and could not be suspended.';
 $string['e-mail-problematic_reactivate'] = 'In the last cron job {$a} users caused exception and could not be reactivated.';
