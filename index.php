@@ -41,24 +41,26 @@ $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('tool_deprovisionuser');
 
-$userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
-$archivearray = $userstatuschecker->get_to_suspend();
-$arraytodelete = $userstatuschecker->get_to_delete();
-$arrayneverloggedin = $userstatuschecker->get_never_logged_in();
-
 $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
 $content = '';
 $mform = new \tool_deprovisionuser\subplugin_select_form();
 if ($fromform = $mform->get_data()) {
-    set_config('tool_deprovisionuser', $fromform->Subplugin);
+    set_config('deprovisionuser_subplugin', $fromform->Subplugin, 'tool_deprovisionuser');
+    // set_config($name, $value, $plugin).
     $content = 'You successfully submitted the Subplugin.';
     $content .= $mform->display();
     // In this case you process validated data. $mform->get_data() returns data posted in form.
 } else {
     $content .= $mform->display();
 }
+$subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
+$mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
+$userstatuschecker = new $mysubpluginname();
+$archivearray = $userstatuschecker->get_to_suspend();
+$arraytodelete = $userstatuschecker->get_to_delete();
+$arrayneverloggedin = $userstatuschecker->get_never_logged_in();
 
 $content .= $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
 echo $content;
