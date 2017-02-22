@@ -51,8 +51,13 @@ class archive_user_task extends \core\task\scheduled_task {
         global $DB, $USER, $PAGE;
         $userdeleted = 0;
         $userarchived = 0;
-        // TODO check for right subplugin
-        $userstatuschecker = new userstatuswwu();
+        if(!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
+            $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
+            $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
+            $userstatuschecker = new $mysubpluginname();
+        } else {
+            $userstatuschecker = new userstatuswwu();
+        }
         $archivearray = $userstatuschecker->get_to_suspend();
         $usersunabletoarchive = array();
         $usersunabletodelete = array();

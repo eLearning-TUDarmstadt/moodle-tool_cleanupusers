@@ -40,9 +40,10 @@ class subplugin_select_form extends moodleform {
         } else {
             $text = 'Change the subplugin';
         }
-        $mform->addElement('select', 'Subplugin', $text, $types);
+        $mform->addElement('select', 'subplugin', $text, $types);
         $mform->addElement('submit', 'reset', 'Submit');
     }
+    // TODO: field subplugin is subplugin.
     public function validation($data, $files) {
         return array();
     }
