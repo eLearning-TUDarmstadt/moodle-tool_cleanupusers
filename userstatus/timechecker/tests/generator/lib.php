@@ -60,8 +60,8 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $generator->enrol_user($userfifteendays->id, $course->id);
         $data['userfifteendays'] = $userfifteendays;
 
-        $timestamponeyearnintydays = $mytimestamp - 39312000;
-        $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => $timestamponeyearnintydays,
+        $oneyearnintydays = $mytimestamp - 39312000;
+        $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => $oneyearnintydays,
             'suspended' => 1));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true), true, false, true);
         $generator->enrol_user($userarchived->id, $course->id);

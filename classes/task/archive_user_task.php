@@ -65,9 +65,9 @@ class archive_user_task extends \core\task\scheduled_task {
             $userstatuschecker = new userstatuswwu();
         }
         $archivearray = $userstatuschecker->get_to_suspend();
-        $usersunabletoarchive = array();
-        $usersunabletodelete = array();
-        $usersunabletoactivate = array();
+        $unabletoarchive = array();
+        $unabletodelete = array();
+        $unabletoactivate = array();
         foreach ($archivearray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
@@ -75,7 +75,7 @@ class archive_user_task extends \core\task\scheduled_task {
                     $archiveduser->archive_me();
                     $userarchived++;
                 } catch (deprovisionuser_exception $e) {
-                    $usersunabletoarchive[$key] = $user;
+                    $unabletoarchive[$key] = $user;
                 }
             }
         }
@@ -86,7 +86,7 @@ class archive_user_task extends \core\task\scheduled_task {
                 try {
                     $archiveduser->activate_me();
                 } catch (deprovisionuser_exception $e) {
-                    $usersunabletoactivate[$key] = $user;
+                    $unabletoactivate[$key] = $user;
                 }
 
             }
@@ -99,20 +99,20 @@ class archive_user_task extends \core\task\scheduled_task {
                     $archiveduser->delete_me();
                     $userdeleted++;
                 } catch (deprovisionuser_exception $e) {
-                    $usersunabletodelete[$key] = $user;
+                    $unabletodelete[$key] = $user;
                 }
             }
         }
         $admin = get_admin();
         $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . "\r\n" .get_string('e-mail-deleted',
                 'tool_deprovisionuser', $userdeleted);
-        if (empty($usersunabletoactivate) and empty($usersunabletoarchive) and empty($usersunabletodelete)) {
+        if (empty($unabletoactivate) and empty($unabletoarchive) and empty($unabletodelete)) {
             $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_deprovisionuser');
         } else {
             $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_deprovisionuser',
-                    count($usersunabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser',
-                    count($usersunabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser',
-                    count($usersunabletoactivate));
+                    count($unabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser',
+                    count($unabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser',
+                    count($unabletoactivate));
         }
         email_to_user($admin, $admin, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
         $context = \context_system::instance();

@@ -22,6 +22,7 @@
  */
 
 namespace tool_deprovisionuser;
+defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 use moodleform;
