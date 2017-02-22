@@ -51,7 +51,7 @@ class archive_user_task extends \core\task\scheduled_task {
         global $DB, $USER, $PAGE;
         $userdeleted = 0;
         $userarchived = 0;
-        if(!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
+        if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
             $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
             $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
             $userstatuschecker = new $mysubpluginname();

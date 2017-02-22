@@ -45,6 +45,13 @@ class subplugin_select_form extends moodleform {
     }
     // TODO: field subplugin is subplugin.
     public function validation($data, $files) {
-        return array();
+        $plugins = core_plugin_manager::instance()->get_plugins_of_type('userstatus');
+        $issubplugin = false;
+        foreach ($plugins as $value) {
+            if ($value->name == $data['subplugin']){
+                $issubplugin = true;
+            }
+        }
+        return $issubplugin;
     }
 }
