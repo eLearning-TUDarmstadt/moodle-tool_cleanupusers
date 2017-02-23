@@ -23,3 +23,5 @@
 
 $string['pluginname'] = 'Userstatus WWU';
 $string['plugintitel'] = 'Userstatus WWU';
+$string['pathtotxt'] = 'Enter the path to your txt ';
+$string['path'] = 'Path';

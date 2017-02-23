@@ -67,10 +67,15 @@ class userstatuswwu implements userstatusinterface {
 
     public function __construct($txtrout = null, $groups = null) {
         global $CFG;
-        if ($txtrout === null) {
-            $this->membertxtrout = '/home/nina/data/groups_excerpt_short.txt';
+        $config = get_config('userstatus_userstatuswwu');
+        if (!empty($config->pathtotxt)) {
+            $this->membertxtrout = $config->pathtotxt;
         } else {
-            $this->membertxtrout = $txtrout;
+            if ($txtrout === null) {
+                $this->membertxtrout = '/home/nina/data/groups_excerpt_short.txt';
+            } else {
+                $this->membertxtrout = $txtrout;
+            }
         }
         if ($groups === null) {
             $this->groups = null;
@@ -83,7 +88,6 @@ class userstatuswwu implements userstatusinterface {
         $this->order_delete();
         $this->order_never_logged_in();
     }
-
 
     /**
      * @return array

@@ -24,4 +24,7 @@
 defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/userstatus/userstatuswwu/index.php';
+    $settings->add(new admin_setting_configtext('userstatus_userstatuswwu/pathtotxt',
+        get_string('path', 'userstatus_userstatuswwu'),
+        get_string('pathtotxt', 'userstatus_userstatuswwu'), false, PARAM_RAW));
 }

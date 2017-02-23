@@ -68,3 +68,4 @@ $string['e-mail-problematic_reactivate'] = 'In the last cron job {$a} users caus
 $string['e-mail-noproblem'] = 'No problems occured in plugin tool_deprovisionuser in the last run.';
 $string['cronjobcomplete'] = 'Deprovisionuser-cronjob complete';
 $string['cronjobwasrunning'] = 'The tool_deprovisionuser cron_job was running.';
+$string['subpluginsof'] = 'Subplugins of deprovisionuser';
