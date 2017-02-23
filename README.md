@@ -15,16 +15,20 @@ e-mail about the number of archived and deleted users.
 
 ## Archive User
 The Plugin aims to make users anonymous that are suspended.
-This should include:
+This includes:
 1. Hide username, firstname, lastname and all contact references to other moodle users.
 2. Save necessary data in a shadow table to reactivate users when necessary.
 
+Users that are deleted will be deleted in the `user` table.
+
 ## Subplugins
-The Plugin requires at least one subplugin that returns the status of all users. The intention is that every university can write their own subplugin
-which specifies the condition to delete archive and reactivate users. An Interface for the methods to be implemented is included in the directory
- `deprovisionuser/classes`. The default subplugin archives users when the last access is one month ago and deletes them after eleven additional months.
+The Plugin requires at least one subplugin that returns the status of all users. 
+Every university can write their own subplugin which specifies the condition to delete archive and 
+reactivate users. An Interface for the methods to be implemented is included in the directory
+ `deprovisionuser/classes`. 
+As the default the subplugin of the University of Münster is installed and can not be uninstalled.
+Additionally, subplugins that are currently in use can not be uninstalled.
  
 ## TODO
  - [ ] TODO in `userstatuswwu` plugin exclude username containing @
  - [ ] Research tables to adjust.
- - [ ] Implement that at least one Subplugin with the interface  `userstatusinterface ` is installed
