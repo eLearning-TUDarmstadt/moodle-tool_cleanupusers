@@ -37,8 +37,7 @@ class userstatus extends base {
     /**
      * Returns true when subplugin can be deleted false when not
      *
-     * By now returns false when only one plugin avaiulable otherwise all plugins can be uninstalled if they are not standard
-     * @todo have different uninstall values for each plugin?
+     * Returns false for the userstatuswwu subplugin and for any plugin currently in useage, otherwise true.
      * @return bool
      */
     public function is_uninstall_allowed() {

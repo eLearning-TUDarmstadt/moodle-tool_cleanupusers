@@ -115,7 +115,7 @@ class archiveduser {
 
         // Is user in the shadow table?
         if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
-            // If there is no user, the main table can not be updated. TODO: What kind of error is adequat?
+            // If there is no user, the main table can not be updated.
             throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
         } else {
             // If user is in table replace data.

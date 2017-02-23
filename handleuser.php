@@ -25,7 +25,6 @@
 require_once('../../../config.php');
 require_login();
 require_once($CFG->dirroot.'/user/lib.php');
-// TODO put in one php file and take delete or archive?
 $userid         = required_param('userid', PARAM_INT);
 $action         = required_param('action', PARAM_INT);
 
