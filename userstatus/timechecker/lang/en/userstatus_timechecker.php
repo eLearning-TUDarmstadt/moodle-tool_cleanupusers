@@ -25,5 +25,6 @@ $string['pluginname'] = 'Timechecker';
 $string['plugintitel'] = 'Timechecker';
 $string['timechecker_time_to_archive'] = 'Number of Days not logged in, until a user is archived';
 $string['timechecker_time_to_delete'] = 'Number of Days a user is archived, until the user is deleted';
-
+$string['suspendtime'] = 'Time until suspension';
+$string['deletetime'] = 'Time until deletion';
 

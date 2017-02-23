@@ -62,7 +62,6 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         $renderaresuspended = $this->information_user_suspend($suspendedusers);
 
         $output = '';
-        $output .= html_writer::div(get_string('plugininfo', 'tool_deprovisionuser'));
         if (!empty($rendertoarchive)) {
             $output .= $this->render_table_of_users($rendertoarchive, array(get_string('oldusers', 'tool_deprovisionuser'),
                 get_string('lastaccess', 'tool_deprovisionuser'),
