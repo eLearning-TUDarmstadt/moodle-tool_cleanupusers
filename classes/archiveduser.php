@@ -17,7 +17,7 @@
  * Class archive user.
  *
  * @package   tool_deprovisionuser
- * @copyright 2016 N. Herrmann
+ * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_deprovisionuser;
@@ -27,11 +27,15 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
 
-class archiveduser
-{
+class archiveduser {
 
     public $id, $archived;
 
+    /**
+     * archiveduser constructor.
+     * @param $id
+     * @param $archived
+     */
     public function __construct($id, $archived) {
         $this->id = $id;
         $this->archived = $archived;
@@ -162,9 +166,13 @@ class archiveduser
         }
     }
 
+    /**
+     * Creates a empty user with anonym as username and Anonym as Firstname.
+     * @param $id int
+     * @param $timestamp int
+     * @return object
+     */
     private function give_pseudo_user($id, $timestamp) {
-        $thiscoreuser = new \core_user();
-
         $cloneuser = (object) 0;
         $cloneuser->id = $id;
         $cloneuser->username = 'anonym' . $id;
@@ -185,7 +193,6 @@ class archiveduser
         $cloneuser->country = '';
         $cloneuser->lang = '';
         $cloneuser->calendartype = '';
-        // Thiscoreuser->get_property_default() does merely work for other properties.
         $cloneuser->firstaccess = 0;
         $cloneuser->lastaccess = 0;
         $cloneuser->currentlogin = 0;

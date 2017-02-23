@@ -17,7 +17,7 @@
  * Create an Exception Class for the tool_deprovisionuser
  *
  * @package   tool_deprovisionuser
- * @copyright 2016 N. Herrmann
+ * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,6 +37,13 @@ class deprovisionuser_exception extends \moodle_exception {
         parent::__construct($errorcode, 'tool_deprovisionuser', '', $a, $debuginfo);
     }
 }
+
+/**
+ * Class deprovisionuser_subplugin_exception
+ * @package tool_deprovisionuser
+ * @copyright 2016 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class deprovisionuser_subplugin_exception extends \moodle_exception {
     /**
      * Constructor

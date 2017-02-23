@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Create an Exception Class for the tool_deprovisionuser
+ * Create an Form Class for the tool_deprovisionuser
  *
  * @package   tool_deprovisionuser
- * @copyright 2016 N. Herrmann
+ * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,7 +27,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/formslib.php");
 use moodleform;
 use core_plugin_manager;
+
 class subplugin_select_form extends moodleform {
+    /**
+     * Defines the subplugin select form.
+     */
     public function definition() {
         global $CFG;
         $mform = $this->_form;
@@ -44,7 +48,13 @@ class subplugin_select_form extends moodleform {
         $mform->addElement('select', 'subplugin', $text, $types);
         $mform->addElement('submit', 'reset', 'Submit');
     }
-    // TODO: field subplugin is subplugin.
+
+    /**
+     * Checks data for correctness
+     * @param array $data
+     * @param array $files
+     * @return bool
+     */
     public function validation($data, $files) {
         $plugins = core_plugin_manager::instance()->get_plugins_of_type('userstatus');
         $issubplugin = false;
