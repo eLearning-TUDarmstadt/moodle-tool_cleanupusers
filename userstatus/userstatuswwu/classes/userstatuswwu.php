@@ -143,6 +143,10 @@ class userstatuswwu implements userstatusinterface {
                 if (count($currentstring) != 2) {
                     continue;
                 }
+                // All users including @ are not relevant.
+                if (strpos($currentstring['0'], '@')) {
+                    continue;
+                }
                 if (count($this->groups) == null) {
                     if (array_key_exists(1, $currentstring)) {
                         $group = rtrim($currentstring[1]);

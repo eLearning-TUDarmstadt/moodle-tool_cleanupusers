@@ -30,5 +30,4 @@ As the default the subplugin of the University of Münster is installed and can 
 Additionally, subplugins that are currently in use can not be uninstalled.
  
 ## TODO
- - [ ] TODO in `userstatuswwu` plugin exclude username containing @
  - [ ] Research tables to adjust.
