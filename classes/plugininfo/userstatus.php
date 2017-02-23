@@ -46,18 +46,18 @@ class userstatus extends base {
         if ($this->is_standard()) {
             return false;
         }
-        $pluginmanager = \core_plugin_manager::instance();
-        $type = $pluginmanager->get_plugins_of_type('userstatus');
-        if (empty($type)) {
+        // Userstatuswwu is the standard subplugin and can not be uninstalled.
+        if ($this->name == 'userstatuswwu') {
             return false;
         }
-
-        if (count($type) == 1) {
-            return false;
-        } else if (count($type) > 1) {
-            return true;
+        // In case the subplugin is in use, subplugin can not be uninstalled.
+        if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
+            $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
+            if ($subplugin == $this->name) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     /**
