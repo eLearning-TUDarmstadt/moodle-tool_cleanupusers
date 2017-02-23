@@ -53,7 +53,7 @@ class subplugin_select_form extends moodleform {
      * Checks data for correctness
      * @param array $data
      * @param array $files
-     * @return bool
+     * @return bool/array array in case an error occurs, otherwise true.
      */
     public function validation($data, $files) {
         $plugins = core_plugin_manager::instance()->get_plugins_of_type('userstatus');
@@ -61,10 +61,12 @@ class subplugin_select_form extends moodleform {
         foreach ($plugins as $value) {
             if ($value->name == $data['subplugin']) {
                 $issubplugin = true;
+                break;
             }
         }
         if ($issubplugin == false) {
-            throw new deprovisionuser_subplugin_exception(get_string('errormessagesubplugin', 'tool_deprovisionuser'));
+            $issubplugin['subplugin'] = new deprovisionuser_subplugin_exception
+            (get_string('errormessagesubplugin', 'tool_deprovisionuser'));
         }
         return $issubplugin;
     }
