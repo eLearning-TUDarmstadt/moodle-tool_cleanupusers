@@ -148,16 +148,16 @@ class archiveduser {
         $thiscoreuser = new \core_user();
         $user = $thiscoreuser->get_user($this->id);
         if ($user->deleted == 0 and !is_siteadmin($user)) {
+            $transaction = $DB->start_delegated_transaction();
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                $transaction = $DB->start_delegated_transaction();
                 // DML Exception is thrown for any failures.
                 $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
                 $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
-                $transaction->allow_commit();
+
             }
             \core\session\manager::kill_user_sessions($user->id);
             delete_user($user);
-            $transaction = $DB->start_delegated_transaction();
+
             // DML Exception is thrown for any failures.
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
             $newusername = hash('sha384', $user->username);

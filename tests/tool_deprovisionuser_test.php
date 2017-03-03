@@ -55,7 +55,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $suspendedtodelete->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser2']->id));
-        $this->assertEmpty($recordusertable);
+        $this->assertNotEmpty($recordusertable);
         $this->assertEmpty($recordtooltable);
 
         // Users that are activated will be marked as active in the user table.
@@ -79,14 +79,14 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Admin Users will not be deleted neither archived.
         $this->setAdminUser($data['adminuser']);
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
-        $this->setexpectedException('tool_deprovisionuser\deprovisionuser_exception', 'Not able to suspend user');
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
         $adminaccount->archive_me();
         $recordtooltable = $DB->get_record('moodle_deprovisionuser', array('id' => $data['adminuser']->id));
         $this->assertEmpty($recordtooltable);
 
         $this->setAdminUser($data['adminuser']);
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
-        $this->setexpectedException('tool_deprovisionuser\deprovisionuser_exception', 'Not able to delete user');
+        $this->expectedException('tool_deprovisionuser\deprovisionuser_exception');
         $adminaccount->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['adminuser']->id));
         $this->assertEmpty($recordtooltable);
