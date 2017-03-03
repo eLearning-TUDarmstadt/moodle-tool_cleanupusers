@@ -14,12 +14,52 @@ The Plugin executes a cron job which deletes, archives and reactivates archived 
 e-mail about the number of archived and deleted users.
 
 ## Archive User
+
+Moodle provides the following functionality when suspending a user:
+- kills the user session
+- mark the user in the `user` table as suspended
+    - threfore the user can not log in anymore
+    
 The Plugin aims to make users anonymous that are suspended.
 This includes:
-1. Hide username, firstname, lastname and all contact references to other moodle users.
-2. Save necessary data in a shadow table to reactivate users when necessary.
 
-Users that are deleted will be deleted in the `user` table.
+- Hide username, firstname, lastname and all contact references to other moodle users
+    - replacing the username with Anonym + id
+    
+        *This is neccessary since usernames have to be unique.*
+    
+    - =replacing all other data in the `user` table with the appropriate null value
+- Save necessary data in a shadow table to reactivate users when necessary. (`deprovisionuser_archive`)
+
+## Delete User
+
+Moodle provides the following functionality when deleting a user with the `delete_user()` function:
+- replaces the username with the e-mail address and a timestamp and replaces the email address 
+with a random string of numbers and letters 
+- mark the user in the `user` table as deleted
+- calls all Plugins with a `pre_user_delete` function to execute the function
+- all grades are deleted backup is kept in grade_grades_history table
+- all item tags are removed
+- withdrawn user from:
+    - all courses
+    - all roles in all contexts
+- Remove from
+    - all cohort
+    - all groups
+- moves all unread messages to read
+- purges log of previous password hashes
+- removes all user tokens
+- prohibits the user for all services
+- forces the user logout - may fail if file based sessions used
+- triggers event `\core\event\user_deleted`
+- notifies all auth plugins
+
+Guest Users and Admin Users can not be deleted.
+
+To check the technical implementation look at `/lib/moodlelib.php`.
+
+In addition to the provided functionality the Plugin does:
+- delete the complete entry in the `user` table.
 
 ## Subplugins
 The Plugin requires at least one subplugin that returns the status of all users. 

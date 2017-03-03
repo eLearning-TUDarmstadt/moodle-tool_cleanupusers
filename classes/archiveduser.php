@@ -76,7 +76,7 @@ class archiveduser {
                 $DB->update_record('tool_deprovisionuser', $tooluser);
             }
 
-            // Insert copy of user in second DB and replace user in main table when entry was successfull.
+            // Insert copy of user in second DB and replace user in main table when entry was successful.
             $shadowuser = clone $user;
             $success = $DB->insert_record_raw('deprovisionuser_archive', $shadowuser, true, false, true);
             if ($success == true) {
@@ -179,6 +179,7 @@ class archiveduser {
         $cloneuser->firstname = 'Anonym';
         $cloneuser->lastname = '';
         $cloneuser->suspended = 1;
+        $cloneuser->email = '';
         $cloneuser->skype = '';
         $cloneuser->icq = '';
         $cloneuser->msn = '';
