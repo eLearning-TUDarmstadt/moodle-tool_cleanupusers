@@ -159,12 +159,19 @@ class archiveduser {
             delete_user($user);
             $transaction = $DB->start_delegated_transaction();
             // DML Exception is thrown for any failures.
+            // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
             $newusername = hash('sha384', $user->username);
             if (empty($DB->get_record('user', array("username" => $newusername)))) {
                 $user->username = $newusername;
                 user_update_user($user, false);
             } else {
-                // TODO how to deal with double hash values (unlikely)
+                // In the unlikely case that hash(username) exist in the table, while loop generates new usernames.
+                while (!empty($DB->get_record('user', array("username" => $newusername)))) {
+                    $tempname = $newusername;
+                    $newusername = hash('sha384', $user->username . $tempname);
+                }
+                $user->username = $newusername;
+                user_update_user($user, false);
             }
             $transaction->allow_commit();
         } else {
