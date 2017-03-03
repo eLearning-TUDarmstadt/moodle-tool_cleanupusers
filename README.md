@@ -23,13 +23,13 @@ Moodle provides the following functionality when suspending a user:
 The Plugin aims to make users anonymous that are suspended.
 This includes:
 
-- Hide username, firstname, lastname and all contact references to other moodle users
+- hide username, firstname, lastname and all contact references to other moodle users
     - replacing the username with Anonym + id
     
         *This is neccessary since usernames have to be unique.*
     
-    - =replacing all other data in the `user` table with the appropriate null value
-- Save necessary data in a shadow table to reactivate users when necessary. (`deprovisionuser_archive`)
+    - replacing all other data in the `user` table with the appropriate null value
+- save necessary data in a shadow table to reactivate users when necessary. (`deprovisionuser_archive`)
 
 ## Delete User
 
@@ -58,7 +58,8 @@ Guest Users and Admin Users can not be deleted.
 
 To check the technical implementation look at `/lib/moodlelib.php`.
 
-In addition to the provided functionality the Plugin does:
+
+In addition to the provided functionality the deprovisionuser-plugin does:
 - delete the complete entry in the `user` table.
 
 ## Subplugins
