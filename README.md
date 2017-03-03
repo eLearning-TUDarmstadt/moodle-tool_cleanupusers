@@ -43,7 +43,7 @@ with a random string of numbers and letters
 - withdrawn user from:
     - all courses
     - all roles in all contexts
-- Remove from
+- remove user from
     - all cohort
     - all groups
 - moves all unread messages to read
@@ -58,13 +58,12 @@ Guest Users and Admin Users can not be deleted.
 
 To check the technical implementation look at `/lib/moodlelib.php`.
 
-
 In addition to the provided functionality the deprovisionuser-plugin does:
 - delete the complete entry in the `user` table.
 
 ## Subplugins
 The Plugin requires at least one subplugin that returns the status of all users. 
-Every university can write their own subplugin which specifies the condition to delete archive and 
+Every university can write their own subplugin which specifies the conditions to delete archive and 
 reactivate users. An Interface for the methods to be implemented is included in the directory
  `deprovisionuser/classes`. 
 As the default the subplugin of the University of Münster is installed and can not be uninstalled.
