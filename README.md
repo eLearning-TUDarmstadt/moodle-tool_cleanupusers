@@ -43,7 +43,7 @@ with a random string of numbers and letters
 - withdrawn user from:
     - all courses
     - all roles in all contexts
-- remove user from
+- removes user from
     - all cohort
     - all groups
 - moves all unread messages to read

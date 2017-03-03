@@ -159,7 +159,13 @@ class archiveduser {
             delete_user($user);
             $transaction = $DB->start_delegated_transaction();
             // DML Exception is thrown for any failures.
-            $DB->delete_records('user', array('id' => $user->id));
+            $newusername = hash('sha384', $user->username);
+            if (empty($DB->get_record('user', array("username" => $newusername)))) {
+                $user->username = $newusername;
+                user_update_user($user, false);
+            } else {
+                // TODO how to deal with double hash values (unlikely)
+            }
             $transaction->allow_commit();
         } else {
             throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
