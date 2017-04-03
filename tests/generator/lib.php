@@ -49,6 +49,10 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $generator->enrol_user($user->id, $course->id);
         $data['user'] = $user;
 
+        $listuser = $generator->create_user(array('username' => 'n_herr03', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
+        $generator->enrol_user($user->id, $course->id);
+        $data['listuser'] = $listuser;
+
         $suspendeduser = $generator->create_user(array('username' => 'suspendeduser', 'suspended' => '1'));
         $generator->enrol_user($suspendeduser->id, $course->id);
         $data['suspendeduser'] = $suspendeduser;
@@ -57,9 +61,17 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $generator->enrol_user($suspendeduser2->id, $course->id);
         $data['suspendeduser2'] = $suspendeduser2;
 
-        $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1'));
+        $timestamponeyearago = $mytimestamp - 31622600;
+        $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1', 'lastaccess' => $timestamponeyearago));
         $generator->enrol_user($deleteduser->id, $course->id);
         $data['deleteduser'] = $deleteduser;
+
+        // User that is archived by the plugin and will be deleted in cronjob.
+        $suspendeduser3 = $generator->create_user(array('username' => 'Anonym', 'suspended' => '1'));
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $suspendeduser3->id, 'archived' => true, 'timestamp' => $timestamponeyearago), true, false, true);
+        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $suspendeduser3->id, 'username' => 'archivedbyplugin',
+            'suspended' => 1, 'lastaccess' => $timestamponeyearago), true, false, true);
+        $data['archivedbyplugin'] = $suspendeduser3;
 
         $adminuser = $generator->create_user(array('username' => 'adminuser', 'suspended' => '1'));
         $generator->enrol_user($adminuser->id, $course->id);

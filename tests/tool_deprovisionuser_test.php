@@ -23,6 +23,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+use tool_deprovisionuser\task;
+
 class tool_deprovisionuser_testcase extends advanced_testcase {
 
     protected function set_up() {
