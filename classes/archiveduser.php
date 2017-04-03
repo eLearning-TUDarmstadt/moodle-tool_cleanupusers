@@ -108,30 +108,38 @@ class archiveduser {
             $user->suspended = 0;
             user_update_user($user, false);
         }
-        // Delete user from table with timestamp.
-        if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-            $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
-        }
-
-        // Is user in the shadow table?
-        if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
-            // If there is no user, the main table can not be updated.
-            throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
+        // The User to activate was not archived by this plugin.
+        if ($user->firstname !== 'Anonym') {
+            $transaction->allow_commit();
+            return;
         } else {
-            // If user is in table replace data.
-            $shadowuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
-            $shadowuser->suspended = 0;
-            $DB->update_record('user', $shadowuser);
-            // Delete records from deprovisionuser_archive table.
-            $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
-        }
 
-        // Delete records from deprovisionuser_archive table.
-        $transaction->allow_commit();
-        $user = $thiscoreuser->get_user($this->id);
-        // When Name is still Anonym something went wrong.
-        if ($user->firstname == 'Anonym') {
-            throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
+            // Deletes record of plugin table.
+            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
+                $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
+            }
+
+            // Is user in the shadow table?
+            if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
+                // If there is no user, the main table can not be updated.
+                throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
+            } else {
+                // If user is in table replace data.
+                $shadowuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
+                $shadowuser->suspended = 0;
+                // TODO catch dml exception?
+                $DB->update_record('user', $shadowuser);
+                // Delete records from deprovisionuser_archive table.
+                $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
+            }
+
+            // Delete records from deprovisionuser_archive table.
+            $transaction->allow_commit();
+            $user = $thiscoreuser->get_user($this->id);
+            // When Name is still Anonym something went wrong.
+            if ($user->firstname == 'Anonym') {
+                throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
+            }
         }
     }
 
