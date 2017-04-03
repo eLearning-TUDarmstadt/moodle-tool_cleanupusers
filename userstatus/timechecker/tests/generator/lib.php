@@ -71,6 +71,14 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $generator->enrol_user($neverloggedin->id, $course->id);
         $data['neverloggedin'] = $neverloggedin;
 
+        $tendaysago = $mytimestamp - 864000;
+        $reactivate = $generator->create_user(array('username' => 'Anonym', 'suspended' => 1));
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivate->id, 'archived' => true), true, false, true);
+        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $reactivate->id, 'username' => 'reactivate',
+            'suspended' => 1, 'lastaccess' => $tendaysago), true, false, true);
+        $generator->enrol_user($reactivate->id, $course->id);
+        $data['reactivate'] = $reactivate;
+
         return $data; // Return the user, course and group objects.
     }
 }

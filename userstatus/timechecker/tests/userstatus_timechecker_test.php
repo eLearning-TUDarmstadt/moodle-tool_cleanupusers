@@ -42,14 +42,17 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         global $DB, $CFG, $OUTPUT;
         $data = $this->set_up();
         $myuserstatuschecker = new timechecker();
-        // Calls for dubplugin methode to return arrays.
+        // Calls for subplugin functions to return arrays.
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
+        $returntoreactivate = $myuserstatuschecker->get_to_reactivate();
 
         $this->assertEquals($data['useroneyearnotlogedin'], $returnsuspend[$data['useroneyearnotlogedin']->id]);
         $this->assertEquals($data['userarchivedoneyearnintydays'], $returndelete[$data['userarchivedoneyearnintydays']->id]);
         $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
+        // Merely id is compared since the user has to be reactivated by the main plugin.
+        $this->assertEquals($data['reactivate']->id, $returntoreactivate[$data['reactivate']->id]->id);
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
