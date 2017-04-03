@@ -81,7 +81,7 @@ class archive_user_task extends \core\task\scheduled_task {
         }
         $activatearray = $userstatuschecker->get_to_reactivate();
         foreach ($activatearray as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+            if ($user->deleted == 0 && $user->lastaccess !== 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 try {
                     $archiveduser->activate_me();
@@ -93,7 +93,7 @@ class archive_user_task extends \core\task\scheduled_task {
         }
         $arraytodelete = $userstatuschecker->get_to_delete();
         foreach ($arraytodelete as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+            if ($user->deleted == 0 && $user->lastaccess !== 0 && !is_siteadmin($user)) {
                 $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 try {
                     $archiveduser->delete_me();
