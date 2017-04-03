@@ -93,20 +93,43 @@ class timechecker implements userstatusinterface {
         }
         return $todeleteusers;
     }
+
+    /**
+     * Returns an array of users that should be reactivated.
+     *
+     * @return array
+     */
     public function get_to_reactivate() {
+        global $DB;
         $users = $this->get_all_users();
         $toactivate = array();
         foreach ($users as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+            if ($user->suspended == 1 && $user->deleted == 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
+                // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
+                if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
+                    $timenotloggedin = $mytimestamp - $user->lastaccess;
+                    $activateuser = $user;
+
+                } else {
+                    $shadowtableuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
+                    // There is an entry in the shadowtable, data from the shadowtable is used.
+                    if ($shadowtableuser->lastaccess !== 0) {
+                        $timenotloggedin = $mytimestamp - $shadowtableuser->lastaccess;
+                    } else {
+                        continue;
+                    }
+                    $activateuser = $shadowtableuser;
+                }
                 if ($timenotloggedin < 8035200 && $user->suspended == 1) {
-                    $toactivate[$key] = $user;
+                    // TODO is the whole user needed?
+                    $toactivate[$key] = $activateuser;
                 }
             }
         }
         return $toactivate;
     }
+
     private function get_all_users() {
         global $DB;
         return $DB->get_records('user');
