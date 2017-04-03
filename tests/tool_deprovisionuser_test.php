@@ -93,6 +93,50 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $adminaccount->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['adminuser']->id));
         $this->assertEmpty($recordtooltable);
+        $this->resetAfterTest(true);
+
+    }
+
+    /**
+     * Function which executes anf tests the cronjob.
+     */
+    public function test_cronjob() {
+        global $DB;
+        $data = $this->set_up();
+        $this->assertNotEmpty($data);
+
+        $cronjob = new tool_deprovisionuser\task\archive_user_task();
+        $name = $cronjob->get_name();
+        $this->assertEquals(get_string('archive_user_task', 'tool_deprovisionuser'), $name);
+
+        // Before cronjob is executed users are not suspended.
+        $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
+        $this->assertEquals(0, $recordusertable->suspended);
+
+        $recordusertable = $DB->get_record('user', array('id' => $data['listuser']->id));
+        $this->assertEquals(0, $recordusertable->suspended);
+        // The default plugin is the userstatuswwu plugin therefore all users that are not listet in the
+        // Groups_excerpt_short.txt are suspended
+        $cronjob->execute();
+
+        $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+
+        $record = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
+        $this->assertnotEquals($data['archivedbyplugin']->username, $record->username);
+
+        $recordusertable = $DB->get_record('user', array('id' => $data['listuser']->id));
+        $this->assertEquals(0, $recordusertable->suspended);
+
+        // Cronjob is executed with different subplugin.
+        set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
+        $cronjob = new tool_deprovisionuser\task\archive_user_task();
+        $cronjob->execute();
+
+        $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
+        // User is reactivated.
+        $this->assertEquals(0, $recordusertable->suspended);
+
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
