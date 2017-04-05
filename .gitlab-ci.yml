@@ -19,7 +19,7 @@ before_script:
  # Several tools complain about xdebug slowdown.
  #- phpenv config-rm xdebug.ini
  # Install php-gd
- - apt-get install -y git libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libicu-dev g++ npm
+ - apt-get install -y git libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libicu-dev g++ libpq-dev npm
  - docker-php-ext-install -j$(nproc) iconv mcrypt intl zip pgsql
  - docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
  - docker-php-ext-install -j$(nproc) gd
