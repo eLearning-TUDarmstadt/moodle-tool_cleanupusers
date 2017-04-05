@@ -46,16 +46,20 @@ echo $OUTPUT->header();
 echo $renderer->get_heading();
 $content = '';
 $mform = new \tool_deprovisionuser\subplugin_select_form();
-$arraydata = get_object_vars($mform->get_data());
-$return = $mform->validation($arraydata, null);
-if ($return) {
+$formdata = $mform->get_data();
+$datavalidated = false;
+if (!empty($formdata)) {
+    $arraydata = get_object_vars($formdata);
+    $datavalidated = $mform->validation($arraydata, null);
+}
+if ($datavalidated) {
     set_config('deprovisionuser_subplugin', $arraydata['subplugin'], 'tool_deprovisionuser');
     $content = 'You successfully submitted the Subplugin.';
     $content .= $mform->display();
     // In this case you process validated data.
 } else {
-    if (!empty($return['subplugin'])) {
-        $content .= $return['subplugin'];
+    if (!empty($datavalidated['subplugin'])) {
+        $content .= $datavalidated['subplugin'];
     }
     $content .= $mform->display();
 }

@@ -25,8 +25,13 @@ namespace tool_deprovisionuser;
 
 defined('MOODLE_INTERNAL') || die();
 
-class deprovisionuser_exception extends \moodle_exception {
-
+/**
+ * Class deprovisionuser_subplugin_exception
+ * @package tool_deprovisionuser
+ * @copyright 2016 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class deprovisionuser_subplugin_exception extends \moodle_exception {
     /**
      * Constructor
      * @param string $errorcode The name of the string from webservice.php to print
