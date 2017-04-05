@@ -137,20 +137,22 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(0, $recordusertable->suspended);
 
     }
-
+    /**
+     * Test the the subplugin_select_form.
+     */
     public function test_subpluginform() {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        $subplugin_form = new tool_deprovisionuser\subplugin_select_form();
+        // Validation with existing subplugin returns true.
+        $subpluginform = new tool_deprovisionuser\subplugin_select_form();
         $validationdata = array ("subplugin" => 'timechecker');
-        $return = $subplugin_form->validation($validationdata, null);
+        $return = $subpluginform->validation($validationdata, null);
         $this->assertEquals(true, $return);
 
+        // Validation with non-existing subplugin returns an array with an errormessage.
         $validationdata = array ("subplugin" => 'nosubplugin');
-        //$this->setexpectedException('tool_deprovisionuser\deprovisionuser_subplugin_exception',
-         //   'The Subplugin you selected is not available. The default will be used.');
-        $return = $subplugin_form->validation($validationdata, null);
+        $return = $subpluginform->validation($validationdata, null);
         $errorarray = array('subplugin' => new tool_deprovisionuser\deprovisionuser_subplugin_exception
             (get_string('errormessagesubplugin', 'tool_deprovisionuser')));
         $this->assertEquals($errorarray, $return);
