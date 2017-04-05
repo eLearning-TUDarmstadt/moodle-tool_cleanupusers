@@ -139,6 +139,24 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(0, $recordusertable->suspended);
 
     }
+
+    public function test_subpluginform() {
+        $data = $this->set_up();
+        $this->assertNotEmpty($data);
+
+        $subplugin_form = new tool_deprovisionuser\subplugin_select_form();
+        $validationdata = array ("subplugin" => 'timechecker');
+        $return = $subplugin_form->validation($validationdata, null);
+        $this->assertEquals(true, $return);
+
+        $validationdata = array ("subplugin" => 'nosubplugin');
+        //$this->setexpectedException('tool_deprovisionuser\deprovisionuser_subplugin_exception',
+         //   'The Subplugin you selected is not available. The default will be used.');
+        $return = $subplugin_form->validation($validationdata, null);
+        $errorarray = array('subplugin' => new tool_deprovisionuser\deprovisionuser_subplugin_exception
+            (get_string('errormessagesubplugin', 'tool_deprovisionuser')));
+        $this->assertEquals($errorarray, $return);
+    }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
      */
