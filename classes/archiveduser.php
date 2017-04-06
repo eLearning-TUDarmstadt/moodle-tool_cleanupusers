@@ -163,12 +163,10 @@ class archiveduser {
                 $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
 
             }
-            \core\session\manager::kill_user_sessions($user->id);
-            delete_user($user);
 
-            // DML Exception is thrown for any failures.
+            // DML Exception is thrown for any failures. TODO:securenamenottolong
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
-            $newusername = hash('sha384', $user->username);
+            $newusername = hash('sha256', $user->username);
             if (empty($DB->get_record('user', array("username" => $newusername)))) {
                 $user->username = $newusername;
                 user_update_user($user, false);
@@ -181,6 +179,8 @@ class archiveduser {
                 $user->username = $newusername;
                 user_update_user($user, false);
             }
+            \core\session\manager::kill_user_sessions($user->id);
+            delete_user($user);
             $transaction->allow_commit();
         } else {
             throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
