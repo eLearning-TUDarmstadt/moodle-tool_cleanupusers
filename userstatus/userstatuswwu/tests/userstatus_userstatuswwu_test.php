@@ -41,10 +41,10 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         global $DB, $CFG, $OUTPUT;
         $data = $this->set_up();
         $this->assertFileExists($CFG->dirroot .
-            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/groups_excerpt_short.txt');
+            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
 
         $myuserstatuschecker = new userstatuswwu($CFG->dirroot .
-            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/groups_excerpt_short.txt',
+            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt',
             array('member_group' => 'member_group', 'member' => 'member'));
         // Calls for subplugin methode to return array.
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
