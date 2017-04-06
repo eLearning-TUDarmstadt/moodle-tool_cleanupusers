@@ -57,6 +57,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $suspendedtodelete->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser2']->id));
+        $this->assertEquals(1, $recordusertable->deleted);
         $this->assertNotEmpty($recordusertable);
         $this->assertEmpty($recordtooltable);
 
@@ -71,7 +72,6 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $cloneuser->firstname = 'Anonym';
         $cloneuser->lastname = '';
         $DB->update_record('user', $cloneuser);
-
         $suspendedtoactive->activate_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
@@ -116,30 +116,38 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
         $recordusertable = $DB->get_record('user', array('id' => $data['listuser']->id));
         $this->assertEquals(0, $recordusertable->suspended);
-        // The default plugin is the userstatuswwu plugin therefore all users that are not listet in the
-        // Groups_excerpt_short.txt are suspended
-        $this->setExpectedException('userstatus_userstatuswwu\userstatuswwu_exception', 'The reference to the .txt could not be found.');
-        $cronjob->execute();
 
-        // TODO: set up test data and use it.
-        /*$recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
-        $this->assertEquals(1, $recordusertable->suspended);
-
-        $record = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
-        $this->assertnotEquals($data['archivedbyplugin']->username, $record->username);
-
-        $recordusertable = $DB->get_record('user', array('id' => $data['listuser']->id));
-        $this->assertEquals(0, $recordusertable->suspended);*/
-
-        // Cronjob is executed with different subplugin.
+        // Cronjob will
         set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
         $cronjob = new tool_deprovisionuser\task\archive_user_task();
         $cronjob->execute();
 
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
-        // User is reactivated.
         $this->assertEquals(0, $recordusertable->suspended);
+        $this->assertEquals(0, $recordusertable->deleted);
 
+        $recordusertable = $DB->get_record('user', array('id' => $data['listuser']->id));
+        $this->assertEquals(0, $recordusertable->suspended);
+        $this->assertEquals(0, $recordusertable->deleted);
+
+        $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEquals(0, $recordusertable->deleted);
+
+        // Users that were archived manually must not be deleted by the cronjob.
+        $recordusertable = $DB->get_record('user', array('id' => $data['deleteduser']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEquals(0, $recordusertable->deleted);
+
+        $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEquals(1, $recordusertable->deleted);
+
+        // Admin User will not be deleted, although he is suspended (only manually possible).
+        $this->setAdminUser($data['adminuser']);
+        $recordusertable = $DB->get_record('user', array('id' => $data['adminuser']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEquals(0, $recordusertable->deleted);
     }
     /**
      * Test the the subplugin_select_form.
