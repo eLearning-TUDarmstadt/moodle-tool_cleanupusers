@@ -44,6 +44,7 @@ $string['willbe_archived'] = 'will be archived in the next cron_job';
 $string['shouldbedelted'] = 'will be deleted in the next cron_job';
 $string['neverlogged'] = 'Never logged in';
 $string['nothinghappens'] = 'Not handled since they never logged in';
+$string['waittodelete'] = 'The user is suspended and will not be deleted in the next cronjob.';
 $string['e-mail-archived'] = 'In the last cron job {$a} users were archived.';
 $string['e-mail-deleted'] = 'In the last cron job {$a} users were deleted.';
 $string['errormessagenotactive'] = 'Not able to activate user.';

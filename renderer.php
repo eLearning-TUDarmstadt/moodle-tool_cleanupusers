@@ -58,8 +58,8 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         } else {
             $rendertoarchive = $this->information_user_suspend($userstoarchive);
         }
-        $suspendedusers = $DB->get_records('user',  array('suspended' => '1'));
-        $renderaresuspended = $this->information_user_suspend($suspendedusers);
+        $suspendedusers = $DB->get_records('user',  array('suspended' => '1', 'deleted' => 0));
+        $renderaresuspended = $this->information_user_is_suspend($suspendedusers);
 
         $output = '';
         if (!empty($rendertoarchive)) {
@@ -162,6 +162,47 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
                     $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
                 }
                 $arrayofusers['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
+
+                if ($user->suspended == 0) {
+                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
+                        \html_writer::img($OUTPUT->pix_url('t/hide'), get_string('hideuser', 'tool_deprovisionuser'),
+                            array('class' => "imggroup-" . $user->id)));
+                } else {
+                    $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .
+                        '/tool/deprovisionuser/handleuser.php?userid=' . $user->id . '&action=' . $user->suspended,
+                        \html_writer::img($OUTPUT->pix_url('t/show'), get_string('showuser', 'tool_deprovisionuser'),
+                            array('class' => "imggroup-" . $user->id)));
+                }
+            }
+            $result[$key] = $arrayofusers;
+        }
+        return $result;
+    }
+/**
+     * Safes relevant information for users that are identified by the Subplugin for suspending.
+     * @param $user a Object of the user std_class
+     * @return array
+     */
+    private function information_user_is_suspend($users) {
+        global $DB, $OUTPUT, $CFG;
+        $result = array();
+        foreach ($users as $key => $user) {
+            $arrayofusers = array();
+            if (!empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
+                $user = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
+            }
+            if (!empty($user)) {
+                $arrayofusers['username'] = $user->username;
+                $arrayofusers['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
+
+                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+                if (empty($isarchivid)) {
+                    $arrayofusers['archived'] = get_string('No', 'tool_deprovisionuser');
+                } else {
+                    $arrayofusers['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                }
+                $arrayofusers['Willbe'] = get_string('waittodelete', 'tool_deprovisionuser');
 
                 if ($user->suspended == 0) {
                     $arrayofusers['link'] = \html_writer::link($CFG->wwwroot . '/' . $CFG->admin .

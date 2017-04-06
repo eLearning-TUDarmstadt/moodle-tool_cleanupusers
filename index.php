@@ -71,7 +71,7 @@ if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
     $subplugin = 'userstatuswwu';
     $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
 }
-$content .= 'You are currently using the ' . $subplugin . ' Plugin';
+$content .= 'You are currently using the <b>' . $subplugin . '</b> Plugin';
 $archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
