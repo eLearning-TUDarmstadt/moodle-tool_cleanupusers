@@ -57,11 +57,15 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $generator->enrol_user($suspendeduser->id, $course->id);
         $data['suspendeduser'] = $suspendeduser;
 
+        $timestamponeyearago = $mytimestamp - 31622600;
+        $notsuspendeduser = $generator->create_user(array('username' => 'notsuspendeduser', 'suspended' => '0', 'lastaccess' => $timestamponeyearago));
+        $generator->enrol_user($notsuspendeduser->id, $course->id);
+        $data['notsuspendeduser'] = $notsuspendeduser;
+
         $suspendeduser2 = $generator->create_user(array('username' => 'suspendeduser2', 'suspended' => '1'));
         $generator->enrol_user($suspendeduser2->id, $course->id);
         $data['suspendeduser2'] = $suspendeduser2;
 
-        $timestamponeyearago = $mytimestamp - 31622600;
         $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1', 'lastaccess' => $timestamponeyearago));
         $generator->enrol_user($deleteduser->id, $course->id);
         $data['deleteduser'] = $deleteduser;
