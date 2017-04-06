@@ -80,13 +80,25 @@ class timechecker implements userstatusinterface {
     }
 
     public function get_to_delete() {
-        $users = $this->get_all_users();
+        global $DB;
+        $users = $this->get_all_users_suspended();
         $todeleteusers = array();
         foreach ($users as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
                 if ($timenotloggedin > $this->timedelete + $this->timesuspend && $user->suspended == 1) {
+                    $todeleteusers[$key] = $user;
+                }
+            }
+        }
+        $pluginusers = $this->get_plugin_user_suspended();
+        foreach ($pluginusers as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+                $mytimestamp = time();
+                $timearchived = $DB->get_record('tool_deprovisionuser', array('id' => $user->id), 'timestamp');
+                $timenotloggedin = $mytimestamp - $timearchived->timestamp;
+                if ($timenotloggedin > $this->timedelete && $user->suspended == 1) {
                     $todeleteusers[$key] = $user;
                 }
             }
@@ -133,5 +145,17 @@ class timechecker implements userstatusinterface {
     private function get_all_users() {
         global $DB;
         return $DB->get_records('user');
+    }
+
+    private function get_all_users_suspended() {
+        global $DB;
+        $select = 'deleted=0 AND suspended=1';
+        return $DB->get_records_select('user', $select);
+    }
+
+    private function get_plugin_user_suspended() {
+        global $DB;
+        $select = 'deleted=0 AND suspended=1';
+        return $DB->get_records_select('deprovisionuser_archive', $select);
     }
 }
