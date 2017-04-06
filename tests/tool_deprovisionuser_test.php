@@ -82,14 +82,16 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->setAdminUser($data['adminuser']);
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
         // Todo: deprecated replace later
-        $this->setExpectedException('tool_deprovisionuser\deprovisionuser_exception', 'Not able to suspend user');
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectExceptionMessage('Not able to suspend user');
         $adminaccount->archive_me();
         $recordtooltable = $DB->get_record('moodle_deprovisionuser', array('id' => $data['adminuser']->id));
         $this->assertEmpty($recordtooltable);
 
         $this->setAdminUser($data['adminuser']);
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
-        $this->setexpectedException('tool_deprovisionuser\deprovisionuser_exception', 'Not able to delete user');
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectExceptionMessage('Not able to delete user');
         $adminaccount->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['adminuser']->id));
         $this->assertEmpty($recordtooltable);
