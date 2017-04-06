@@ -77,7 +77,7 @@ if ($action == 0) {
         }
         notice(get_string('usersdeleted', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     } else {
-        notice('errormessagenoaction', $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
     }
 } else {
     notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
