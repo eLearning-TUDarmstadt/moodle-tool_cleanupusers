@@ -179,7 +179,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         }
         return $result;
     }
-/**
+    /**
      * Safes relevant information for users that are identified by the Subplugin for suspending.
      * @param $user a Object of the user std_class
      * @return array
