@@ -39,6 +39,7 @@ $string['usersreactivated'] = 'The User has been reactivated.';
 $string['showuser'] = 'Activate User';
 $string['hideuser'] = 'Suspend User';
 $string['deleteuser'] = 'Delete User';
+$string['aresuspended'] = 'Users currently suspended:';
 $string['archive_user_task'] = 'Archive Users';
 $string['willbe_archived'] = 'will be archived in the next cron_job';
 $string['shouldbedelted'] = 'will be deleted in the next cron_job';
