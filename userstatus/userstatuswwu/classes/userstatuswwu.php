@@ -222,7 +222,7 @@ class userstatuswwu implements userstatusinterface {
             if (is_siteadmin($moodleuser) || !empty($DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id)))) {
                 continue;
             }
-            if ($moodleuser->lastaccess == 0) {
+            if ($moodleuser->lastaccess == 0 && $moodleuser->deleted == 0) {
                 $datauser = (object) 0;
                 $datauser->id = $moodleuser->id;
                 $datauser->username = $moodleuser->username;
