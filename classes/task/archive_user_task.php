@@ -64,45 +64,22 @@ class archive_user_task extends \core\task\scheduled_task {
         } else {
             $userstatuschecker = new userstatuswwu();
         }
-        $archivearray = $userstatuschecker->get_to_suspend();
-        $unabletoarchive = array();
-        $unabletodelete = array();
         $unabletoactivate = array();
-        foreach ($archivearray as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
-                $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
-                try {
-                    $archiveduser->archive_me();
-                    $userarchived++;
-                } catch (deprovisionuser_exception $e) {
-                    $unabletoarchive[$key] = $user;
-                }
-            }
-        }
-        $activatearray = $userstatuschecker->get_to_reactivate();
-        foreach ($activatearray as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess !== 0 && !is_siteadmin($user)) {
-                $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
-                try {
-                    $archiveduser->activate_me();
-                } catch (deprovisionuser_exception $e) {
-                    $unabletoactivate[$key] = $user;
-                }
 
-            }
-        }
+        $archivearray = $userstatuschecker->get_to_suspend();
+        $suspendresult = $this->operate_user_array($archivearray, 'suspend');
+        $unabletoarchive = $suspendresult['failures'];
+        $userarchived = $suspendresult['numbersuccess'];
+
+        $reactivatearray = $userstatuschecker->get_to_reactivate();
+        $activateresult = $this->operate_user_array($reactivatearray, 'reactivate');
+        $unableactivate = $activateresult['failures'];
+
         $arraytodelete = $userstatuschecker->get_to_delete();
-        foreach ($arraytodelete as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess !== 0 && !is_siteadmin($user)) {
-                $archiveduser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
-                try {
-                    $archiveduser->delete_me();
-                    $userdeleted++;
-                } catch (deprovisionuser_exception $e) {
-                    $unabletodelete[$key] = $user;
-                }
-            }
-        }
+        $deleteresult = $this->operate_user_array($arraytodelete, 'delete');
+        $unabletodelete = $deleteresult['failures'];
+        $userdeleted = $deleteresult['numbersuccess'];
+
         $admin = get_admin();
         $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . "\r\n" .get_string('e-mail-deleted',
                 'tool_deprovisionuser', $userdeleted);
@@ -122,5 +99,37 @@ class archive_user_task extends \core\task\scheduled_task {
         $event->trigger();
 
         return true;
+    }
+
+    private function operate_user_array($userarray, $intention) {
+        $numbersuccess = 0;
+        $failures = array();
+        foreach ($userarray as $key => $user) {
+            if ($user->deleted == 0 && $user->lastaccess !== 0 && !is_siteadmin($user)) {
+                $changinguser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
+                try {
+                    switch ($intention) {
+                        case  'suspend':
+                            $changinguser->archive_me();
+                            break;
+                        case 'reactivate':
+                            $changinguser->activate_me();
+                            break;
+                        case 'delete':
+                            $changinguser->delete_me();
+                            break;
+                        default:
+                            break 2;
+                    }
+                    $numbersuccess++;
+                } catch (deprovisionuser_exception $e) {
+                    $failures[$key] = $user;
+                }
+            }
+        }
+        $result = array();
+        $result['numbersuccess'] = $numbersuccess;
+        $result['failures'] = $failures;
+        return $result;
     }
 }
