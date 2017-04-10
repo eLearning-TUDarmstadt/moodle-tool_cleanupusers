@@ -25,6 +25,8 @@ namespace userstatus_userstatuswwu;
 
 use admin_setting_configtext;
 
+defined('MOODLE_INTERNAL') || die;
+
 class admin_setting_deprovisionuser extends admin_setting_configtext {
 
     public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW,

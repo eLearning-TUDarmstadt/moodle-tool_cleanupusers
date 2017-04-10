@@ -22,6 +22,8 @@
  */
 require_once($CFG->libdir.'/adminlib.php');
 
+defined('MOODLE_INTERNAL') || die;
+
 $PAGE->set_context(context_system::instance());
 $context = context_system::instance();
 // Check permissions.

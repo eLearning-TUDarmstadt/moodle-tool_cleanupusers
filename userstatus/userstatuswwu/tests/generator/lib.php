@@ -48,13 +48,13 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $generator->enrol_user($user->id, $course->id);
         $data['e_user03'] = $user;
 
-        $timestamponeyearago = $mytimestamp - 31536000;
-        $userlongnotloggedin = $generator->create_user(array('username' => 'user', 'lastaccess' => $timestamponeyearago));
+        $unixoneyearago = $mytimestamp - 31536000;
+        $userlongnotloggedin = $generator->create_user(array('username' => 'user', 'lastaccess' => $unixoneyearago));
         $generator->enrol_user($userlongnotloggedin->id, $course->id);
         $data['user'] = $userlongnotloggedin;
 
-        $timestampfifteendays = $mytimestamp - 1296000;
-        $userfifteendays = $generator->create_user(array('username' => 'userm', 'lastaccess' => $timestampfifteendays));
+        $unixfifteendaysago = $mytimestamp - 1296000;
+        $userfifteendays = $generator->create_user(array('username' => 'userm', 'lastaccess' => $unixfifteendaysago));
         $generator->enrol_user($userfifteendays->id, $course->id);
         $data['userm'] = $userfifteendays;
 
@@ -68,12 +68,12 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $generator->enrol_user($neverloggedin->id, $course->id);
         $data['r_theu9'] = $neverloggedin;
 
-        $timestamponeyearnintydays = $mytimestamp - 39528000;
-        $deleteme = $generator->create_user(array('username' => 'd_me09', 'lastaccess' => $timestamponeyearnintydays,
+        $unixoneyearnintydays = $mytimestamp - 39528000;
+        $deleteme = $generator->create_user(array('username' => 'd_me09', 'lastaccess' => $unixoneyearnintydays,
             'suspended' => 1));
         $generator->enrol_user($deleteme->id, $course->id);
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true,
-            'timestamp' => $timestamponeyearnintydays), true, false, true);
+            'timestamp' => $unixoneyearnintydays), true, false, true);
         $data['d_me09'] = $deleteme;
 
         return $data; // Return the user and course objects.

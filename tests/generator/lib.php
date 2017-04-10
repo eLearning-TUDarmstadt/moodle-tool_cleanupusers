@@ -58,7 +58,8 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $data['suspendeduser'] = $suspendeduser;
 
         $timestamponeyearago = $mytimestamp - 31622600;
-        $notsuspendeduser = $generator->create_user(array('username' => 'notsuspendeduser', 'suspended' => '0', 'lastaccess' => $timestamponeyearago));
+        $notsuspendeduser = $generator->create_user(array('username' => 'notsuspendeduser', 'suspended' => '0',
+            'lastaccess' => $timestamponeyearago));
         $generator->enrol_user($notsuspendeduser->id, $course->id);
         $data['notsuspendeduser'] = $notsuspendeduser;
 
@@ -66,13 +67,15 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $generator->enrol_user($suspendeduser2->id, $course->id);
         $data['suspendeduser2'] = $suspendeduser2;
 
-        $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1', 'lastaccess' => $timestamponeyearago));
+        $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1',
+            'lastaccess' => $timestamponeyearago));
         $generator->enrol_user($deleteduser->id, $course->id);
         $data['deleteduser'] = $deleteduser;
 
         // User that was archived by the plugin and will be deleted in cronjob.
         $suspendeduser3 = $generator->create_user(array('username' => 'anonym', 'suspended' => '1', 'firstname' => 'Anonym'));
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $suspendeduser3->id, 'archived' => true, 'timestamp' => $timestamponeyearago), true, false, true);
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $suspendeduser3->id, 'archived' => true,
+            'timestamp' => $timestamponeyearago), true, false, true);
         $DB->insert_record_raw('deprovisionuser_archive', array('id' => $suspendeduser3->id,
             'username' => 'archivedbyplugin', 'suspended' => 1, 'lastaccess' => $timestamponeyearago),
             true, false, true);
@@ -80,8 +83,10 @@ class tool_deprovisionuser_generator extends testing_data_generator {
 
         // User that was archived by the plugin and will be deleted in cronjob.
         $reactivatebyplugin = $generator->create_user(array('username' => 'anonym2', 'suspended' => '1', 'firstname' => 'Anonym'));
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivatebyplugin->id, 'archived' => true, 'timestamp' => $timestamponeyearago), true, false, true);
-        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $reactivatebyplugin->id, 'username' => 'reactivatebyplugin',
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivatebyplugin->id, 'archived' => true,
+            'timestamp' => $timestamponeyearago), true, false, true);
+        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $reactivatebyplugin->id,
+            'username' => 'reactivatebyplugin',
             'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
         $data['reactivatebyplugin'] = $reactivatebyplugin;
 

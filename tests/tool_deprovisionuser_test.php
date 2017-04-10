@@ -81,7 +81,6 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Admin Users will not be deleted neither archived.
         $this->setAdminUser($data['adminuser']);
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0);
-        // Todo: deprecated replace later
         $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
         $this->expectExceptionMessage('Not able to suspend user');
         $adminaccount->archive_me();

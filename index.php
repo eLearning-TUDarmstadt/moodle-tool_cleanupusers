@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web interface to deprovisionuser
+ * Web interface to deprovisionuser.
  *
  * @package    tool_deprovisionuser
  * @copyright  2016 N Herrmann
