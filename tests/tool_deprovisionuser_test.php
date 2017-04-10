@@ -168,6 +168,44 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $recordusertable = $DB->get_record('user', array('id' => $data['adminuser']->id));
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
+        $this->resetAfterTest();
+
+    }
+    /**
+     * Test the the deprovisionuser cronjob complete event.
+     */
+    public function test_logging() {
+        global $DB;
+        $data = $this->set_up();
+        $this->assertNotEmpty($data);
+
+        $dbman = $DB->get_manager();
+
+        // Set logstore configuration.
+        $this->preventResetByRollback();
+
+        // Test all plugins are disabled by this command.
+        set_config('enabled_stores', '', 'tool_log');
+        $manager = get_log_manager(true);
+        $stores = $manager->get_readers();
+        $this->assertCount(0, $stores);
+
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('buffersize', 0, 'logstore_standard');
+        $manager = get_log_manager(true);
+
+        $this->assertTrue($dbman->table_exists('logstore_standard_log'));
+        $timestamp = time();
+
+        set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
+        $cronjob = new tool_deprovisionuser\task\archive_user_task();
+        $cronjob->execute();
+
+        $logstore = $DB->get_record_select('logstore_standard_log', 'timecreated >=' . $timestamp .
+            'AND eventname = \'\tool_deprovisionuser\event\deprovisionusercronjob_completed\'');
+        $this->assertEquals('a:2:{s:14:"numberarchived";i:1;s:13:"numberdeleted";i:1;}', $logstore->other);
+
+        $this->resetAfterTest();
     }
     /**
      * Test the the subplugin_select_form.
