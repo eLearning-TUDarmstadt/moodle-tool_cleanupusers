@@ -105,6 +105,9 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
+        // Set up mail configuration
+        unset_config('noemailever');
+        $sink = $this->redirectEmails();
 
         $cronjob = new tool_deprovisionuser\task\archive_user_task();
         $name = $cronjob->get_name();
@@ -121,6 +124,10 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
         $cronjob = new tool_deprovisionuser\task\archive_user_task();
         $cronjob->execute();
+
+        // Administrator should have received an email.
+        $messages = $sink->get_messages();
+        $this->assertEquals(1, count($messages));
 
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
         $this->assertEquals(0, $recordusertable->suspended);
