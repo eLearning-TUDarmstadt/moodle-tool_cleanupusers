@@ -128,6 +128,9 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
+        $expectedmessage = "In the last cron job 1 users were archived.In the last cron job 1 users were deleted.No problems occured in plugin tool_deprovisionuser in the last run.";
+        $msg = str_replace(array("\r\n", "\r", "\n"), '', $messages[0]->body);
+        $this->assertEquals($expectedmessage, $msg);
 
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
         $this->assertEquals(0, $recordusertable->suspended);
