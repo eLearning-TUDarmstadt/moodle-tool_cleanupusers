@@ -45,10 +45,11 @@ class subplugin_select_form extends moodleform {
         } else {
             $text = 'Change the subplugin';
         }
-        if (!empty(get_config('tool_deprovisionuser'))) {
-            $mform->setDefault('subplugin', get_config('tool_deprovisionuser'));
-        }
         $mform->addElement('select', 'subplugin', $text, $types);
+
+        if (!empty(get_config('tool_deprovisionuser'))) {
+            $mform->setDefault('subplugin', get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'));
+        }
         $mform->addElement('submit', 'reset', 'Submit');
     }
 
