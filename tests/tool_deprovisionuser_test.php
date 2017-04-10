@@ -139,6 +139,11 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
 
+        // User is reactivated.
+        $recordusertable = $DB->get_record('user', array('id' => $data['reactivatebyplugin']->id));
+        $this->assertEquals(0, $recordusertable->suspended);
+        $this->assertEquals(0, $recordusertable->deleted);
+
         // Users that were archived manually must not be deleted by the cronjob.
         $recordusertable = $DB->get_record('user', array('id' => $data['deleteduser']->id));
         $this->assertEquals(1, $recordusertable->suspended);
