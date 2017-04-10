@@ -110,7 +110,7 @@ class archive_user_task extends \core\task\scheduled_task {
      * @throws \coding_exception
      */
     private function change_user_deprovisionstatus($userarray, $intention) {
-        if (!in_array($intention, array('suspend', 'reactivate', 'delete'))){
+        if (!in_array($intention, array('suspend', 'reactivate', 'delete'))) {
             throw new \coding_exception('Invalid parameters in tool_deprovisionuser.');
         }
         $numbersuccess = 0;
