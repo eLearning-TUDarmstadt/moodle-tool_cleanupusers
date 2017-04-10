@@ -67,16 +67,16 @@ class archive_user_task extends \core\task\scheduled_task {
         $unabletoactivate = array();
 
         $archivearray = $userstatuschecker->get_to_suspend();
-        $suspendresult = $this->operate_user_array($archivearray, 'suspend');
+        $suspendresult = $this->change_user_deprovisionstatus($archivearray, 'suspend');
         $unabletoarchive = $suspendresult['failures'];
         $userarchived = $suspendresult['numbersuccess'];
 
         $reactivatearray = $userstatuschecker->get_to_reactivate();
-        $activateresult = $this->operate_user_array($reactivatearray, 'reactivate');
+        $activateresult = $this->change_user_deprovisionstatus($reactivatearray, 'reactivate');
         $unableactivate = $activateresult['failures'];
 
         $arraytodelete = $userstatuschecker->get_to_delete();
-        $deleteresult = $this->operate_user_array($arraytodelete, 'delete');
+        $deleteresult = $this->change_user_deprovisionstatus($arraytodelete, 'delete');
         $unabletodelete = $deleteresult['failures'];
         $userdeleted = $deleteresult['numbersuccess'];
 
@@ -101,7 +101,18 @@ class archive_user_task extends \core\task\scheduled_task {
         return true;
     }
 
-    private function operate_user_array($userarray, $intention) {
+    /**
+     * Deletes, suspends or reactivates an array of users.
+     *
+     * @param $userarray array of users
+     * @param $intention one of suspend, delete, reactivate
+     * @return array ['numbersuccess'] successfully changed users ['failures'] array of users who could not be changed
+     * @throws \coding_exception
+     */
+    private function change_user_deprovisionstatus($userarray, $intention) {
+        if (!in_array($intention, array('suspend', 'reactivate', 'delete'))){
+            throw new \coding_exception('Invalid parameters in tool_deprovisionuser.');
+        }
         $numbersuccess = 0;
         $failures = array();
         foreach ($userarray as $key => $user) {
@@ -118,8 +129,7 @@ class archive_user_task extends \core\task\scheduled_task {
                         case 'delete':
                             $changinguser->delete_me();
                             break;
-                        default:
-                            break 2;
+                        // No default since if-clause checks the intention parameter.
                     }
                     $numbersuccess++;
                 } catch (deprovisionuser_exception $e) {
