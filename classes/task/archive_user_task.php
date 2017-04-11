@@ -122,6 +122,7 @@ class archive_user_task extends \core\task\scheduled_task {
      * @throws \coding_exception
      */
     private function change_user_deprovisionstatus($userarray, $intention) {
+        global $DB;
         // Checks whether the intention is valid.
         if (!in_array($intention, array('suspend', 'reactivate', 'delete'))) {
             throw new \coding_exception('Invalid parameters in tool_deprovisionuser.');
@@ -137,7 +138,8 @@ class archive_user_task extends \core\task\scheduled_task {
         // However this would have produced duplicated code.
         // Therefore checking the intention parameter repeatedly was preferred.
         foreach ($userarray as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess !== 0 && !is_siteadmin($user)) {
+            $user = $DB->get_record('user', array('id' => $user->id));
+            if ($user->deleted == 0 && !is_siteadmin($user)) {
                 $changinguser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 try {
                     switch ($intention) {

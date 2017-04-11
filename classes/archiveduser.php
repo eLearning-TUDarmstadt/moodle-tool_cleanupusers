@@ -37,19 +37,28 @@ require_once($CFG->dirroot.'/lib/moodlelib.php');
 class archiveduser {
 
     /** @var int The id of the user */
-    private $id;
+    public $id;
 
     /** @var int 1 if the user is suspended 0 otherwise */
-    private $archived;
+    public $archived;
+
+    /** @var int timestamp */
+    public $lastaccess;
+
+    /** @var string username */
+    public $username;
+
 
     /**
      * Archiveduser constructor.
      * @param int $id
      * @param int $archived
      */
-    public function __construct($id, $archived) {
+    public function __construct($id, $archived, $lastaccess = 0, $username = '') {
         $this->id = $id;
         $this->archived = $archived;
+        $this->lastaccess = $lastaccess;
+        $this->username = $username;
     }
 
     /**
