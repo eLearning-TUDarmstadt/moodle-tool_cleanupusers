@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use tool_deprovisionuser\db as this_db;
 use tool_deprovisionuser\deprovisionuser_exception;
-use userstatus_timechecker\timechecker;
+// Needed for the default plugin.
 use userstatus_userstatuswwu\userstatuswwu;
 
 class archive_user_task extends \core\task\scheduled_task {
@@ -46,17 +46,19 @@ class archive_user_task extends \core\task\scheduled_task {
     }
 
     /**
-     * Runs the cron job - Makes a list of all Users who will be archived.
-     *
-     * Only supposed to execute Logic. Admin is supposed to see the last result of the Cron-Job. We need to save the data of users
-     * in Databases to display the results of the last cronjob.
+     * Runs the cron job - Calls for the currently activated subplugin to return arrays of users.
+     * Distinguishes between users to reacticate, suspend and delete.
+     * Subsequently sends an e-mail to the admin containing information about the amount of successfully changed users
+     * and the amount of failures.
+     * Last but not least triggers an event with the same information.
      *
      * @return true
      */
     public function execute() {
-        global $DB, $USER, $PAGE;
-        $userdeleted = 0;
-        $userarchived = 0;
+        // In case the admin did not submit a subplugin, the default is used.
+        // This is very unlikely to happen since when installing the plugin a default is defined.
+        // It could happen when subplugin is deleted manually (Uninstalling subplugins that are active is not allowed).
+
         if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
             $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
             $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
@@ -64,35 +66,46 @@ class archive_user_task extends \core\task\scheduled_task {
         } else {
             $userstatuschecker = new userstatuswwu();
         }
-        $unabletoactivate = array();
 
+        // Private function is executed to suspend, delete and activate users.
         $archivearray = $userstatuschecker->get_to_suspend();
         $suspendresult = $this->change_user_deprovisionstatus($archivearray, 'suspend');
         $unabletoarchive = $suspendresult['failures'];
-        $userarchived = $suspendresult['numbersuccess'];
+        $userarchived = $suspendresult['countersuccess'];
 
         $reactivatearray = $userstatuschecker->get_to_reactivate();
-        $this->change_user_deprovisionstatus($reactivatearray, 'reactivate');
+        $result = $this->change_user_deprovisionstatus($reactivatearray, 'reactivate');
+        $unabletoactivate = $result['failures'];
 
         $arraytodelete = $userstatuschecker->get_to_delete();
         $deleteresult = $this->change_user_deprovisionstatus($arraytodelete, 'delete');
         $unabletodelete = $deleteresult['failures'];
-        $userdeleted = $deleteresult['numbersuccess'];
+        $userdeleted = $deleteresult['countersuccess'];
+
+        // Admin is informed about the Cronjob and the amount of users that are affected.
 
         $admin = get_admin();
-        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) . "\r\n" .get_string('e-mail-deleted',
-                'tool_deprovisionuser', $userdeleted);
+        // Number of users suspended or deleted.
+        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) .
+            "\r\n" .get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
+
+        // No Problems occured during the cronjob.
         if (empty($unabletoactivate) and empty($unabletoarchive) and empty($unabletodelete)) {
             $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_deprovisionuser');
         } else {
+            // Extra information for problematic users.
             $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_deprovisionuser',
                     count($unabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser',
                     count($unabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser',
                     count($unabletoactivate));
         }
+
+        // Email is send from the do not reply user.
         $user = new \core_user();
         $sender = $user->get_user(-10);
         email_to_user($admin, $sender, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
+
+        // Triggers cronjob_completed event.
         $context = \context_system::instance();
         $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($context, $userarchived, $userdeleted);
         $event->trigger();
@@ -103,23 +116,32 @@ class archive_user_task extends \core\task\scheduled_task {
     /**
      * Deletes, suspends or reactivates an array of users.
      *
-     * @param $userarray array of users
+     * @param array $userarray of users
      * @param $intention one of suspend, delete, reactivate
-     * @return array ['numbersuccess'] successfully changed users ['failures'] array of users who could not be changed
+     * @return array ['numbersuccess'] successfully changed users ['failures'] userids, who could not be changed.
      * @throws \coding_exception
      */
     private function change_user_deprovisionstatus($userarray, $intention) {
+        // Checks whether the intention is valid.
         if (!in_array($intention, array('suspend', 'reactivate', 'delete'))) {
             throw new \coding_exception('Invalid parameters in tool_deprovisionuser.');
         }
-        $numbersuccess = 0;
+
+        /** @var int number of successfully changed users. */
+        $countersuccess = 0;
+
+        /** @var array users who could not be changed. */
         $failures = array();
+
+        // Alternatively one could have wrote different function for each intention.
+        // However this would have produced duplicated code.
+        // Therefore checking the intention parameter repeatedly was preferred.
         foreach ($userarray as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess !== 0 && !is_siteadmin($user)) {
                 $changinguser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
                 try {
                     switch ($intention) {
-                        case  'suspend':
+                        case 'suspend':
                             $changinguser->archive_me();
                             break;
                         case 'reactivate':
@@ -130,14 +152,14 @@ class archive_user_task extends \core\task\scheduled_task {
                             break;
                         // No default since if-clause checks the intention parameter.
                     }
-                    $numbersuccess++;
+                    $countersuccess++;
                 } catch (deprovisionuser_exception $e) {
-                    $failures[$key] = $user;
+                    $failures[$key] = $user->id;
                 }
             }
         }
         $result = array();
-        $result['numbersuccess'] = $numbersuccess;
+        $result['countersuccess'] = $countersuccess;
         $result['failures'] = $failures;
         return $result;
     }

@@ -15,13 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin userstatuswwu.
- *
- * The Plugins of the type userstatus must return values whether users should be deleted archived or reactivated.
- * This Plugin will be used by the cron_job and manually bz the admin to determine the appropriate actions for users.
+ * The Plugins of the type userstatus must return values whether users should be deleted, archived or reactivated.
+ * The subplugins will be used by the cronjob and manually by the admin to determine the appropriate actions for users.
  *
  * @package   tool_deprovisionuser
- * @copyright 2016 N. Herrmann
+ * @copyright 2016/17 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,12 +30,19 @@ use core\plugininfo\base;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The general settings for all subplugins of userstatus.
+ * Defines the deinstallation settings and adds subplugins to the admin tree, if they have a settings.php.
+ *
+ * @package    tool_deprovisionuser
+ * @copyright  2016/17 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class userstatus extends base {
 
     /**
-     * Returns true when subplugin can be deleted false when not
-     *
-     * Returns false for the userstatuswwu subplugin and for any plugin currently in useage, otherwise true.
+     * Returns true when subplugin can be deleted false when not.
+     * Returns false for the userstatuswwu subplugin and for any plugin currently in usage, otherwise true.
      * @return bool
      */
     public function is_uninstall_allowed() {
@@ -87,6 +92,11 @@ class userstatus extends base {
             $ADMIN->add($parentnodename, $settings);
         }
     }
+
+    /**
+     * Overrides function from the base class to define section name.
+     * @return string
+     */
     public function get_settings_section_name() {
         return 'deprovisionuser_userstatus' . $this->name;
     }
