@@ -25,6 +25,13 @@ namespace tool_deprovisionuser;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Exception Class for the tool_deprovisionuser.
+ *
+ * @package   tool_deprovisionuser
+ * @copyright 2017 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class deprovisionuser_exception extends \moodle_exception {
 
     /**

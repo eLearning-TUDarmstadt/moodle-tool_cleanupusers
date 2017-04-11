@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Create an Exception Class for the tool_deprovisionuser
+ * Create an additional Exception Class for the tool_deprovisionuser_subplugins.
  *
  * @package   tool_deprovisionuser
  * @copyright 2017 N. Herrmann
@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class deprovisionuser_subplugin_exception
+ *
  * @package tool_deprovisionuser
  * @copyright 2016 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
