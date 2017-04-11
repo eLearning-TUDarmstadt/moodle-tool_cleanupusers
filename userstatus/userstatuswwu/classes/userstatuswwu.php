@@ -24,6 +24,7 @@
 namespace userstatus_userstatuswwu;
 
 use tool_deprovisionuser\userstatusinterface;
+use tool_deprovisionuser\archiveduser;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -125,6 +126,7 @@ class userstatuswwu implements userstatusinterface {
      * all users who are allowed to log in into the Learnweb.
      *
      * @return array of authorized users
+     * @throws userstatuswwu_exception
      */
     private function get_all_ziv_users() {
         $zivuserarray = array();
@@ -201,13 +203,9 @@ class userstatuswwu implements userstatusinterface {
                 }
             }
             if ($ismember == false) {
-                $datauser = (object) 0;
-                $datauser->id = $moodleuser->id;
-                $datauser->username = $moodleuser->username;
-                $datauser->suspended = $moodleuser->suspended;
-                $datauser->deleted = $moodleuser->deleted;
-                $datauser->lastaccess = $moodleuser->lastaccess;
-                $this->tosuspend[$moodleuser->id] = $datauser;
+                $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                    $moodleuser->username, $moodleuser->deleted);
+                $this->tosuspend[$moodleuser->id] = $informationuser;
             }
         }
     }
@@ -223,12 +221,8 @@ class userstatuswwu implements userstatusinterface {
                 continue;
             }
             if ($moodleuser->lastaccess == 0 && $moodleuser->deleted == 0) {
-                $datauser = (object) 0;
-                $datauser->id = $moodleuser->id;
-                $datauser->username = $moodleuser->username;
-                $datauser->suspended = $moodleuser->suspended;
-                $datauser->deleted = $moodleuser->deleted;
-                $datauser->lastaccess = $moodleuser->lastaccess;
+                $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                    $moodleuser->username, $moodleuser->deleted);
                 $this->neverloggedin[$moodleuser->id] = $datauser;
             }
         }
@@ -249,12 +243,8 @@ class userstatuswwu implements userstatusinterface {
             $entry = $DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id));
             if (!empty($entry->timestamp)) {
                 if ($entry->timestamp < $timestamp - 31622400) {
-                    $datauser = (object) 0;
-                    $datauser->id = $moodleuser->id;
-                    $datauser->username = $moodleuser->username;
-                    $datauser->suspended = $moodleuser->suspended;
-                    $datauser->deleted = $moodleuser->deleted;
-                    $datauser->lastaccess = $moodleuser->lastaccess;
+                    $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                        $moodleuser->username, $moodleuser->deleted);
                     $this->todelete[$moodleuser->id] = $datauser;
                 }
             }
