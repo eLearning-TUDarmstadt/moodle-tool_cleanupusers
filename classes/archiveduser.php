@@ -55,8 +55,8 @@ class archiveduser {
     /**
      * Suspends the user.
      *
-     * Therefore makes an entry in the tool_deprovisionuser table and throws an error when user that should be suspended has an
-     * entry in the table.
+     * Therefore makes an entry in the tool_deprovisionuser table. Throws an error when the user that should be
+     * suspended is already suspended or is the sideadmin.
      *
      * @throws deprovisionuser_exception
      */
@@ -78,6 +78,7 @@ class archiveduser {
             $tooluser = $DB->get_record('tool_deprovisionuser', array('id' => $user->id));
 
             // Document time of editing user in Database.
+            // In case there is no entry in the tool table make a new one.
             if (empty($tooluser)) {
                 $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended,
                     'timestamp' => $timestamp), true, false, true);
@@ -91,7 +92,8 @@ class archiveduser {
             $shadowuser = clone $user;
             $success = $DB->insert_record_raw('deprovisionuser_archive', $shadowuser, true, false, true);
             if ($success == true) {
-                $cloneuser = $this->give_pseudo_user($shadowuser->id, $timestamp);
+                // Replaces the current user with a pseudo_user that has no reference.
+                $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
                 user_update_user($cloneuser, false);
             }
             $transaction->allow_commit();
@@ -104,7 +106,8 @@ class archiveduser {
     /**
      * Reactivates the user.
      *
-     * Therefore deletes the entry in the tool_deprovisionuser table and throws an error when no entry is available.
+     * Therefore deletes the entry in the tool_deprovisionuser table and throws an exception when no entry is available
+     * or the name of the user is 'Anonym' at the end of the function.
      *
      * @throws deprovisionuser_exception
      */
@@ -124,30 +127,33 @@ class archiveduser {
             $transaction->allow_commit();
             return;
         } else {
+            // The user was archived by the plugin.
 
-            // Deletes record of plugin table.
+            // Deletes record of plugin table tool_deprovisionuser.
             if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
                 $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
             }
 
-            // Is user in the shadow table?
+            // Is user in the shadow table (deprovisionuser_archive table)?
             if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
+
                 // If there is no user, the main table can not be updated.
                 throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
+
             } else {
-                // If user is in table replace data.
+                // If the user is in table replace data.
                 $shadowuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
                 $shadowuser->suspended = 0;
-                // TODO catch dml exception?
+
                 $DB->update_record('user', $shadowuser);
                 // Delete records from deprovisionuser_archive table.
                 $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
             }
-
-            // Delete records from deprovisionuser_archive table.
+            // Gets the new user for additional checks.
             $transaction->allow_commit();
             $user = $thiscoreuser->get_user($this->id);
-            // When Name is still Anonym something went wrong.
+
+            // When username is still 'Anonym' something went wrong.
             if ($user->firstname == 'Anonym') {
                 throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
             }
@@ -157,40 +163,57 @@ class archiveduser {
     /**
      * Deletes the user.
      *
-     * Therefore deletes the entry in the tool_deprovisionuser table and call the moodle core delete_user function.
+     * Therefore
+     * (1) Deletes the entry in the tool_deprovisionuser and the deprovisionuser_archive table.
+     * (2) Hashes the username with the sha256 function.
+     * (3) Calls the moodle core delete_user function..
+     *
      * Throws an error when the side admin should be deleted or user is already flagged as deleted.
      *
      * @throws deprovisionuser_exception
      */
     public function delete_me() {
         global $DB;
+
         $thiscoreuser = new \core_user();
         $user = $thiscoreuser->get_user($this->id);
-        if ($user->deleted == 0 and !is_siteadmin($user)) {
-            $transaction = $DB->start_delegated_transaction();
-            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                // DML Exception is thrown for any failures.
-                $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
-                $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
 
+        if ($user->deleted == 0 and !is_siteadmin($user)) {
+
+            $transaction = $DB->start_delegated_transaction();
+
+            // Deletes the records in both plugin tables.
+            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
+                $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
             }
 
-            // DML Exception is thrown for any failures. TODO:securenamenottolong
+            if (!empty($DB->get_records('deprovisionuser_archive', array('id' => $user->id)))) {
+                $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
+            }
+
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
             $newusername = hash('sha256', $user->username);
+
+            // Checks whether the username already exist (possible but unlikely).
             if (empty($DB->get_record('user', array("username" => $newusername)))) {
                 $user->username = $newusername;
                 user_update_user($user, false);
             } else {
-                // In the unlikely case that hash(username) exist in the table, while loop generates new usernames.
+                // In the unlikely case that hash(username) exist in the table, while loop generates new username.
                 while (!empty($DB->get_record('user', array("username" => $newusername)))) {
                     $tempname = $newusername;
-                    $newusername = hash('sha384', $user->username . $tempname);
+                    $newusername = hash('sha256', $user->username . $tempname);
                 }
                 $user->username = $newusername;
                 user_update_user($user, false);
             }
+
             \core\session\manager::kill_user_sessions($user->id);
+            // Core Function has to be executed finally.
+            // It can not be executed earlier since moodle then prevents further operations on the user.
+            // The Function adds @unknownemail.invalid. and a timestamp to the username.
+            // It is secured, that the username is below 100 characters since sha256 produces 64 characters and the...
+            // additional string has only 32 characters.
             delete_user($user);
             $transaction->allow_commit();
         } else {
@@ -199,14 +222,16 @@ class archiveduser {
     }
 
     /**
-     * Creates a empty user with anonym as username and Anonym as Firstname.
-     * @param $id int
-     * @param $timestamp int
+     * Creates a empty user with 'anonym + id' as username and 'Anonym' as Firstname.
+     *
+     * @param int $id
+     * @param int $timestamp
      * @return object
      */
-    private function give_pseudo_user($id, $timestamp) {
+    private function give_suspended_pseudo_user($id, $timestamp) {
         $cloneuser = (object) 0;
         $cloneuser->id = $id;
+        // Usernames have to be unique therefore the id is used.
         $cloneuser->username = 'anonym' . $id;
         $cloneuser->firstname = 'Anonym';
         $cloneuser->lastname = '';
