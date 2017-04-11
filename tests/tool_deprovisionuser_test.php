@@ -101,7 +101,6 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEmpty($recordtooltable);
         $this->resetAfterTest(true);
 
-
         $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebyplugin']->id, 0,
             $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
         $useraccount->activate_me();
