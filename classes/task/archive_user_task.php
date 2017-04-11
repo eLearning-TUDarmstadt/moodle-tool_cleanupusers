@@ -138,9 +138,8 @@ class archive_user_task extends \core\task\scheduled_task {
         // However this would have produced duplicated code.
         // Therefore checking the intention parameter repeatedly was preferred.
         foreach ($userarray as $key => $user) {
-            $user = $DB->get_record('user', array('id' => $user->id));
             if ($user->deleted == 0 && !is_siteadmin($user)) {
-                $changinguser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended);
+                $changinguser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
                 try {
                     switch ($intention) {
                         case 'suspend':

@@ -66,7 +66,7 @@ class timechecker implements userstatusinterface {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
                 if ($timenotloggedin > $this->timesuspend && $user->suspended == 0) {
-                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username);
+                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
                     $tosuspend[$key] = $informationuser;
                 }
             }
@@ -85,7 +85,7 @@ class timechecker implements userstatusinterface {
         $neverloggedin = array();
         foreach ($arrayofuser as $key => $user) {
             if (empty($user->lastaccess) && $user->deleted == 0) {
-                $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username);
+                $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
                 $neverloggedin[$key] = $informationuser;
             }
         }
@@ -111,7 +111,7 @@ class timechecker implements userstatusinterface {
 
                 // When the user did not sign in for timesuspend+timedeleted he should be deleted.
                 if ($timenotloggedin > $this->timedelete + $this->timesuspend && $user->suspended == 1) {
-                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username);
+                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
                     $todeleteusers[$key] = $informationuser;
                 }
             }
@@ -127,7 +127,7 @@ class timechecker implements userstatusinterface {
                 $timearchived = $DB->get_record('tool_deprovisionuser', array('id' => $user->id), 'timestamp');
                 $timenotloggedin = $mytimestamp - $timearchived->timestamp;
                 if ($timenotloggedin > $this->timedelete && $user->suspended == 1) {
-                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username);
+                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
                     $todeleteusers[$key] = $informationuser;
                 }
             }
@@ -152,7 +152,7 @@ class timechecker implements userstatusinterface {
                 // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
                 if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
                     $timenotloggedin = $mytimestamp - $user->lastaccess;
-                    $activateuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username);
+                    $activateuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
                 } else {
                     $shadowtableuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
                     // There is an entry in the shadowtable, data from the shadowtable is used.
@@ -162,7 +162,7 @@ class timechecker implements userstatusinterface {
                         continue;
                     }
                     $activateuser = new archiveduser($shadowtableuser->id, $shadowtableuser->lastaccess,
-                        $shadowtableuser->lastaccess, $shadowtableuser->username);
+                        $shadowtableuser->lastaccess, $shadowtableuser->username, $shadowtableuser->deleted);
 
                 }
                 // When the user signed in he/she should be activated again.

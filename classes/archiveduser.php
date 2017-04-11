@@ -40,7 +40,7 @@ class archiveduser {
     public $id;
 
     /** @var int 1 if the user is suspended 0 otherwise */
-    public $archived;
+    public $suspended;
 
     /** @var int timestamp */
     public $lastaccess;
@@ -48,17 +48,22 @@ class archiveduser {
     /** @var string username */
     public $username;
 
+    /** @var int user deleted? */
+    public $deleted;
+
 
     /**
      * Archiveduser constructor.
      * @param int $id
      * @param int $archived
      */
-    public function __construct($id, $archived, $lastaccess = 0, $username = '') {
+    // TODO: Params not optional.
+    public function __construct($id, $archived, $lastaccess, $username, $deleted) {
         $this->id = $id;
-        $this->archived = $archived;
+        $this->suspended = $archived;
         $this->lastaccess = $lastaccess;
         $this->username = $username;
+        $this->deleted = $deleted;
     }
 
     /**

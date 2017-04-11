@@ -44,7 +44,7 @@ switch($action){
     case 0:
         // Sideadmins, the current $USER and user who are already suspended can not be handeled.
         if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
             try {
                 $deprovisionuser->archive_me();
             } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
@@ -61,7 +61,7 @@ switch($action){
     // User should be reactivated.
     case 1:
         if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
             try {
                 $deprovisionuser->activate_me();
             } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
@@ -78,7 +78,7 @@ switch($action){
     // User should be deleted.
     case 2:
         if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
             try {
                 $deprovisionuser->delete_me();
             } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
