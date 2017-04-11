@@ -48,9 +48,9 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
         $returntoreactivate = $myuserstatuschecker->get_to_reactivate();
 
-        $this->assertEquals($data['useroneyearnotlogedin'], $returnsuspend[$data['useroneyearnotlogedin']->id]);
-        $this->assertEquals($data['userarchivedoneyearnintydays'], $returndelete[$data['userarchivedoneyearnintydays']->id]);
-        $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
+        $this->assertEquals($data['useroneyearnotlogedin']->id, $returnsuspend[$data['useroneyearnotlogedin']->id]->id);
+        $this->assertEquals($data['userarchivedoneyearnintydays']->id, $returndelete[$data['userarchivedoneyearnintydays']->id]->id);
+        $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
         // Merely id is compared since the user has to be reactivated by the main plugin.
         $this->assertEquals($data['reactivate']->id, $returntoreactivate[$data['reactivate']->id]->id);
         $this->assertNotContains($data['user']->username, $returnsuspend);
@@ -77,7 +77,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returnsuspend);
         $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returndelete);
         $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returnneverloggedin);
-        $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
+        $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
 
         set_config('suspendtime', 10 , 'userstatus_timechecker');
         set_config('deletetime', 20 , 'userstatus_timechecker');
@@ -86,13 +86,13 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $returndelete = $newstatuschecker->get_to_delete();
         $returnneverloggedin = $newstatuschecker->get_never_logged_in();
 
-        $this->assertEquals($data['useroneyearnotlogedin'], $returnsuspend[$data['useroneyearnotlogedin']->id]);
-        $this->assertEquals($data['userfifteendays'], $returnsuspend[$data['userfifteendays']->id]);
-        $this->assertEquals($data['userarchivedoneyearnintydays'], $returndelete[$data['userarchivedoneyearnintydays']->id]);
+        $this->assertEquals($data['useroneyearnotlogedin']->id, $returnsuspend[$data['useroneyearnotlogedin']->id]->id);
+        $this->assertEquals($data['userfifteendays']->id, $returnsuspend[$data['userfifteendays']->id]->id);
+        $this->assertEquals($data['userarchivedoneyearnintydays']->id, $returndelete[$data['userarchivedoneyearnintydays']->id]->id);
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
-        $this->assertEquals($data['neverloggedin'], $returnneverloggedin[$data['neverloggedin']->id]);
+        $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.

@@ -20,9 +20,9 @@
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->libdir.'/adminlib.php');
-
 defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->libdir.'/adminlib.php');
 
 $PAGE->set_context(context_system::instance());
 $context = context_system::instance();
