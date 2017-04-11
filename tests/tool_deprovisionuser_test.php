@@ -204,7 +204,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
         $logstore = $DB->get_record_select('logstore_standard_log', 'timecreated >=' . $timestamp .
             'AND eventname = \'\tool_deprovisionuser\event\deprovisionusercronjob_completed\'');
-        $this->assertEquals('a:2:{s:14:"numberarchived";i:1;s:13:"numberdeleted";i:1;}', $logstore->other);
+        $this->assertEquals('a:2:{s:15:"numbersuspended";i:1;s:13:"numberdeleted";i:1;}', $logstore->other);
 
         $this->resetAfterTest();
     }

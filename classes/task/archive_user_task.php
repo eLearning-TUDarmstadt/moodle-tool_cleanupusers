@@ -127,10 +127,10 @@ class archive_user_task extends \core\task\scheduled_task {
             throw new \coding_exception('Invalid parameters in tool_deprovisionuser.');
         }
 
-        /** @var int number of successfully changed users. */
+        // Number of successfully changed users.
         $countersuccess = 0;
 
-        /** @var array users who could not be changed. */
+        // Array of users who could not be changed.
         $failures = array();
 
         // Alternatively one could have wrote different function for each intention.

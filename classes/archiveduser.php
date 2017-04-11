@@ -27,14 +27,25 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
 
+/**
+ * The class collects the necessary information to suspend, delete and activate users.
+ *
+ * @package   tool_deprovisionuser
+ * @copyright 2017 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class archiveduser {
 
-    public $id, $archived;
+    // The id of the user.
+    private $id;
+
+    // Integer 1 if the user is suspended 0 otherwise.
+    private $archived;
 
     /**
-     * archiveduser constructor.
-     * @param $id
-     * @param $archived
+     * Archiveduser constructor.
+     * @param int $id
+     * @param int $archived
      */
     public function __construct($id, $archived) {
         $this->id = $id;
