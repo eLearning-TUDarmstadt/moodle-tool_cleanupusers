@@ -17,12 +17,17 @@
 /**
  * Interface for the Subplugin userstatus.
  *
- * The Plugins of the type userstatus must return values whether users should be deleted archived,
- * reactivated or no action is required.
- * This Plugin will be used by the cron_job and manually bz the admin to determine the appropriate actions for users.
+ * The Plugins of the type userstatus must return values whether users should be deleted, suspended, reactivated
+ * or never logged in.
+ * Each array has to include at least the following information:
+ * (1) userid
+ * (2) username
+ * (3) lastaccess
+ *
+ * This Plugin will be used by the cron_job and manually by the admin to determine the appropriate actions for users.
  *
  * @package   tool_deprovisionuser
- * @copyright 2016 N. Herrmann
+ * @copyright 2016/17 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_deprovisionuser;

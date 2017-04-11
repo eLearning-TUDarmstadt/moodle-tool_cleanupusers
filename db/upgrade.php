@@ -14,16 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Upgrade for the admin tool deprovisionuser.
+ * Upgrade for the tool_deprovisionuser.
  *
  * @package tool_deprovisionuser
- * @copyright 2016 N Herrmann
+ * @copyright 2016/17 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-/**
- * Function to upgrade for the groups block.
- */
+
 defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Function to upgrade for the tool_deprovisionuser.
+ */
+
 function xmldb_tool_deprovisionuser_upgrade($oldversion) {
     return true;
 }

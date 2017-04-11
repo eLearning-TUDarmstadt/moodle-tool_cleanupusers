@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * File to archive users.
+ * Suspend, delete or reactivate user. This is called when sideadmin changes user from the deprovisionuser
+ * administration page.
  *
  * @package tool_deprovision
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require_once('../../../config.php');
 require_login();
 require_once($CFG->dirroot.'/user/lib.php');
+
 $userid         = required_param('userid', PARAM_INT);
+// Integer 0 for suspending, 1 for reactivate, 2 for delete.
 $action         = required_param('action', PARAM_INT);
 
 $PAGE->set_url('/admin/tool/deprovisionuser/handleuser.php');
@@ -34,52 +36,65 @@ $PAGE->set_context(context_system::instance());
 global $USER;
 $user = $DB->get_record('user', array('id' => $userid));
 require_capability('moodle/user:update', $PAGE->context);
-if ($action == 0) {
-    if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
-        $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
-        try {
-            $deprovisionuser->archive_me();
-        } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
-            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'),
-                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-        }
-        notice(get_string('usersarchived', 'tool_deprovisionuser'),
-            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-    } else {
-        notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'),
-            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-    }
 
-} else if ($action == 1) {
-    if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
-        $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
-        try {
-            $deprovisionuser->activate_me();
-        } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
-            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'),
-                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+$url = new moodle_url('/admin/tool/deprovisionuser/index.php');
+
+switch($action){
+    // User should be suspended.
+    case 0:
+        // Sideadmins, the current $USER and user who are already suspended can not be handeled.
+        if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+            try {
+                $deprovisionuser->archive_me();
+            } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+                // Notice user could not be suspended.
+                notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+            }
+            // User was successfully suspended.
+            notice(get_string('usersarchived', 'tool_deprovisionuser'), $url);
+        } else {
+            // Notice user could not be suspended.
+            notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'), $url);
         }
-        notice(get_string('usersreactivated', 'tool_deprovisionuser'),
-            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-    } else {
-        notice(get_string('errormessagenotactive', 'tool_deprovisionuser'),
-            $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-    }
-    // User is supposed to be deleted.
-} else if ($action == 3) {
-    if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
-        $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
-        try {
-            $deprovisionuser->delete_me();
-        } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
-            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'),
-                $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        break;
+    // User should be reactivated.
+    case 1:
+        if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+            try {
+                $deprovisionuser->activate_me();
+            } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+                // Notice user could not be reactivated.
+                notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+            }
+            // User successfully reactivated.
+            notice(get_string('usersreactivated', 'tool_deprovisionuser'), $url);
+        } else {
+            // Notice user could not be reactivated.
+            notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $url);
         }
-        notice(get_string('usersdeleted', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-    } else {
-        notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
-    }
-} else {
-    notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $CFG->wwwroot . '/admin/tool/deprovisionuser/index.php');
+        break;
+    // User should be deleted.
+    case 2:
+        if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended);
+            try {
+                $deprovisionuser->delete_me();
+            } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+                $url = new moodle_url('/admin/tool/deprovisionuser/index.php');
+                // Notice user could not be deleted.
+                notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+            }
+            notice(get_string('usersdeleted', 'tool_deprovisionuser'), $url);
+        } else {
+            // Notice user could not be deleted.
+            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+        }
+        break;
+    // Action is not valid.
+    default:
+        notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+        break;
 }
 exit();

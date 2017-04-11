@@ -45,6 +45,7 @@ $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
 $content = '';
+
 $mform = new \tool_deprovisionuser\subplugin_select_form();
 $formdata = $mform->get_data();
 $datavalidated = false;
@@ -52,17 +53,18 @@ if (!empty($formdata)) {
     $arraydata = get_object_vars($formdata);
     $datavalidated = $mform->validation($arraydata, null);
 }
+// In this case you process validated data.
 if ($datavalidated) {
     set_config('deprovisionuser_subplugin', $arraydata['subplugin'], 'tool_deprovisionuser');
     $content = 'You successfully submitted the Subplugin.';
     $content .= $mform->display();
-    // In this case you process validated data.
 } else {
     if (!empty($datavalidated['subplugin'])) {
         $content .= $datavalidated['subplugin'];
     }
     $content .= $mform->display();
 }
+// Assures right subplugin is used.
 if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
     $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
@@ -71,11 +73,16 @@ if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
     $subplugin = 'userstatuswwu';
     $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
 }
+
+// Informs the user about the currently used plugin.
 $content .= 'You are currently using the <b>' . $subplugin . '</b> Plugin';
+
+// Request arrays from the subplugin.
 $archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
 
 $content .= $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
+
 echo $content;
 echo $OUTPUT->footer();
