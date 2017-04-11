@@ -96,7 +96,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
     /**
      * Formats information for users that are identified by the subplugin for deletion.
-     * @param $users Object of the user std_class
+     * @param array $users array of objects of the user std_class
      * @return array
      */
     private function information_user_delete($users) {
@@ -126,8 +126,8 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Safes relevant information for users that are identified by the Subplugin for suspending.
-     * @param $user a Object of the user std_class
+     * Safes relevant information for users that are identified by the subplugin for suspending.
+     * @param array $users array of objects of the user std_class
      * @return array
      */
     private function information_user_suspend($users) {
@@ -148,7 +148,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
                 $userinformation['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
 
-                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => $user->suspended));
+                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 1));
 
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/hide'),
                     get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
