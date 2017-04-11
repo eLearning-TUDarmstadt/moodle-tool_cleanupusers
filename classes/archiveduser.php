@@ -36,10 +36,10 @@ require_once($CFG->dirroot.'/lib/moodlelib.php');
  */
 class archiveduser {
 
-    // The id of the user.
+    /** @var int The id of the user */
     private $id;
 
-    // Integer 1 if the user is suspended 0 otherwise.
+    /** @var int 1 if the user is suspended 0 otherwise */
     private $archived;
 
     /**
