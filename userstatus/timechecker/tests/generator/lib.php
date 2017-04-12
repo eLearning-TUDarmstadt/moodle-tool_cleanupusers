@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Data Generator for the userstatus_timechecker subplugin
  *
  * @package    userstatus_timechecker
  * @category   test
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -25,16 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- *
+ * Class Data Generator for the userstatus_timechecker subplugin
  *
  * @package    userstatus_timechecker
  * @category   test
- * @copyright
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userstatus_timechecker_generator extends testing_data_generator {
     /**
-     * Creates Course, course members, groups and groupings to test the block.
+     * Creates users to test the subplugin.
      */
     public function test_create_preparation () {
         global $DB;
@@ -42,33 +44,27 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $data = array();
 
         $course = $generator->create_course(array('name' => 'Some course'));
-        $data['course'] = $course;
         $mytimestamp = time();
 
         $user = $generator->create_user(array('username' => 'neutraluser', 'lastaccess' => $mytimestamp));
-        $generator->enrol_user($user->id, $course->id);
         $data['user'] = $user;
 
         $timestamponeyearago = $mytimestamp - 31536000;
         $userlongnotloggedin = $generator->create_user(array('username' => 'userlongnotloggedin',
             'lastaccess' => $timestamponeyearago));
-        $generator->enrol_user($userlongnotloggedin->id, $course->id);
         $data['useroneyearnotlogedin'] = $userlongnotloggedin;
 
         $timestampfifteendays = $mytimestamp - 1296000;
         $userfifteendays = $generator->create_user(array('username' => 'userfifteendays', 'lastaccess' => $timestampfifteendays));
-        $generator->enrol_user($userfifteendays->id, $course->id);
         $data['userfifteendays'] = $userfifteendays;
 
         // User manually suspended.
         $oneyearnintydays = $mytimestamp - 39313000;
         $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => $oneyearnintydays,
             'suspended' => 1));
-        $generator->enrol_user($userarchived->id, $course->id);
         $data['userarchivedoneyearnintydays'] = $userarchived;
 
         $neverloggedin = $generator->create_user(array('username' => 'neverloggedin'));
-        $generator->enrol_user($neverloggedin->id, $course->id);
         $data['neverloggedin'] = $neverloggedin;
 
         // User suspended by the plugin.
@@ -77,7 +73,6 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivate->id, 'archived' => true), true, false, true);
         $DB->insert_record_raw('deprovisionuser_archive', array('id' => $reactivate->id, 'username' => 'reactivate',
             'suspended' => 1, 'lastaccess' => $tendaysago), true, false, true);
-        $generator->enrol_user($reactivate->id, $course->id);
         $data['reactivate'] = $reactivate;
 
         return $data; // Return the user, course and group objects.

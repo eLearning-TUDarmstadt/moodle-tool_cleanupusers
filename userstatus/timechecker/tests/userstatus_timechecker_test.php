@@ -17,14 +17,23 @@
 /**
  * The class contains a test script for the moodle userstatus_timechecker
  *
- * @package userstatus_userstatuswwu
- * @copyright 2016 N Herrmann
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    userstatus_timechecker
+ * @category   phpunit
+ * @copyright  2016/17 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 use userstatus_timechecker\timechecker;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The class contains a test script for the moodle userstatus_timechecker
+ *
+ * @package    userstatus_timechecker
+ * @category   phpunit
+ * @copyright  2016/17 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class userstatus_timechecker_testcase extends advanced_testcase {
 
     protected function set_up() {
@@ -36,12 +45,14 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         return $data;
     }
     /**
-     * Function to test the locallib functions.
+     * Function to test the class timechecker.
+     *
+     * @see timechecker
      */
     public function test_locallib() {
-        global $DB, $CFG, $OUTPUT;
         $data = $this->set_up();
         $myuserstatuschecker = new timechecker();
+
         // Calls for subplugin functions to return arrays.
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
@@ -51,7 +62,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertEquals($data['useroneyearnotlogedin']->id, $returnsuspend[$data['useroneyearnotlogedin']->id]->id);
         $this->assertEquals($data['userarchivedoneyearnintydays']->id, $returndelete[$data['userarchivedoneyearnintydays']->id]->id);
         $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
-        // Merely id is compared since the user has to be reactivated by the main plugin.
+        // Merely id is compared since plugin only saves necessary data not complete user.
         $this->assertEquals($data['reactivate']->id, $returntoreactivate[$data['reactivate']->id]->id);
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
