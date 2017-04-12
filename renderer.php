@@ -100,7 +100,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_delete($users) {
-        global $DB, $OUTPUT, $CFG;
+        global $DB, $OUTPUT;
 
         $resultarray = array();
         foreach ($users as $key => $user) {
@@ -116,7 +116,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
                     $userinformation['archived'] = get_string('Yes', 'tool_deprovisionuser');
                 }
                 $userinformation['Willbe'] = get_string('shouldbedelted', 'tool_deprovisionuser');
-                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 2));
+                $url = new moodle_url('/admin/tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 'delete'));
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/delete'),
                     get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
             }
@@ -131,7 +131,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_suspend($users) {
-        global $DB, $OUTPUT, $CFG;
+        global $DB, $OUTPUT;
         $result = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -148,7 +148,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
                 $userinformation['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
 
-                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 0));
+                $url = new moodle_url('/admin/tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 'suspend'));
 
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/hide'),
                     get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
@@ -178,7 +178,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
                     $userinformation['archived'] = get_string('Yes', 'tool_deprovisionuser');
                 }
                 $userinformation['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
-                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 2));
+                $url = new moodle_url('/admin/tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 'delete'));
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/delete'),
                     get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
             }

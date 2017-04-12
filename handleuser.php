@@ -27,8 +27,8 @@ require_login();
 require_once($CFG->dirroot.'/user/lib.php');
 
 $userid         = required_param('userid', PARAM_INT);
-// Integer 0 for suspending, 1 for reactivate, 2 for delete.
-$action         = required_param('action', PARAM_INT);
+// One of: suspend, reactivate or delete.
+$action         = required_param('action', PARAM_TEXT);
 
 $PAGE->set_url('/admin/tool/deprovisionuser/handleuser.php');
 $PAGE->set_context(context_system::instance());
@@ -41,10 +41,11 @@ $url = new moodle_url('/admin/tool/deprovisionuser/index.php');
 
 switch($action){
     // User should be suspended.
-    case 0:
+    case 'suspend':
         // Sideadmins, the current $USER and user who are already suspended can not be handeled.
         if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess,
+                $user->username, $user->deleted);
             try {
                 $deprovisionuser->archive_me();
             } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
@@ -59,7 +60,7 @@ switch($action){
         }
         break;
     // User should be reactivated.
-    case 1:
+    case 'reactivate':
         if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
             $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
             try {
@@ -76,7 +77,7 @@ switch($action){
         }
         break;
     // User should be deleted.
-    case 2:
+    case 'delete':
         if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
             $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
             try {
