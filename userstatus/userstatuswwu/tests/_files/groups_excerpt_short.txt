@@ -13,6 +13,3 @@ r_theu9 member
 example member
 member some_group
 member some_other_group
-
-
-

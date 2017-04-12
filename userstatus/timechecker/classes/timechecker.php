@@ -29,7 +29,7 @@ use tool_deprovisionuser\userstatusinterface;
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Class that checks the status of different users depending on the time they logged in.
+ * Class that checks the status of different users depending on the time they did not signed in.
  *
  * @package    deprovisionuser_userstatus_timechecker
  * @copyright  2016/17 N Herrmann
@@ -44,7 +44,7 @@ class timechecker implements userstatusinterface {
     private $timedelete;
 
     /**
-     * This constructor sets timesuspend and timedelete to the unix time.
+     * This constructor sets timesuspend and timedelete from days to seconds.
      */
     public function __construct() {
         $config = get_config('userstatus_timechecker');
@@ -54,8 +54,8 @@ class timechecker implements userstatusinterface {
     }
 
     /**
-     * All users who are not suspended and not deleted are selected. If the user did not sign in for the hitherto
-     * determined time he/she will be returned.
+     * All users who are not suspended and not deleted are selected. If a user did not sign in for the hitherto
+     * determined suspendtime he/she will be returned.
      * The array includes merely the necessary information which comprises the userid, lastaccess, suspended, deleted
      * and the username.
      *
@@ -63,15 +63,16 @@ class timechecker implements userstatusinterface {
      */
     public function get_to_suspend() {
         global $DB;
-        $select = 'deleted=0 AND suspended=0';
+        $select = 'deleted=0 AND suspended=0 AND lastaccess!=0';
         $users = $DB->get_records_select('user', $select);
         $tosuspend = array();
         foreach ($users as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+            if (!is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
                 if ($timenotloggedin > $this->timesuspend && $user->suspended == 0) {
-                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
+                        $user->deleted);
                     $tosuspend[$key] = $informationuser;
                 }
             }
@@ -88,7 +89,7 @@ class timechecker implements userstatusinterface {
      */
     public function get_never_logged_in() {
         global $DB;
-        $select = 'lastaccess=0 AND deleted=0';
+        $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
         $arrayofuser = $DB->get_records_select('user', $select);
         $neverloggedin = array();
         foreach ($arrayofuser as $key => $user) {
@@ -111,45 +112,57 @@ class timechecker implements userstatusinterface {
      */
     public function get_to_delete() {
         global $DB;
-        // Select clause for users who are suspended manually.
-        $select = 'deleted=0 AND suspended=1 AND firstname!=\'Anonym\'';
+        // Select clause for users who are suspended.
+        // TODO Clause to find users who are anonym or lastaccess=!0
+        $select = 'deleted=0 AND suspended=1 AND (lastaccess!=0 OR firstname=\'Anonym\')';
         $users = $DB->get_records_select('user', $select);
         $todeleteusers = array();
 
         // Users who are not suspended by the plugin but are marked as suspended in the main table.
         foreach ($users as $key => $user) {
             // Additional check for deletion, lastaccess and admin.
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
+            if ($user->deleted == 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
-                $timenotloggedin = $mytimestamp - $user->lastaccess;
 
-                // When the user did not sign in for timesuspend+timedeleted he should be deleted.
-                if ($timenotloggedin > $this->timedelete + $this->timesuspend && $user->suspended == 1) {
-                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
-                    $todeleteusers[$key] = $informationuser;
+                // User was suspended by the plugin.
+                if ($user->firstname == 'Anonym' && $user->lastaccess == 0) {
+                    $select = 'id=' . $user->id;
+
+                    $record = $DB->get_records_select('tool_deprovisionuser', $select);
+                    if (!empty($record) && $record[$user->id]->timestamp != 0) {
+                        $suspendedbyplugin = true;
+                        $timearchived = $DB->get_record('tool_deprovisionuser', array('id' => $user->id), 'timestamp');
+                        $timenotloggedin = $mytimestamp - $timearchived->timestamp;
+                    } else {
+                        // Users firstname is Anonym although he is not in the plugin table. It can not be determined
+                        // when the user was suspended therefore he/she can not be handled.
+                        continue;
+                    }
+                } else if ($user->lastaccess != 0) {
+                    // User was suspended manually.
+                    $suspendedbyplugin = false;
+                    $timenotloggedin = $mytimestamp - $user->lastaccess;
+                } else {
+                    // The user was not suspended by the plugin but does not have an last access, therefore he/she is
+                    // not handled.
+                    continue;
                 }
-            }
-        }
-
-        // Users who are suspended by the plugin, therefore the plugin table is used.
-        $select = 'deleted=0 AND suspended=1';
-        $pluginusers = $DB->get_records_select('deprovisionuser_archive', $select);
-
-        foreach ($pluginusers as $key => $user) {
-            if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
-                $mytimestamp = time();
-
-                // Need to get the record of the tool_deprovisionuser table to identify the time the user was suspended.
-                $timearchived = $DB->get_record('tool_deprovisionuser', array('id' => $user->id), 'timestamp');
-                $timenotloggedin = $mytimestamp - $timearchived->timestamp;
-
+                // When the user did not sign in for the timedeleted he/she should be deleted.
                 if ($timenotloggedin > $this->timedelete && $user->suspended == 1) {
-                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
-                        $user->deleted);
+                    if ($suspendedbyplugin) {
+                        // Users who are suspended by the plugin, therefore the plugin table is used.
+                        $pluginuser = $DB->get_record_select('deprovisionuser_archive', $select);
+                        $informationuser = new archiveduser($pluginuser->id, $pluginuser->suspended,
+                            $pluginuser->lastaccess, $pluginuser->username, $pluginuser->deleted);
+                    } else {
+                        $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess,
+                            $user->username, $user->deleted);
+                    }
                     $todeleteusers[$key] = $informationuser;
                 }
             }
         }
+
         return $todeleteusers;
     }
 
