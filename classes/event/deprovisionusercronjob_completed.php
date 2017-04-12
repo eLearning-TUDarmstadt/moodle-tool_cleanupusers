@@ -25,6 +25,7 @@
 namespace tool_deprovisionuser\event;
 defined('MOODLE_INTERNAL') || die();
 
+use \core\event\base;
 /**
  * The tool_deprovisionuser event informs admin about outcome of cronjob.
  *
@@ -32,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class deprovisionusercronjob_completed extends \core\event\base {
+class deprovisionusercronjob_completed extends base {
 
     /**
      * Creates a simple event with the number of users archives and deleted as additional information.

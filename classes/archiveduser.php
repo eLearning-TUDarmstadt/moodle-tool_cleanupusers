@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
 
+use \core\session\manager;
 /**
  * The class collects the necessary information to suspend, delete and activate users.
  * It can be used in subplugins, since the constructor assures that all necessary information is transferred.
@@ -57,6 +58,9 @@ class archiveduser {
      * Archiveduser constructor.
      * @param int $id
      * @param int $suspended
+     * @param int $lastaccess
+     * @param string $username
+     * @param int $deleted
      */
     public function __construct($id, $suspended, $lastaccess, $username, $deleted) {
         $this->id = $id;
@@ -85,7 +89,7 @@ class archiveduser {
 
             // Suspend user and kill session.
             $user->suspended = 1;
-            \core\session\manager::kill_user_sessions($user->id);
+            manager::kill_user_sessions($user->id);
             user_update_user($user, false);
 
             $timestamp = time();
@@ -222,7 +226,7 @@ class archiveduser {
                 user_update_user($user, false);
             }
 
-            \core\session\manager::kill_user_sessions($user->id);
+            manager::kill_user_sessions($user->id);
             // Core Function has to be executed finally.
             // It can not be executed earlier since moodle then prevents further operations on the user.
             // The Function adds @unknownemail.invalid. and a timestamp to the username.

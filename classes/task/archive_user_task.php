@@ -29,12 +29,14 @@ namespace tool_deprovisionuser\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-use tool_deprovisionuser\db as this_db;
 use tool_deprovisionuser\deprovisionuser_exception;
 // Needed for the default plugin.
 use userstatus_userstatuswwu\userstatuswwu;
+use tool_deprovisionuser\archiveduser;
+use tool_deprovisionuser\event\deprovisionusercronjob_completed;
+use core\task\scheduled_task;
 
-class archive_user_task extends \core\task\scheduled_task {
+class archive_user_task extends scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -107,7 +109,7 @@ class archive_user_task extends \core\task\scheduled_task {
 
         // Triggers cronjob_completed event.
         $context = \context_system::instance();
-        $event = \tool_deprovisionuser\event\deprovisionusercronjob_completed::create_simple($context, $userarchived, $userdeleted);
+        $event = deprovisionusercronjob_completed::create_simple($context, $userarchived, $userdeleted);
         $event->trigger();
 
         return true;
@@ -116,13 +118,12 @@ class archive_user_task extends \core\task\scheduled_task {
     /**
      * Deletes, suspends or reactivates an array of users.
      *
-     * @param array $userarray of users
-     * @param $intention one of suspend, delete, reactivate
+     * @param  array $userarray of users
+     * @param  string $intention of suspend, delete, reactivate
      * @return array ['numbersuccess'] successfully changed users ['failures'] userids, who could not be changed.
      * @throws \coding_exception
      */
     private function change_user_deprovisionstatus($userarray, $intention) {
-        global $DB;
         // Checks whether the intention is valid.
         if (!in_array($intention, array('suspend', 'reactivate', 'delete'))) {
             throw new \coding_exception('Invalid parameters in tool_deprovisionuser.');
@@ -139,7 +140,8 @@ class archive_user_task extends \core\task\scheduled_task {
         // Therefore checking the intention parameter repeatedly was preferred.
         foreach ($userarray as $key => $user) {
             if ($user->deleted == 0 && !is_siteadmin($user)) {
-                $changinguser = new \tool_deprovisionuser\archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+                $changinguser = new archiveduser($user->id, $user->suspended, $user->lastaccess,
+                    $user->username, $user->deleted);
                 try {
                     switch ($intention) {
                         case 'suspend':

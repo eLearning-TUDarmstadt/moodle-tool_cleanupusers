@@ -93,7 +93,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEmpty($recordtooltable);
 
         // Admin Users will not be deleted neither archived.
-        $this->setAdminUser($data['adminuser']);
+        $this->setAdminUser();
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0,
             $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
         $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
@@ -102,7 +102,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $recordtooltable = $DB->get_record('moodle_deprovisionuser', array('id' => $data['adminuser']->id));
         $this->assertEmpty($recordtooltable);
 
-        $this->setAdminUser($data['adminuser']);
+        $this->setAdminUser();
         $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0,
             $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
         $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
@@ -130,7 +130,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
-        // Set up mail configuration
+        // Set up mail configuration.
         unset_config('noemailever');
         $sink = $this->redirectEmails();
 
@@ -145,7 +145,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $recordusertable = $DB->get_record('user', array('id' => $data['listuser']->id));
         $this->assertEquals(0, $recordusertable->suspended);
 
-        // Cronjob will
+        // Run Cronjob with timechecker plugin.
         set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
         $cronjob = new tool_deprovisionuser\task\archive_user_task();
         $cronjob->execute();

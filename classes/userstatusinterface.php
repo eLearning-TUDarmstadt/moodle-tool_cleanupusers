@@ -29,7 +29,7 @@
  *
  * This Plugin will be used by the cron_job and manually by the admin to determine the appropriate actions for users.
  *
- * @see \tool_deprovisionuser\archiveduser
+ * @see       \tool_deprovisionuser\archiveduser
  * @package   tool_deprovisionuser
  * @copyright 2016/17 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

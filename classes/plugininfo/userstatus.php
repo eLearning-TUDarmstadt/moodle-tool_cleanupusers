@@ -46,7 +46,6 @@ class userstatus extends base {
      * @return bool
      */
     public function is_uninstall_allowed() {
-        global $CFG;
         if ($this->is_standard()) {
             return false;
         }
@@ -72,9 +71,7 @@ class userstatus extends base {
      * @param bool $hassiteconfig
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
-        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         $ADMIN = $adminroot; // May be used in settings.php.
-        $plugininfo = $this; // Also can be used inside settings.php.
 
         if (!$this->is_installed_and_upgraded()) {
             return;
