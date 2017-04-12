@@ -112,8 +112,8 @@ class timechecker implements userstatusinterface {
      */
     public function get_to_delete() {
         global $DB;
+
         // Select clause for users who are suspended.
-        // TODO Clause to find users who are anonym or lastaccess=!0
         $select = 'deleted=0 AND suspended=1 AND (lastaccess!=0 OR firstname=\'Anonym\')';
         $users = $DB->get_records_select('user', $select);
         $todeleteusers = array();
@@ -144,13 +144,14 @@ class timechecker implements userstatusinterface {
                     $timenotloggedin = $mytimestamp - $user->lastaccess;
                 } else {
                     // The user was not suspended by the plugin but does not have an last access, therefore he/she is
-                    // not handled.
+                    // not handled. This should not happen due to the select clause.
                     continue;
                 }
                 // When the user did not sign in for the timedeleted he/she should be deleted.
                 if ($timenotloggedin > $this->timedelete && $user->suspended == 1) {
                     if ($suspendedbyplugin) {
                         // Users who are suspended by the plugin, therefore the plugin table is used.
+                        $select = 'id=' . $user->id;
                         $pluginuser = $DB->get_record_select('deprovisionuser_archive', $select);
                         $informationuser = new archiveduser($pluginuser->id, $pluginuser->suspended,
                             $pluginuser->lastaccess, $pluginuser->username, $pluginuser->deleted);

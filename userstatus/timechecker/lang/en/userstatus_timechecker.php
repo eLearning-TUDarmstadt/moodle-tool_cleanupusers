@@ -23,8 +23,11 @@
 
 $string['pluginname'] = 'Timechecker';
 $string['plugintitel'] = 'Timechecker';
-$string['timechecker_time_to_archive'] = 'Number of Days not logged in, until a user is archived';
-$string['timechecker_time_to_delete'] = 'Number of Days a user is archived, until the user is deleted';
+$string['introsettingstext'] = 'In these settings, the time until suspension and the time until deletion can be defined.<br>
+The plugin does apply this to users changed by the plugin and users who are manually suspended or deleted.';
+$string['settingsinformation'] = 'Settings Information';
+$string['timechecker_time_to_archive'] = 'Number of Days a user not signs in, until suspension.';
+$string['timechecker_time_to_delete'] = 'Number of Days a user is suspended, until the user is deleted.';
 $string['suspendtime'] = 'Time until suspension';
 $string['deletetime'] = 'Time until deletion';
 

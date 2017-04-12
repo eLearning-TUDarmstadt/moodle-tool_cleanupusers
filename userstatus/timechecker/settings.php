@@ -17,13 +17,15 @@
 /**
  * Settings.php
  * @package deprovisionuser_userstatus_timechecker
- * @copyright 2016 N Herrmann
+ * @copyright 2016/17 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/timechecker/index.php';
+    $settings->add(new admin_setting_heading('timechecker_heading', get_string('settingsinformation',
+        'userstatus_timechecker'), get_string('introsettingstext', 'userstatus_timechecker')));
     $settings->add(new admin_setting_configtext('userstatus_timechecker/suspendtime',
         get_string('suspendtime', 'userstatus_timechecker'),
         get_string('timechecker_time_to_archive', 'userstatus_timechecker'), 90, PARAM_INT));
