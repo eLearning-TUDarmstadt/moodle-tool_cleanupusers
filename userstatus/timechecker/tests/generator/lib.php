@@ -60,10 +60,10 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $generator->enrol_user($userfifteendays->id, $course->id);
         $data['userfifteendays'] = $userfifteendays;
 
-        $oneyearnintydays = $mytimestamp - 39312000;
+        // User manually suspended.
+        $oneyearnintydays = $mytimestamp - 39313000;
         $userarchived = $generator->create_user(array('username' => 'userarchived', 'lastaccess' => $oneyearnintydays,
             'suspended' => 1));
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true), true, false, true);
         $generator->enrol_user($userarchived->id, $course->id);
         $data['userarchivedoneyearnintydays'] = $userarchived;
 
@@ -71,6 +71,7 @@ class userstatus_timechecker_generator extends testing_data_generator {
         $generator->enrol_user($neverloggedin->id, $course->id);
         $data['neverloggedin'] = $neverloggedin;
 
+        // User suspended by the plugin.
         $tendaysago = $mytimestamp - 864000;
         $reactivate = $generator->create_user(array('username' => 'Anonym', 'suspended' => 1));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivate->id, 'archived' => true), true, false, true);

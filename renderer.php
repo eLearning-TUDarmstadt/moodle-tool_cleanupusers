@@ -148,7 +148,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
 
                 $userinformation['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
 
-                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 1));
+                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 0));
 
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/hide'),
                     get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
@@ -178,7 +178,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
                     $userinformation['archived'] = get_string('Yes', 'tool_deprovisionuser');
                 }
                 $userinformation['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
-                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 3));
+                $url = new moodle_url('/admin//tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 2));
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/delete'),
                     get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
             }

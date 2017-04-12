@@ -48,12 +48,17 @@ class timechecker implements userstatusinterface {
      */
     public function __construct() {
         $config = get_config('userstatus_timechecker');
-        $this->timesuspend = $config->suspendtime * 84600;
-        $this->timedelete = $config->deletetime * 84600;
+        // Calculates days to seconds.
+        $this->timesuspend = $config->suspendtime * 86400;
+        $this->timedelete = $config->deletetime * 86400;
     }
 
     /**
-     * Function returns the id, username and lastaccess of users who should be suspended.
+     * All users who are not suspended and not deleted are selected. If the user did not sign in for the hitherto
+     * determined time he/she will be returned.
+     * The array includes merely the necessary information which comprises the userid, lastaccess, suspended, deleted
+     * and the username.
+     *
      * @return array of users to suspend
      */
     public function get_to_suspend() {
@@ -75,7 +80,10 @@ class timechecker implements userstatusinterface {
     }
 
     /**
-     * Function returns the id, username and lastaccess of users who never logged in.
+     * All users who never logged in will be returned in the array.
+     * The array includes merely the necessary information which comprises the userid, lastaccess, suspended, deleted
+     * and the username.
+     *
      * @return array of users who never logged in
      */
     public function get_never_logged_in() {
@@ -93,18 +101,24 @@ class timechecker implements userstatusinterface {
     }
 
     /**
-     * Functions returns the id, username and lastaccess of users who should be deleted.
+     * All users who should be deleted will be returned in the array.
+     * The array includes merely the necessary information which comprises the userid, lastaccess, suspended, deleted
+     * and the username.
+     * The function checks the user table and the deprovisionuser_archive table. Therefore users who are suspended by
+     * the tool_deprovisionuser plugin and users who are suspended manually are screened.
+     *
      * @return array of users who should be deleted.
      */
     public function get_to_delete() {
         global $DB;
+        // Select clause for users who are suspended manually.
         $select = 'deleted=0 AND suspended=1 AND firstname!=\'Anonym\'';
         $users = $DB->get_records_select('user', $select);
         $todeleteusers = array();
 
         // Users who are not suspended by the plugin but are marked as suspended in the main table.
         foreach ($users as $key => $user) {
-            // Pseudo-users have as lastaccess 0 therefore they will not be
+            // Additional check for deletion, lastaccess and admin.
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
                 $timenotloggedin = $mytimestamp - $user->lastaccess;
@@ -117,17 +131,21 @@ class timechecker implements userstatusinterface {
             }
         }
 
-        // Users who are suspended by the plugin.
+        // Users who are suspended by the plugin, therefore the plugin table is used.
         $select = 'deleted=0 AND suspended=1';
         $pluginusers = $DB->get_records_select('deprovisionuser_archive', $select);
+
         foreach ($pluginusers as $key => $user) {
             if ($user->deleted == 0 && $user->lastaccess != 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
-                // Need to get the record of the tool_deprovisionuser table since the user table has only pseudo information.
+
+                // Need to get the record of the tool_deprovisionuser table to identify the time the user was suspended.
                 $timearchived = $DB->get_record('tool_deprovisionuser', array('id' => $user->id), 'timestamp');
                 $timenotloggedin = $mytimestamp - $timearchived->timestamp;
+
                 if ($timenotloggedin > $this->timedelete && $user->suspended == 1) {
-                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+                    $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
+                        $user->deleted);
                     $todeleteusers[$key] = $informationuser;
                 }
             }
@@ -136,7 +154,11 @@ class timechecker implements userstatusinterface {
     }
 
     /**
-     * Returns an array of users that should be reactivated.
+     * All user that should be reactivated will be returned.
+     *
+     * User should be reactivated when their lastaccess is smaller then the timesuspend variable. Although users are
+     * not able to sign in when they are flagged as suspended, this is necessary to react when the timesuspended setting
+     * is changed.
      *
      * @return array of objects
      */
@@ -146,9 +168,11 @@ class timechecker implements userstatusinterface {
         $select = 'deleted=0 AND suspended=1';
         $users = $DB->get_records_select('user', $select);
         $toactivate = array();
+
         foreach ($users as $key => $user) {
             if ($user->suspended == 1 && $user->deleted == 0 && !is_siteadmin($user)) {
                 $mytimestamp = time();
+
                 // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
                 if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
                     $timenotloggedin = $mytimestamp - $user->lastaccess;
@@ -159,14 +183,16 @@ class timechecker implements userstatusinterface {
                     if ($shadowtableuser->lastaccess !== 0) {
                         $timenotloggedin = $mytimestamp - $shadowtableuser->lastaccess;
                     } else {
+                        // In case lastaccess is 0 it can not decided whether the user should be reactivated.
                         continue;
                     }
-                    $activateuser = new archiveduser($shadowtableuser->id, $shadowtableuser->lastaccess,
+                    $activateuser = new archiveduser($shadowtableuser->id, $shadowtableuser->suspended,
                         $shadowtableuser->lastaccess, $shadowtableuser->username, $shadowtableuser->deleted);
 
                 }
-                // When the user signed in he/she should be activated again.
-                if ($timenotloggedin < 8035200 && $user->suspended == 1) {
+
+                // When the time not logged in is smaller than the timesuspend he/she should be activated again.
+                if ($timenotloggedin < $this->timesuspend && $user->suspended == 1) {
                     $toactivate[$key] = $activateuser;
                 }
             }

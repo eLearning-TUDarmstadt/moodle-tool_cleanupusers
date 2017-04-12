@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/lib/moodlelib.php');
 
 /**
  * The class collects the necessary information to suspend, delete and activate users.
+ * It can be used in subplugins, since the constructor assures that all necessary information is transferred.
  *
  * @package   tool_deprovisionuser
  * @copyright 2017 N. Herrmann
@@ -55,12 +56,11 @@ class archiveduser {
     /**
      * Archiveduser constructor.
      * @param int $id
-     * @param int $archived
+     * @param int $suspended
      */
-    // TODO: Params not optional.
-    public function __construct($id, $archived, $lastaccess, $username, $deleted) {
+    public function __construct($id, $suspended, $lastaccess, $username, $deleted) {
         $this->id = $id;
-        $this->suspended = $archived;
+        $this->suspended = $suspended;
         $this->lastaccess = $lastaccess;
         $this->username = $username;
         $this->deleted = $deleted;
