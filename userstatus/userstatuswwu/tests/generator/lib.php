@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Data generator for the userstatus_userstatuswwu plugin.
  *
  * @package    userstatus_userstatuswwu
  * @category   test
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -25,16 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- *
+ * Class for the data generator for the userstatus_userstatuswwu plugin.
  *
  * @package    userstatus_userstatuswwu
  * @category   test
- * @copyright
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userstatus_userstatuswwu_generator extends testing_data_generator {
     /**
-     * Creates Course and course members.
+     * Creates Users with different suspend, and deleted settings.
      */
     public function test_create_preparation () {
         global $DB;
@@ -45,33 +47,27 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $mytimestamp = time();
 
         $user = $generator->create_user(array('username' => 'e_user03', 'lastaccess' => $mytimestamp));
-        $generator->enrol_user($user->id, $course->id);
         $data['e_user03'] = $user;
 
         $unixoneyearago = $mytimestamp - 31536000;
         $userlongnotloggedin = $generator->create_user(array('username' => 'user', 'lastaccess' => $unixoneyearago));
-        $generator->enrol_user($userlongnotloggedin->id, $course->id);
         $data['user'] = $userlongnotloggedin;
 
         $unixfifteendaysago = $mytimestamp - 1296000;
         $userfifteendays = $generator->create_user(array('username' => 'userm', 'lastaccess' => $unixfifteendaysago));
-        $generator->enrol_user($userfifteendays->id, $course->id);
         $data['userm'] = $userfifteendays;
 
         $userarchived = $generator->create_user(array('username' => 's_other07', 'lastaccess' => $mytimestamp, 'suspended' => 1));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true,
             'timestamp' => $mytimestamp), true, false, true);
-        $generator->enrol_user($userarchived->id, $course->id);
         $data['s_other07'] = $userarchived;
 
         $neverloggedin = $generator->create_user(array('username' => 'r_theu9'));
-        $generator->enrol_user($neverloggedin->id, $course->id);
         $data['r_theu9'] = $neverloggedin;
 
         $unixoneyearnintydays = $mytimestamp - 39528000;
         $deleteme = $generator->create_user(array('username' => 'd_me09', 'lastaccess' => $unixoneyearnintydays,
             'suspended' => 1));
-        $generator->enrol_user($deleteme->id, $course->id);
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true,
             'timestamp' => $unixoneyearnintydays), true, false, true);
         $data['d_me09'] = $deleteme;

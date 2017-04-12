@@ -17,19 +17,18 @@
  * PHPUnit data generator tests
  *
  * @package    userstatus_userstatuswwu
- * @category   phpunit
+ * @category   test
  * @copyright  2017 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
- * PHPUnit data generator testcase
+ * Class for the PHPUnit data generator testcase
  *
  * @package    userstatus_userstatuswwu
- * @category   phpunit
+ * @category   test
  * @copyright  2017 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
