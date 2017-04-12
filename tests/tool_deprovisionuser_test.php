@@ -35,8 +35,11 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         return $data;
     }
+
     /**
      * Function to test the the archiveduser class.
+     *
+     * @see \tool_deprovisionuser\archiveduser
      */
     public function test_archiveduser() {
         global $DB, $CFG, $OUTPUT;
@@ -112,6 +115,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
     /**
      * Executes and tests the cronjob.
+     *
+     * @see task\archive_user_task
      */
     public function test_cronjob() {
         global $DB;
@@ -140,7 +145,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-        $expectedmessage = 'In the last cron job 1 users were archived.In the last cron job 1 users were deleted.No
+        $expectedmessage = 'In the last cron job 1 users were archived.In the last cron job 2 users were deleted.No
  problems occurred in plugin tool_deprovisionuser in the last run.';
         $expectedmessage = str_replace(array("\r\n", "\r", "\n"), '', $expectedmessage);
         $msg = str_replace(array("\r\n", "\r", "\n"), '', $messages[0]->body);
@@ -168,10 +173,10 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
 
-        // Users that were archived manually must not be deleted by the cronjob.
+        // Users that were archived will be deleted by the cronjob.
         $recordusertable = $DB->get_record('user', array('id' => $data['deleteduser']->id));
         $this->assertEquals(1, $recordusertable->suspended);
-        $this->assertEquals(0, $recordusertable->deleted);
+        $this->assertEquals(1, $recordusertable->deleted);
 
         $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
         $this->assertEquals(1, $recordusertable->suspended);
@@ -183,10 +188,12 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
         $this->resetAfterTest();
-
     }
+
     /**
      * Test the the deprovisionuser cronjob complete event.
+     *
+     * @see \tool_deprovisionuser\event\deprovisionusercronjob_completed
      */
     public function test_logging() {
         global $DB;
@@ -217,12 +224,15 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
         $logstore = $DB->get_record_select('logstore_standard_log', 'timecreated >=' . $timestamp .
             'AND eventname = \'\tool_deprovisionuser\event\deprovisionusercronjob_completed\'');
-        $this->assertEquals('a:2:{s:15:"numbersuspended";i:1;s:13:"numberdeleted";i:1;}', $logstore->other);
+        $this->assertEquals('a:2:{s:15:"numbersuspended";i:1;s:13:"numberdeleted";i:2;}', $logstore->other);
 
         $this->resetAfterTest();
     }
+
     /**
      * Test the the subplugin_select_form.
+     *
+     * @see \tool_deprovisionuser\subplugin_select_form
      */
     public function test_subpluginform() {
         $data = $this->set_up();
