@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The class contains a test script for the moodle userstatus_userstatuswwu
+ * Test script for the moodle tool_deprovisionuser plugin.
  *
- * @package userstatus_userstatuswwu
- * @copyright 2016 N Herrmann
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_deprovisionuser
+ * @copyright  2016/17 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
 use tool_deprovisionuser\task;
 
+
+/**
+ * Testcase class for executing phpunit test for the moodle tool_deprovisionuser plugin.
+ *
+ * @package    tool_deprovisionuser
+ * @copyright  2016/17 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class tool_deprovisionuser_testcase extends advanced_testcase {
 
     protected function set_up() {
@@ -251,6 +259,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
             (get_string('errormessagesubplugin', 'tool_deprovisionuser')));
         $this->assertEquals($errorarray, $return);
     }
+
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
      */
@@ -262,6 +271,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEmpty($DB->get_records('user'));
         $this->assertEmpty($DB->get_records('tool_deprovisionuser'));
     }
+
     /**
      * Methodes recommended by moodle to assure database is reset.
      */

@@ -16,9 +16,9 @@
 /**
  * PHPUnit data generator tests
  *
- * @package    block_groups
+ * @package    tool_deprovisionuser
  * @category   phpunit
- * @copyright  2016 Nina Herrmann
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,11 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * PHPUnit data generator testcase
+ * PHPUnit data class generator testcase
  *
- * @package    block_groups
+ * @package    tool_deprovisionuser
  * @category   phpunit
- * @copyright  2016 Nina Herrmann
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_deprovisionuser_generator_testcase extends advanced_testcase {

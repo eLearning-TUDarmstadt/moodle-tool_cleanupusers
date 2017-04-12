@@ -15,26 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Data Generator for the tool_deprovisionuser plugin.
  *
- * @package    userstatus_userstatuswwu
+ * @package    tool_deprovisionuser
  * @category   test
+ * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
+ * Data Generator class for the tool_deprovisionuser plugin.
  *
- *
- * @package    userstatus_userstatuswwu
+ * @package    tool_deprovisionuser
  * @category   test
- * @copyright
+ * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_deprovisionuser_generator extends testing_data_generator {
     /**
-     * Creates Course, course members, groups and groupings to test the block.
+     * Creates User to test the tool_deprovisionuser plugin.
      */
     public function test_create_preparation () {
         global $DB;
@@ -46,30 +47,24 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $mytimestamp = time();
 
         $user = $generator->create_user(array('username' => 'neutraluser', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
-        $generator->enrol_user($user->id, $course->id);
         $data['user'] = $user;
 
         $listuser = $generator->create_user(array('username' => 'n_herr03', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
-        $generator->enrol_user($user->id, $course->id);
         $data['listuser'] = $listuser;
 
         $suspendeduser = $generator->create_user(array('username' => 'suspendeduser', 'suspended' => '1'));
-        $generator->enrol_user($suspendeduser->id, $course->id);
         $data['suspendeduser'] = $suspendeduser;
 
         $timestamponeyearago = $mytimestamp - 31622600;
         $notsuspendeduser = $generator->create_user(array('username' => 'notsuspendeduser', 'suspended' => '0',
             'lastaccess' => $timestamponeyearago));
-        $generator->enrol_user($notsuspendeduser->id, $course->id);
         $data['notsuspendeduser'] = $notsuspendeduser;
 
         $suspendeduser2 = $generator->create_user(array('username' => 'suspendeduser2', 'suspended' => '1'));
-        $generator->enrol_user($suspendeduser2->id, $course->id);
         $data['suspendeduser2'] = $suspendeduser2;
 
         $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1',
             'lastaccess' => $timestamponeyearago));
-        $generator->enrol_user($deleteduser->id, $course->id);
         $data['deleteduser'] = $deleteduser;
 
         // User that was archived by the plugin and will be deleted in cronjob.
@@ -92,7 +87,6 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $data['reactivatebyplugin'] = $reactivatebyplugin;
 
         $adminuser = $generator->create_user(array('username' => 'adminuser', 'suspended' => '1'));
-        $generator->enrol_user($adminuser->id, $course->id);
         $data['adminuser'] = $adminuser;
 
         return $data; // Return the user, course and group objects.
