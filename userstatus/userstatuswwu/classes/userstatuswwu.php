@@ -18,7 +18,7 @@
  * Subplugin userstatuswwu.
  *
  * @package   userstatus_userstatuswwu
- * @copyright 2016 N. Herrmann
+ * @copyright 2016/17 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace userstatus_userstatuswwu;
@@ -32,50 +32,47 @@ defined('MOODLE_INTERNAL') || die;
  * Class that checks the status of different users
  *
  * @package    userstatus_userstatuswwu
- * @copyright  2016 N Herrmann
+ * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class userstatuswwu implements userstatusinterface {
-    /**
-     * @var array
-     */
+
+    /** @var array of usernames from the university list. */
     private $zivmemberlist = array();
-    /**
-     * @var array
-     */
+    /** @var array of users who never signed in. */
     private $neverloggedin = array();
-    /**
-     * @var array
-     */
+    /** @var array of users who should be suspended in the next cronjob. */
     private $tosuspend = array();
-    /**
-     * @var array
-     */
+    /** @var array of users who should be deleted in the next cronjob. */
     private $todelete = array();
-    /**
-     * @var array
-     */
+    /** @var array of users who should be reactivated in the next cronjob. */
     private $toreactivate = array();
     /**
-     * @var array
+     * @var array of strings each string represents a usergroup a user can belong to according to the zivmemberlist
+     * and all users who belong to a group should have access to the moodle instance.
      */
     private $groups = array();
-    /**
-     * @var string
-     */
-    private $membertxtrout = '';
+    /** @var string path to the .txt file whcih identifies users and their groups. */
+    private $txtpathtomemberlist = '';
 
-    public function __construct($txtrout = null, $groups = null) {
+    /**
+     * Userstatuswwu constructor.
+     *
+     * @param string $txtpath path to the .txt file which assigns usernames to groups.
+     * @param array $groups array of strings, each string represents a usergroup.
+     */
+    public function __construct($txtpath = null, $groups = null) {
         global $CFG;
         $config = get_config('userstatus_userstatuswwu');
         if (!empty($config->pathtotxt)) {
-            $this->membertxtrout = $config->pathtotxt;
+            $this->txtpathtomemberlist = $config->pathtotxt;
         } else {
-            if ($txtrout === null) {
-                $this->membertxtrout = '/home/nina/data/groups_excerpt_short.txt';
+            if ($txtpath === null) {
+                // Used as default.
+                $this->txtpathtomemberlist = '/home/nina/data/groups_excerpt_short.txt';
             } else {
-                $this->membertxtrout = $txtrout;
+                $this->txtpathtomemberlist = $txtpath;
             }
         }
         if ($groups === null) {
@@ -83,47 +80,52 @@ class userstatuswwu implements userstatusinterface {
         } else {
             $this->groups = $groups;
         }
+        // From the .txt file the relevant users are extracted.
         $this->zivmemberlist = $this->get_all_ziv_users();
 
+        // With this information moodle users are checked.
         $this->order_suspend();
         $this->order_delete();
         $this->order_never_logged_in();
     }
 
     /**
-     * @return array
+     * @return array of users who should be suspended in the next cronjob.
      */
     public function get_to_suspend() {
         return $this->tosuspend;
     }
 
     /**
-     * @return array
+     * @return array of users who never signed in.
      */
     public function get_never_logged_in() {
         return $this->neverloggedin;
     }
 
     /**
-     * @return array
+     * @return array of users who should be deleted in the next cronjob.
      */
     public function get_to_delete() {
         return $this->todelete;
     }
 
     /**
-     * @return array
+     * @return array of users who should be reactivated in the next cronjob.
      */
     public function get_to_reactivate() {
         return $this->toreactivate;
     }
 
     /**
-     * Scans a given txt file for specific groups.
+     * Scans a given .txt file for specific groups.
      *
-     * This function uses fopen() to get a .txt file. This File includes specific groups for the University of Münster.
+     * This function uses fopen() to get a .txt file.
+     * fopen() supports other filetypes, these are not tested. Therefore the usage of a .txt file is recommended.
+     *
+     * This File includes specific groups for the University of Muenster.
      * When a user belongs to certain group the function adds the user to an array. Therefore the return array includes
-     * all users who are allowed to log in into the Learnweb.
+     * all users who are allowed to sign in into the Learnweb.
      *
      * @return array of authorized users
      * @throws userstatuswwu_exception
@@ -131,10 +133,10 @@ class userstatuswwu implements userstatusinterface {
     private function get_all_ziv_users() {
         $zivuserarray = array();
         $currentname = '';
-        if (!file_exists($this->membertxtrout)) {
+        if (!file_exists($this->txtpathtomemberlist)) {
             throw new userstatuswwu_exception(get_string('zivlistnotfound', 'userstatus_userstatuswwu'));
         }
-        $handle = @fopen($this->membertxtrout, "r");
+        $handle = @fopen($this->txtpathtomemberlist, "r");
         if ($handle) {
             while (!feof($handle)) {
                 $buffer = fgets($handle);
@@ -187,22 +189,26 @@ class userstatuswwu implements userstatusinterface {
 
     /**
      * Checks for all users who are not suspended whether they are member of the $zivmemberlist.
-     * When they are not member the user will be saved in the tosuspend array.
+     * In case a user is not a member of the list, the user will be saved in the $tosuspend array.
      */
     private function order_suspend() {
         $allusers = $this->get_users_not_suspended();
         foreach ($allusers as $moodleuser) {
+            // Siteadmins will not be suspended.
             if (is_siteadmin($moodleuser)) {
                 continue;
             }
             $ismember = false;
+            // Compares every zivmember to the moodleusername.
             foreach ($this->zivmemberlist as $zivmember) {
                 if ($zivmember == $moodleuser->username) {
                     $ismember = true;
                     continue;
                 }
             }
+            // Adds Object of the user to the array if he/she is not a member.
             if ($ismember == false) {
+                // Only necessary information is saved in the object and transmitted.
                 $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
                     $moodleuser->username, $moodleuser->deleted);
                 $this->tosuspend[$moodleuser->id] = $informationuser;
@@ -215,12 +221,20 @@ class userstatuswwu implements userstatusinterface {
      */
     private function order_never_logged_in() {
         global $DB;
-        $users = $DB->get_records('user');
+        // Users who never logged in and are not deleted.
+        // Additionally users who are called Anonym with the firstname were suspended with the plugin...
+        // ... therefore they are not displayed.
+        $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
+        $users = $DB->get_records_select('user', $select);
+
         foreach ($users as $moodleuser) {
+            // In case the user is a siteadmin or has an entry in the plugin table he/she will not be displayed.
             if (is_siteadmin($moodleuser) || !empty($DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id)))) {
                 continue;
             }
+            // Additional check for properties.
             if ($moodleuser->lastaccess == 0 && $moodleuser->deleted == 0) {
+                // Add necessary data to the array.
                 $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
                     $moodleuser->username, $moodleuser->deleted);
                 $this->neverloggedin[$moodleuser->id] = $datauser;
@@ -230,19 +244,23 @@ class userstatuswwu implements userstatusinterface {
 
     /**
      * Checks for all users who are suspended the last point of time they were modified.
-     * When the last modification is at least one year ago the user will be saved in the todelete array.
+     * When the last modification is at least one year ago the user will be saved in the $todelete array.
+     * Users who are not in the plugin table will not be handled.
      */
     private function order_delete() {
         global $DB;
         $allusers = $this->get_users_suspended_not_deleted();
         foreach ($allusers as $moodleuser) {
+            // Siteadmin will be ignored.
             if (is_siteadmin($moodleuser)) {
                 continue;
             }
             $timestamp = time();
             $entry = $DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id));
             if (!empty($entry->timestamp)) {
+                // In case the user was not suspended for longer than one year he/she is supposed to be deleted.
                 if ($entry->timestamp < $timestamp - 31622400) {
+                    // Object with necessary data.
                     $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
                         $moodleuser->username, $moodleuser->deleted);
                     $this->todelete[$moodleuser->id] = $datauser;
@@ -257,7 +275,7 @@ class userstatuswwu implements userstatusinterface {
      */
     private function get_users_not_suspended() {
         global $DB;
-        $select = 'deleted=0 AND suspended=0 AND lastaccess>0';
+        $select = 'deleted=0 AND suspended=0 AND lastaccess!=0';
         return $DB->get_records_select('user', $select);
     }
 
@@ -267,6 +285,7 @@ class userstatuswwu implements userstatusinterface {
      */
     private function get_users_suspended_not_deleted() {
         global $DB;
-        return $DB->get_records('user', array('suspended' => 1, 'deleted' => 0));
+        $select = 'deleted=0 AND suspended=1';
+        return $DB->get_records_select('user', $select);
     }
 }
