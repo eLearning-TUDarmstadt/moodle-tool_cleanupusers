@@ -108,6 +108,27 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertArrayNotHasKey($USER->id, $returnsuspend);
         $this->assertArrayNotHasKey($USER->id, $returnneverloggedin);
         $this->assertArrayNotHasKey($USER->id, $returndelete);
+
+        $myuserstatuschecker = new userstatuswwu($CFG->dirroot .
+            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
+        $returnsuspend = $myuserstatuschecker->get_to_suspend();
+        $returndelete = $myuserstatuschecker->get_to_delete();
+        $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
+        // In case no groups are listet the default is used.
+        // No user is any longer in a valid group therefore user who were not handled before will be listet.
+        $this->assertEquals($data['e_user03']->id, $returnsuspend[$data['e_user03']->id]->id);
+
+        // Admin are still not handled.
+        $this->setAdminUser();
+        $this->assertArrayNotHasKey($USER->id, $returnsuspend);
+        $this->assertArrayNotHasKey($USER->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($USER->id, $returndelete);
+
+        $this->assertEquals($data['userm']->id, $returnsuspend[$data['userm']->id]->id);
+
+        $this->assertEquals($data['n_loged4']->id, $returnneverloggedin[$data['n_loged4']->id]->id);
+        $this->assertEquals($data['user']->id, $returnsuspend[$data['user']->id]->id);
+        $this->assertEquals($data['d_me09']->id, $returndelete[$data['d_me09']->id]->id);
     }
 
     /**
