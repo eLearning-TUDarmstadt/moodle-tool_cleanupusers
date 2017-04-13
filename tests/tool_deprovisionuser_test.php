@@ -67,7 +67,6 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals('Anonym', $recordusertable->firstname);
         $this->assertEquals('anonym' . $data['user']->id, $recordusertable->username);
 
-
         // Users that are activated will be marked as suspended=0 in the user table.
         // suspendeduser is only flagged as suspended in the user table
         $neutraltosuspended = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, $data['suspendeduser']->suspended,
@@ -185,9 +184,9 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-        $expectedmessage = 'In the last cron job 1 users were archived.In the last cron job 2 users were deleted.In the 
-last cron job 0 users caused exception and could not be deleted.In the last cron job 0 users caused exception and 
-could not be suspended.In the last cron job 1 users caused exception and could not be reactivated.';
+        $expectedmessage = 'In the last cron job 1 users were archived.In the last cron job 2 users were deleted.In the
+ last cron job 0 users caused exception and could not be deleted.In the last cron job 0 users caused exception and
+ could not be suspended.In the last cron job 1 users caused exception and could not be reactivated.';
         $expectedmessage = str_replace(array("\r\n", "\r", "\n"), '', $expectedmessage);
         $msg = str_replace(array("\r\n", "\r", "\n"), '', $messages[0]->body);
         $this->assertEquals($expectedmessage, $msg);
