@@ -94,7 +94,8 @@ class timechecker implements userstatusinterface {
         $neverloggedin = array();
         foreach ($arrayofuser as $key => $user) {
             if (empty($user->lastaccess) && $user->deleted == 0) {
-                $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+                $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
+                    $user->deleted);
                 $neverloggedin[$key] = $informationuser;
             }
         }
@@ -190,7 +191,8 @@ class timechecker implements userstatusinterface {
                 // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
                 if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
                     $timenotloggedin = $mytimestamp - $user->lastaccess;
-                    $activateuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+                    $activateuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
+                        $user->deleted);
                 } else {
                     $shadowtableuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
                     // There is an entry in the shadowtable, data from the shadowtable is used.

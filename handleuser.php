@@ -33,7 +33,6 @@ $action         = required_param('action', PARAM_TEXT);
 $PAGE->set_url('/admin/tool/deprovisionuser/handleuser.php');
 $PAGE->set_context(context_system::instance());
 
-global $USER;
 $user = $DB->get_record('user', array('id' => $userid));
 require_capability('moodle/user:update', $PAGE->context);
 
@@ -62,7 +61,8 @@ switch($action){
     // User should be reactivated.
     case 'reactivate':
         if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess,
+                $user->username, $user->deleted);
             try {
                 $deprovisionuser->activate_me();
             } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
@@ -79,7 +79,8 @@ switch($action){
     // User should be deleted.
     case 'delete':
         if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess, $user->username, $user->deleted);
+            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess,
+                $user->username, $user->deleted);
             try {
                 $deprovisionuser->delete_me();
             } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {

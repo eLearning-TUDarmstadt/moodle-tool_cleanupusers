@@ -54,15 +54,15 @@ if (!empty($formdata)) {
     $datavalidated = $mform->validation($arraydata, null);
 }
 // In this case you process validated data.
-if ($datavalidated) {
+if ($datavalidated && !empty($arraydata['subplugin'])) {
     set_config('deprovisionuser_subplugin', $arraydata['subplugin'], 'tool_deprovisionuser');
     $content = 'You successfully submitted the Subplugin.';
-    $content .= $mform->display();
+    $mform->display();
 } else {
     if (!empty($datavalidated['subplugin'])) {
         $content .= $datavalidated['subplugin'];
     }
-    $content .= $mform->display();
+    $mform->display();
 }
 // Assures right subplugin is used.
 if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {

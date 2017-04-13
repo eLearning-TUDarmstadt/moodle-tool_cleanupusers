@@ -50,7 +50,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
      * @see \tool_deprovisionuser\archiveduser
      */
     public function test_archiveduser() {
-        global $DB, $CFG, $OUTPUT;
+        global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
@@ -191,7 +191,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->deleted);
 
         // Admin User will not be deleted, although he is suspended (only manually possible).
-        $this->setAdminUser($data['adminuser']);
+        $this->setAdminUser();
         $recordusertable = $DB->get_record('user', array('id' => $data['adminuser']->id));
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
@@ -221,10 +221,12 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
         set_config('buffersize', 0, 'logstore_standard');
-        $manager = get_log_manager(true);
 
         $this->assertTrue($dbman->table_exists('logstore_standard_log'));
         $timestamp = time();
+
+        // Necessary to get current logs otherwise $DB get_record does not contain the event.
+        $manager = get_log_manager(true);
 
         set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
         $cronjob = new tool_deprovisionuser\task\archive_user_task();

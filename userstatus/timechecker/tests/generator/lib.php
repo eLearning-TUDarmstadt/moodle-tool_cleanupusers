@@ -42,8 +42,6 @@ class userstatus_timechecker_generator extends testing_data_generator {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
-
-        $course = $generator->create_course(array('name' => 'Some course'));
         $mytimestamp = time();
 
         $user = $generator->create_user(array('username' => 'neutraluser', 'lastaccess' => $mytimestamp));
