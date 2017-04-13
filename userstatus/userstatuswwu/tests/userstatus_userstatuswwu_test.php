@@ -48,7 +48,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
      * Function to test the userstatuswwu class.
      */
     public function test_userstatuswwu() {
-        global $CFG;
+        global $CFG, $USER;
         $data = $this->set_up();
         $this->assertFileExists($CFG->dirroot .
             '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
@@ -61,27 +61,53 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $returndelete = $myuserstatuschecker->get_to_delete();
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
 
-        $this->assertEquals($data['userm']->id, $returnsuspend[$data['userm']->id]->id);
+        // Several users are generated.
 
+        // E_user03 is an exampleuser who is member of one valid group two not valid groups.
+        // Therefore he/she is not listed by the plugin.
         $this->assertArrayNotHasKey($data['e_user03']->id, $returnsuspend);
         $this->assertArrayNotHasKey($data['e_user03']->id, $returnneverloggedin);
         $this->assertArrayNotHasKey($data['e_user03']->id, $returndelete);
 
+        // S_other07 is in the .txt file member of one valid group and two not valid groups and suspended.
+        // (sequence of the groups changes compared to e_user03).
+        // Not in $todelete array since he/she is a valid groups member.
         $this->assertArrayNotHasKey($data['s_other07']->id, $returnsuspend);
         $this->assertArrayNotHasKey($data['s_other07']->id, $returnneverloggedin);
         $this->assertArrayNotHasKey($data['s_other07']->id, $returndelete);
 
+        // Userm is in the .txt file but not member of a valid group.
+        // Therefore he/she is listed in the $returntosuspend array.
+        $this->assertEquals($data['userm']->id, $returnsuspend[$data['userm']->id]->id);
+        $this->assertArrayNotHasKey($data['userm']->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($data['userm']->id, $returndelete);
+
+        // R_theu9 never signed in and will not be handled, he is in a valid group.
         $this->assertArrayNotHasKey($data['r_theu9']->id, $returnsuspend);
         $this->assertEquals($data['r_theu9']->id, $returnneverloggedin[$data['r_theu9']->id]->id);
         $this->assertArrayNotHasKey($data['r_theu9']->id, $returndelete);
 
+        // N_loged4 never signed in and will not be handled, he is not in a valid group.
+        $this->assertArrayNotHasKey($data['n_loged4']->id, $returnsuspend);
+        $this->assertEquals($data['n_loged4']->id, $returnneverloggedin[$data['n_loged4']->id]->id);
+        $this->assertArrayNotHasKey($data['n_loged4']->id, $returndelete);
+
+        // User is in the .txt file but not member of a valid group.
+        // Therefore he will be in the $returntosuspend array.
         $this->assertEquals($data['user']->id, $returnsuspend[$data['user']->id]->id);
         $this->assertArrayNotHasKey($data['user']->id, $returndelete);
         $this->assertArrayNotHasKey($data['user']->id, $returnneverloggedin);
 
+        // D_me09 was suspended one year ninety days ago by the plugin, is not in the .txt file.
+        // Therefore he is in the $returntodelete array.
         $this->assertEquals($data['d_me09']->id, $returndelete[$data['d_me09']->id]->id);
         $this->assertArrayNotHasKey($data['d_me09']->id, $returnsuspend);
         $this->assertArrayNotHasKey($data['d_me09']->id, $returnneverloggedin);
+
+        $this->setAdminUser();
+        $this->assertArrayNotHasKey($USER->id, $returnsuspend);
+        $this->assertArrayNotHasKey($USER->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($USER->id, $returndelete);
     }
 
     /**

@@ -44,6 +44,15 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $data = array();
         $mytimestamp = time();
 
+        // Several users are generated
+        // e_user03 is an exampleuser who is member of one valid group two not valid groups.
+        // user is in the .txt file but not member of a valid group.
+        // userm is in the .txt file but not member of a valid group.
+        // s_other07 is in the .txt file member of one valid group and two not valid groups
+        // (sequence of the groups changes compared to e_user03).
+        // r_theu9 never logged in and will not be handled, he is in a valid group.
+        // n_loged4 never logged in and is not member of a valid group.
+        // d_me09 was suspended one year ninety days ago by the plugin, is not in the .txt file.
         $user = $generator->create_user(array('username' => 'e_user03', 'lastaccess' => $mytimestamp));
         $data['e_user03'] = $user;
 
@@ -55,20 +64,29 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $userfifteendays = $generator->create_user(array('username' => 'userm', 'lastaccess' => $unixfifteendaysago));
         $data['userm'] = $userfifteendays;
 
+        $unixoneyearnintydays = $mytimestamp - 39528000;
+
         $userarchived = $generator->create_user(array('username' => 's_other07', 'lastaccess' => $mytimestamp, 'suspended' => 1));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true,
-            'timestamp' => $mytimestamp), true, false, true);
+            'timestamp' => $unixoneyearnintydays), true, false, true);
+        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $userarchived->id, 'suspended' => 1,
+            'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 's_other07'), true,
+            false, true);
         $data['s_other07'] = $userarchived;
 
         $neverloggedin = $generator->create_user(array('username' => 'r_theu9'));
         $data['r_theu9'] = $neverloggedin;
 
-        $unixoneyearnintydays = $mytimestamp - 39528000;
+        $neverloggedinnotmember = $generator->create_user(array('username' => 'n_loged4'));
+        $data['n_loged4'] = $neverloggedinnotmember;
+
+        $user = $generator->create_user(array('username' => 'adminuser', 'lastaccess' => $unixoneyearnintydays));
+        $data['adminuser'] = $user;
+
         $deleteme = $generator->create_user(array('username' => 'anonym', 'lastaccess' => $unixoneyearnintydays,
             'suspended' => 1, 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true,
             'timestamp' => $unixoneyearnintydays), true, false, true);
-
         $DB->insert_record_raw('deprovisionuser_archive', array('id' => $deleteme->id, 'suspended' => 1,
             'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 'd_me09'), true,
             false, true);
