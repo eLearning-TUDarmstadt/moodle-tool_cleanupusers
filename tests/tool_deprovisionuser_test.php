@@ -50,11 +50,12 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
      * @see \tool_deprovisionuser\archiveduser
      */
     public function test_archiveduser() {
-        global $DB;
+        global $DB, $USER;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
         // Users that are archived will be marked as suspended in the user table and in the tool_deprovisionuser table.
+        // User is not suspended and did sign in.
         $neutraltosuspended = new \tool_deprovisionuser\archiveduser($data['user']->id, 0,
             $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
         $neutraltosuspended->archive_me();
@@ -63,10 +64,21 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(1, $recordtooltable->archived);
 
+        // Users that are activated will be marked as suspended=0 in the user table.
+        // suspendeduser is only flagged as suspended in the user table
+        $neutraltosuspended = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, $data['suspendeduser']->suspended,
+            $data['suspendeduser']->lastaccess, $data['suspendeduser']->username, $data['suspendeduser']->deleted);
+        $neutraltosuspended->activate_me();
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser']->id));
+        $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
+        $this->assertEquals(0, $recordusertable->suspended);
+        $this->assertEmpty($recordtooltable);
+
         // Users that are deleted will be marked as deleted in the user table.
         // The entry the tool_deprovisionuser table will be deleted.
+        // Suspenduser2 is marked as suspended in the user table no additional information.
         $suspendedtodelete = new \tool_deprovisionuser\archiveduser($data['suspendeduser2']->id, 0,
-            $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
+            $data['suspendeduser2']->lastaccess, $data['suspendeduser2']->username, $data['suspendeduser2']->deleted);
         $suspendedtodelete->delete_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser2']->id));
@@ -76,49 +88,71 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
         // Users that are activated will be marked as active in the user table.
         // The entry the tool_deprovisionuser table will be deleted.
-        $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, 0,
-            $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $data['suspendeduser']->id, 'archived' => 1),
-            true, false, true);
-        $DB->insert_record_raw('deprovisionuser_archive', $data['suspendeduser'], true, false, true);
-        $cloneuser = clone $data['suspendeduser'];
-        $cloneuser->username = 'anonym' . $data['suspendeduser']->id;
-        $cloneuser->firstname = 'Anonym';
-        $cloneuser->lastname = '';
-        $DB->update_record('user', $cloneuser);
+        // archivedbyplugin has entry in tool_deprovisionuser and deprovisionuser_archive was suspended one year ago.
+        $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['archivedbyplugin']->id, $data['archivedbyplugin']->suspended,
+            $data['archivedbyplugin']->lastaccess, $data['archivedbyplugin']->username, $data['archivedbyplugin']->deleted);
         $suspendedtoactive->activate_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser']->id));
-        $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['archivedbyplugin']->id));
+        $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
 
-        // Admin Users will not be deleted neither archived.
-        $this->setAdminUser();
-        $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0,
-            $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
-        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
-        $this->expectExceptionMessage('Not able to suspend user');
-        $adminaccount->archive_me();
-        $recordtooltable = $DB->get_record('moodle_deprovisionuser', array('id' => $data['adminuser']->id));
-        $this->assertEmpty($recordtooltable);
-
-        $this->setAdminUser();
-        $adminaccount = new \tool_deprovisionuser\archiveduser($data['adminuser']->id, 0,
-            $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
-        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
-        $this->expectExceptionMessage('Not able to delete user');
-        $adminaccount->delete_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['adminuser']->id));
-        $this->assertEmpty($recordtooltable);
-        $this->resetAfterTest(true);
-
         $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebyplugin']->id, 0,
-            $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
+            $data['reactivatebyplugin']->lastaccess, $data['reactivatebyplugin']->username, $data['reactivatebyplugin']->deleted);
         $useraccount->activate_me();
         $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['reactivatebyplugin']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['reactivatebyplugin']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
+    }
+    public function test_exception () {
+        global $DB;
+        $data = $this->set_up();
+        $this->assertNotEmpty($data);
+
+        $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebypluginexception']->id, 0,
+            $data['reactivatebypluginexception']->lastaccess, $data['reactivatebypluginexception']->username,
+            $data['reactivatebypluginexception']->deleted);
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectExceptionMessage('Not able to activate user.');
+        $useraccount->activate_me();
+
+        // When entry in deprovisionuser_archive table is deleted user can not be updated.
+        $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebyplugin']->id, 0,
+            $data['reactivatebyplugin']->lastaccess, $data['reactivatebyplugin']->username,
+            $data['reactivatebyplugin']->deleted);
+        $DB->delete_records('deprovisionuser_archive', array('id' => $data['reactivatebyplugin']->id));
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectExceptionMessage('Not able to activate user.');
+        $useraccount->activate_me();
+
+        $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebyplugin']->id, 0,
+            $data['reactivatebyplugin']->lastaccess, $data['reactivatebyplugin']->username,
+            $data['reactivatebyplugin']->deleted);
+        $DB->delete_records('deprovisionuser_archive', array('id' => $data['reactivatebyplugin']->id));
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectExceptionMessage('Not able to activate user.');
+        $useraccount->activate_me();
+
+        // Admin Users will not be deleted neither archived.
+        $this->setAdminUser();
+        $adminaccount = new \tool_deprovisionuser\archiveduser($USER->id, 0,
+            $USER->lastaccess, $USER->username, $USER->deleted);
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectExceptionMessage('Not able to suspend user');
+        $adminaccount->archive_me();
+        $recordtooltable = $DB->get_record('moodle_deprovisionuser', array('id' => $USER->id));
+        $this->assertEmpty($recordtooltable);
+
+        $this->setAdminUser();
+        $adminaccount = new \tool_deprovisionuser\archiveduser($USER->id, 0,
+            $USER->lastaccess, $USER->username, $USER->deleted);
+        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectExceptionMessage('Not able to delete user');
+        $adminaccount->delete_me();
+        $recordtooltable = $DB->get_record('tool_deprovisionuser', array($USER->id));
+        $this->assertEmpty($recordtooltable);
+        $this->resetAfterTest(true);
     }
 
     /**
@@ -127,7 +161,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
      * @see task\archive_user_task
      */
     public function test_cronjob() {
-        global $DB;
+        global $DB, $USER;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
         // Set up mail configuration.
@@ -153,8 +187,9 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-        $expectedmessage = 'In the last cron job 1 users were archived.In the last cron job 2 users were deleted.No
- problems occurred in plugin tool_deprovisionuser in the last run.';
+        $expectedmessage = 'In the last cron job 1 users were archived.In the last cron job 2 users were deleted.In the 
+last cron job 0 users caused exception and could not be deleted.In the last cron job 0 users caused exception and 
+could not be suspended.In the last cron job 1 users caused exception and could not be reactivated.';
         $expectedmessage = str_replace(array("\r\n", "\r", "\n"), '', $expectedmessage);
         $msg = str_replace(array("\r\n", "\r", "\n"), '', $messages[0]->body);
         $this->assertEquals($expectedmessage, $msg);
@@ -192,8 +227,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
         // Admin User will not be deleted, although he is suspended (only manually possible).
         $this->setAdminUser();
-        $recordusertable = $DB->get_record('user', array('id' => $data['adminuser']->id));
-        $this->assertEquals(1, $recordusertable->suspended);
+        $recordusertable = $DB->get_record('user', array('id' => $USER->id));
+        $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
         $this->resetAfterTest();
     }

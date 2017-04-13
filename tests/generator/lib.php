@@ -42,14 +42,22 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
 
-        $course = $generator->create_course(array('name' => 'Some course'));
-        $data['course'] = $course;
         $mytimestamp = time();
 
-        $user = $generator->create_user(array('username' => 'neutraluser', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
+        // Creates several user:
+        // user is not suspended did sign in.
+        // listuser is equal to neutraluser
+        // suspendeduser is suspended never signed in.
+        // notsuspendeduser signed in one year ago
+        // suspendeduser2 is suspended
+        // deleteuser is suspended signed in one year ago
+        // archivedbyplugin has entry in tool_deprovisionuser and deprovisionuser_archive was suspended one year ago.
+        // reactivatebyplugin wassuspended by plugin (has entry in both tables) however lastaccess is only few hours ago.
+
+        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
         $data['user'] = $user;
 
-        $listuser = $generator->create_user(array('username' => 'n_herr03', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
+        $listuser = $generator->create_user(array('username' => 'n_merr03', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
         $data['listuser'] = $listuser;
 
         $suspendeduser = $generator->create_user(array('username' => 'suspendeduser', 'suspended' => '1'));
@@ -86,8 +94,14 @@ class tool_deprovisionuser_generator extends testing_data_generator {
             'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
         $data['reactivatebyplugin'] = $reactivatebyplugin;
 
-        $adminuser = $generator->create_user(array('username' => 'adminuser', 'suspended' => '1'));
-        $data['adminuser'] = $adminuser;
+        // User that was archived by the plugin and will be reactivated in cronjob has as firstname Anonym.
+        $reactivatebypluginexception = $generator->create_user(array('username' => 'anonym3', 'suspended' => '1', 'firstname' => 'Anonym'));
+        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivatebypluginexception->id, 'archived' => true,
+            'timestamp' => $timestampshortago), true, false, true);
+        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $reactivatebypluginexception->id,
+            'username' => 'reactivatebypluginexception', 'firstname' => 'Anonym',
+            'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
+        $data['reactivatebypluginexception'] = $reactivatebypluginexception;
 
         return $data; // Return the user, course and group objects.
     }

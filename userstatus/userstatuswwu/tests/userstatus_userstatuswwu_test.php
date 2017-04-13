@@ -133,7 +133,6 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
 
     public function test_exception() {
         global $CFG;
-        $data = $this->set_up();
         $this->assertFileExists($CFG->dirroot .
             '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
 
