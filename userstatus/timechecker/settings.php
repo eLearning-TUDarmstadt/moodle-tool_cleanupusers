@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 // Included in admin/tool/deprovisionuser/classes/plugininfo/userstatus.php therefore need to include global variable.
 global $CFG, $PAGE;
 
-$PAGE->set_title(get_string('pluginname', 'timechecker'));
-$PAGE->set_heading(get_string('pluginname', 'timechecker'));
+$PAGE->set_title(get_string('pluginname', 'userstatus_timechecker'));
+$PAGE->set_heading(get_string('pluginname', 'userstatus_timechecker'));
 
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/timechecker/index.php';
