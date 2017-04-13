@@ -95,7 +95,7 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $data['reactivatebyplugin'] = $reactivatebyplugin;
 
         // User that was archived by the plugin and will be reactivated in cronjob has as firstname Anonym.
-        $reactivatebypluginexception = $generator->create_user(array('username' => 'anonym3', 'suspended' => '1', 'firstname' => 'Anonym'));
+        $reactivatebypluginexception = $generator->create_user(array('username' => 'moreanonym', 'suspended' => '1', 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivatebypluginexception->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);
         $DB->insert_record_raw('deprovisionuser_archive', array('id' => $reactivatebypluginexception->id,
