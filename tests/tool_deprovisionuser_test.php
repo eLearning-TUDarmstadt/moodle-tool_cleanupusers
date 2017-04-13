@@ -108,6 +108,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $recordusertable = $DB->get_record('user', array('id' => $data['reactivatebyplugin']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
+
+        $this->resetAfterTest(true);
     }
     public function test_exception () {
         global $DB, $USER;
@@ -291,6 +293,8 @@ could not be suspended.In the last cron job 1 users caused exception and could n
         $errorarray = array('subplugin' => new tool_deprovisionuser\deprovisionuser_subplugin_exception
             (get_string('errormessagesubplugin', 'tool_deprovisionuser')));
         $this->assertEquals($errorarray, $return);
+        $this->resetAfterTest(true);
+
     }
 
     /**

@@ -106,6 +106,8 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
         $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
+        $this->resetAfterTest(true);
+
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.

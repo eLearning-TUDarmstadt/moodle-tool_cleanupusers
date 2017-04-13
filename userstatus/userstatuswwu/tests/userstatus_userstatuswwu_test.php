@@ -129,6 +129,8 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertEquals($data['n_loged4']->id, $returnneverloggedin[$data['n_loged4']->id]->id);
         $this->assertEquals($data['user']->id, $returnsuspend[$data['user']->id]->id);
         $this->assertEquals($data['d_me09']->id, $returndelete[$data['d_me09']->id]->id);
+        $this->resetAfterTest(true);
+
     }
 
     public function test_exception() {
@@ -140,6 +142,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->expectExceptionMessage('The reference to the .txt could not be found.');
         new userstatuswwu($CFG->dirroot . '/somenotexistingpath.txt',
             array('member_group' => 'member_group', 'member' => 'member'));
+        $this->resetAfterTest(true);
 
     }
 
