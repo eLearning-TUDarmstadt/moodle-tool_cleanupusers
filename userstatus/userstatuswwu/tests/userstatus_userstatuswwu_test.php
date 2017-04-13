@@ -131,6 +131,19 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertEquals($data['d_me09']->id, $returndelete[$data['d_me09']->id]->id);
     }
 
+    public function test_exception() {
+        global $CFG;
+        $data = $this->set_up();
+        $this->assertFileExists($CFG->dirroot .
+            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
+
+        $this->expectException('userstatus_userstatuswwu\userstatuswwu_exception');
+        $this->expectExceptionMessage('The reference to the .txt could not be found.');
+        new userstatuswwu($CFG->dirroot . '/somenotexistingpath.txt',
+            array('member_group' => 'member_group', 'member' => 'member'));
+
+    }
+
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
      */
