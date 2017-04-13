@@ -42,8 +42,6 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
-        $course = $generator->create_course(array('name' => 'Some course'));
-        $data['course'] = $course;
         $mytimestamp = time();
 
         $user = $generator->create_user(array('username' => 'e_user03', 'lastaccess' => $mytimestamp));
@@ -66,10 +64,14 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $data['r_theu9'] = $neverloggedin;
 
         $unixoneyearnintydays = $mytimestamp - 39528000;
-        $deleteme = $generator->create_user(array('username' => 'd_me09', 'lastaccess' => $unixoneyearnintydays,
-            'suspended' => 1));
+        $deleteme = $generator->create_user(array('username' => 'anonym', 'lastaccess' => $unixoneyearnintydays,
+            'suspended' => 1, 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true,
             'timestamp' => $unixoneyearnintydays), true, false, true);
+
+        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $deleteme->id, 'suspended' => 1,
+            'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 'd_me09'), true,
+            false, true);
         $data['d_me09'] = $deleteme;
 
         return $data; // Return the user and course objects.
