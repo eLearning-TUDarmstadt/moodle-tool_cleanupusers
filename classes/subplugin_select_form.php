@@ -29,7 +29,7 @@ use moodleform;
 use core_plugin_manager;
 
 /**
- * Form Class which allows the sideadmin to select between the available subplugins.
+ * Form Class which allows the sideadmin to select between the available sub-plugins.
  *
  * @package   tool_deprovisionuser
  * @copyright 2017 N. Herrmann
@@ -37,7 +37,7 @@ use core_plugin_manager;
  */
 class subplugin_select_form extends moodleform {
     /**
-     * Defines the subplugin select form.
+     * Defines the sub-plugin select form.
      */
     public function definition() {
         global $CFG;
@@ -69,11 +69,11 @@ class subplugin_select_form extends moodleform {
 
     /**
      * Checks data for correctness
-     * Returns an string in an array when the subplugin is not available.
+     * Returns an string in an array when the sub-plugin is not available.
      *
      * @param array $data
      * @param array $files
-     * @return bool/array array in case the subplugin is not valid, otherwise true.
+     * @return bool/array array in case the sub-plugin is not valid, otherwise true.
      */
     public function validation($data, $files) {
         $plugins = core_plugin_manager::instance()->get_plugins_of_type('userstatus');

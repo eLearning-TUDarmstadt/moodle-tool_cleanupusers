@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Interface for the Subplugin userstatus.
+ * Interface for the sub-plugin userstatus.
  *
  * The Plugins of the type userstatus must return values whether users should be deleted, suspended, reactivated
  * or never logged in.

@@ -16,7 +16,7 @@
 
 /**
  * The Plugins of the type userstatus must return values whether users should be deleted, archived or reactivated.
- * The subplugins will be used by the cron-job and manually by the admin to determine the appropriate actions for users.
+ * The sub-plugins will be used by the cron-job and manually by the admin to determine the appropriate actions for users.
  *
  * @package   tool_deprovisionuser
  * @copyright 2016/17 N. Herrmann
@@ -31,8 +31,8 @@ use core\plugininfo\base;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The general settings for all subplugins of userstatus.
- * Defines the deinstallation settings and adds subplugins to the admin tree, if they have a settings.php.
+ * The general settings for all sub-plugins of userstatus.
+ * Defines the deinstallation settings and adds sub-plugins to the admin tree, if they have a settings.php.
  *
  * @package    tool_deprovisionuser
  * @copyright  2016/17 N Herrmann
@@ -41,19 +41,19 @@ defined('MOODLE_INTERNAL') || die();
 class userstatus extends base {
 
     /**
-     * Returns true when subplugin can be deleted false when not.
-     * Returns false for the userstatuswwu subplugin and for any plugin currently in usage, otherwise true.
+     * Returns true when sub-plugin can be deleted false when not.
+     * Returns false for the userstatuswwu sub-plugin and for any plugin currently in usage, otherwise true.
      * @return bool
      */
     public function is_uninstall_allowed() {
         if ($this->is_standard()) {
             return false;
         }
-        // Userstatuswwu is the standard subplugin and can not be uninstalled.
+        // Userstatuswwu is the standard sub-plugin and can not be uninstalled.
         if ($this->name == 'userstatuswwu') {
             return false;
         }
-        // In case the subplugin is in use, subplugin can not be uninstalled.
+        // In case the sub-plugin is in use, sub-plugin can not be uninstalled.
         if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
             $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
             if ($subplugin == $this->name) {
@@ -64,8 +64,8 @@ class userstatus extends base {
     }
 
     /**
-     * Checks whether Subplugins have settings.php and adds them to the admin menu.
-     * In Case a subplugin is added the settings.php has to include all global variables it needs.
+     * Checks whether sub-plugins have settings.php and adds them to the admin menu.
+     * In Case a sub-plugin is added the settings.php has to include all global variables it needs.
      *
      * @param \part_of_admin_tree $adminroot
      * @param string $parentnodename

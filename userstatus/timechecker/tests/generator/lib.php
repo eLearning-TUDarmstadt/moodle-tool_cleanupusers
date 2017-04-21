@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Data Generator for the userstatus_timechecker subplugin
+ * Data Generator for the userstatus_timechecker sub-plugin
  *
  * @package    userstatus_timechecker
  * @category   test
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Class Data Generator for the userstatus_timechecker subplugin
+ * Class Data Generator for the userstatus_timechecker sub-plugin
  *
  * @package    userstatus_timechecker
  * @category   test
@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class userstatus_timechecker_generator extends testing_data_generator {
     /**
-     * Creates users to test the subplugin.
+     * Creates users to test the sub-plugin.
      */
     public function test_create_preparation () {
         global $DB;

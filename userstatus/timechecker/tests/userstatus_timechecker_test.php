@@ -53,7 +53,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $data = $this->set_up();
         $myuserstatuschecker = new timechecker();
 
-        // Calls for subplugin functions to return arrays.
+        // Calls for sub-plugin functions to return arrays.
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();

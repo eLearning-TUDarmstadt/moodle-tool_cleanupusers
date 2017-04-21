@@ -48,7 +48,7 @@ class archive_user_task extends scheduled_task {
     }
 
     /**
-     * Runs the cron job - Calls for the currently activated subplugin to return arrays of users.
+     * Runs the cron job - Calls for the currently activated sub-plugin to return arrays of users.
      * Distinguishes between users to reacticate, suspend and delete.
      * Subsequently sends an e-mail to the admin containing information about the amount of successfully changed users
      * and the amount of failures.
@@ -57,9 +57,9 @@ class archive_user_task extends scheduled_task {
      * @return true
      */
     public function execute() {
-        // In case the admin did not submit a subplugin, the default is used.
+        // In case the admin did not submit a sub-plugin, the default is used.
         // This is very unlikely to happen since when installing the plugin a default is defined.
-        // It could happen when subplugin is deleted manually (Uninstalling subplugins that are active is not allowed).
+        // It could happen when sub-plugin is deleted manually (Uninstalling sub-plugins that are active is not allowed).
 
         if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
             $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');

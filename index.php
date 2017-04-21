@@ -64,7 +64,7 @@ if ($datavalidated && !empty($arraydata['subplugin'])) {
     }
     $mform->display();
 }
-// Assures right subplugin is used.
+// Assures right sub-plugin is used.
 if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
     $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
@@ -77,7 +77,7 @@ if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
 // Informs the user about the currently used plugin.
 $content .= 'You are currently using the <b>' . $subplugin . '</b> Plugin';
 
-// Request arrays from the subplugin.
+// Request arrays from the sub-plugin.
 $archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();

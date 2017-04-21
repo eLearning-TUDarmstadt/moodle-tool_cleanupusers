@@ -30,7 +30,7 @@ if ($hassiteconfig) {
         get_string('plugintitel', 'tool_deprovisionuser'),
         "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
     ));
-    // Adds an entry for every subplugin with an settings.php.
+    // Adds an entry for every sub-plugin with an settings.php.
     $ADMIN->add('users', new admin_category('subplugins', get_string('subpluginsof', 'tool_deprovisionuser')));
     foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
         global $CFG;

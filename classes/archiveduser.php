@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/lib/moodlelib.php');
 use \core\session\manager;
 /**
  * The class collects the necessary information to suspend, delete and activate users.
- * It can be used in subplugins, since the constructor assures that all necessary information is transferred.
+ * It can be used in sub-plugins, since the constructor assures that all necessary information is transferred.
  *
  * @package   tool_deprovisionuser
  * @copyright 2017 N. Herrmann

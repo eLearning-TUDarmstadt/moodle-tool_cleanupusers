@@ -95,7 +95,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Formats information for users that are identified by the subplugin for deletion.
+     * Formats information for users that are identified by the sub-plugin for deletion.
      * @param array $users array of objects of the user std_class
      * @return array
      */
@@ -126,7 +126,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Safes relevant information for users that are identified by the subplugin for suspending.
+     * Safes relevant information for users that are identified by the sub-plugin for suspending.
      * @param array $users array of objects of the user std_class
      * @return array
      */

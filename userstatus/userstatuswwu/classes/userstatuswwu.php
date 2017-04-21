@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin userstatuswwu.
+ * Sub-plugin userstatuswwu.
  *
  * @package   userstatus_userstatuswwu
  * @copyright 2016/17 N. Herrmann

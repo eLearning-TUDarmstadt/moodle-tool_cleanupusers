@@ -272,7 +272,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the the subplugin_select_form.
+     * Test the the sub-plugin_select_form.
      *
      * @see \tool_deprovisionuser\subplugin_select_form
      */
@@ -280,13 +280,13 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        // Validation with existing subplugin returns true.
+        // Validation with existing sub-plugin returns true.
         $subpluginform = new tool_deprovisionuser\subplugin_select_form();
         $validationdata = array ("subplugin" => 'timechecker');
         $return = $subpluginform->validation($validationdata, null);
         $this->assertEquals(true, $return);
 
-        // Validation with non-existing subplugin returns an array with an errormessage.
+        // Validation with non-existing sub-plugin returns an array with an errormessage.
         $validationdata = array ("subplugin" => 'nosubplugin');
         $return = $subpluginform->validation($validationdata, null);
         $errorarray = array('subplugin' => new tool_deprovisionuser\deprovisionuser_subplugin_exception

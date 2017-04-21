@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin timechecker.
+ * Sub-plugin timechecker.
  *
  * @package   deprovisionuser_userstatus_timechecker
  * @copyright 2016/17 N. Herrmann
