@@ -13,27 +13,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Adds tool_deprovisionuser link in admin tree
+ * PHPUnit data generator tests
  *
- * @package    tool_deprovisionuser
- * @copyright  2016/17 N Herrmann
+ * @package    userstatus_timechecker
+ * @category   phpunit
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
-    $ADMIN->add('users', new admin_externalpage('deprovisionuser',
-        get_string('plugintitel', 'tool_deprovisionuser'),
-        "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
-    ));
-    // Adds an entry for every sub-plugin with an settings.php.
-    $ADMIN->add('users', new admin_category('subplugins', get_string('subpluginsof', 'tool_deprovisionuser')));
-    foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
-        global $CFG;
-        $plugin->load_settings($ADMIN, 'subplugins', $hassiteconfig);
+/**
+ * PHPUnit data generator testcase class
+ *
+ * @package    userstatus_timechecker
+ * @category   phpunit
+ * @copyright  2016/17 Nina Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class userstatus_timechecker_generator_testcase extends advanced_testcase {
+    public function test_generator() {
+        $this->resetAfterTest(true);
     }
 }

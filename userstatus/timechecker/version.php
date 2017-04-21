@@ -16,17 +16,17 @@
 
 /**
  * Version details
- * @package deprovisionuser_userstatuswwu
- * TODO how to name subplugins
+ * @package deprovisionuser_userstatus_timechecker
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016102501;     // The current plugin version (Date: YYYYMMDDXX).
-// TODO Check for requirements
-$plugin->requires  = 2015111000;     // Requires this Moodle version.
-$plugin->component = 'deprovisionuser_userstatuswwu'; // Full name of the plugin (used for diagnostics).
+$plugin->version   = 2017010500;     // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2016052300;     // Requires 31 Moodle version.
+$plugin->component = 'userstatus_timechecker'; // Full name of the plugin (used for diagnostics).
 $plugin->release = 'v1.0-r0';
 $plugin->maturity = MATURITY_ALPHA;
+$plugin->dependencies = array(
+    'tool_deprovisionuser' => ANY_VERSION);

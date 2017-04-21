@@ -14,13 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * This file defines the sub-plugins for the deprovisionuser admin tool.
+ * This file contains language strings used in the userstatuswwu sub-plugin.
  *
  * @package tool_deprovisionuser
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$subplugins = array('userstatus' => 'admin/tool/deprovisionuser/userstatus');
+$string['pluginname'] = 'Userstatus WWU';
+$string['plugintitel'] = 'Userstatus WWU';
+$string['headingintroduction'] = 'Functions of the userstatuswwu subplugin';
+$string['introduction'] = 'In the following setting you can enter a path to a file which assign usernames to usergroups.
+The usernames have to be equal to the usernames in moodle. The groups are hardcoded and have to be changed in the code.
+The plugin will not handle users who are deleted or suspended manually.';
+$string['pathtotxt'] = 'Enter the path to your txt ';
+$string['path'] = 'Path';
+$string['zivlistnotfound'] = 'The reference to the .txt could not be found.';
+$string['noconfig'] = 'The path to the .txt file has to be set.';

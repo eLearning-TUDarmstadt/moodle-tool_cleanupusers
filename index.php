@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web interface to deprovisionuser
+ * Web interface to deprovisionuser.
  *
  * @package    tool_deprovisionuser
  * @copyright  2016 N Herrmann
@@ -25,12 +25,64 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 // Get URL parameters.
-/*$contextid = optional_param('context', $systemcontext->id, PARAM_INT);*/
+
 $PAGE->set_context(context_system::instance());
 $context = context_system::instance();
 // Check permissions.
 require_login();
 require_capability('moodle/site:config', $context);
 
-admin_externalpage_setup('tooldeprovisionuser');
-echo 'something';
+admin_externalpage_setup('deprovisionuser');
+
+$pagetitle = get_string('pluginname', 'tool_deprovisionuser');
+$PAGE->set_title(get_string('pluginname', 'tool_deprovisionuser'));
+$PAGE->set_heading(get_string('pluginname', 'tool_deprovisionuser'));
+$PAGE->set_pagelayout('standard');
+
+$renderer = $PAGE->get_renderer('tool_deprovisionuser');
+
+$content = '';
+echo $OUTPUT->header();
+echo $renderer->get_heading();
+$content = '';
+
+$mform = new \tool_deprovisionuser\subplugin_select_form();
+$formdata = $mform->get_data();
+$datavalidated = false;
+if (!empty($formdata)) {
+    $arraydata = get_object_vars($formdata);
+    $datavalidated = $mform->validation($arraydata, null);
+}
+// In this case you process validated data.
+if ($datavalidated && !empty($arraydata['subplugin'])) {
+    set_config('deprovisionuser_subplugin', $arraydata['subplugin'], 'tool_deprovisionuser');
+    $content = 'You successfully submitted the Subplugin.';
+    $mform->display();
+} else {
+    if (!empty($datavalidated['subplugin'])) {
+        $content .= $datavalidated['subplugin'];
+    }
+    $mform->display();
+}
+// Assures right sub-plugin is used.
+if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
+    $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
+    $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
+    $userstatuschecker = new $mysubpluginname();
+} else {
+    $subplugin = 'userstatuswwu';
+    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
+}
+
+// Informs the user about the currently used plugin.
+$content .= 'You are currently using the <b>' . $subplugin . '</b> Plugin';
+
+// Request arrays from the sub-plugin.
+$archivearray = $userstatuschecker->get_to_suspend();
+$arraytodelete = $userstatuschecker->get_to_delete();
+$arrayneverloggedin = $userstatuschecker->get_never_logged_in();
+
+$content .= $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
+
+echo $content;
+echo $OUTPUT->footer();

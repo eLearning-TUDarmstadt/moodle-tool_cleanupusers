@@ -13,12 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Tasks definitions.
+ * Tasks definition.
  *
  * @package    tool_deprovisionuser
- * @copyright  2016 N Herrmann
+ * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,13 +25,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = array(
     array(
-        'classname' => 'tool_deprovisionuser\task\cron_task',
+        'classname' => 'tool_deprovisionuser\task\archive_user_task',
         'blocking' => 0,
-        'minute' => '',
-        'hour' => '',
-        'day' => '1',
+        'minute' => 'R',
+        'hour' => '4',
+        'day' => '*',
         'month' => '*',
-        'dayofweek' => '',
-        'faildelay' => 1,
+        'dayofweek' => '*',
+        'faildelay' => 0,
     )
 );

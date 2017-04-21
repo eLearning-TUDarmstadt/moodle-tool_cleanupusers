@@ -13,53 +13,28 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * A scheduled task for tool_deprovisionuser cron.
+ * PHPUnit data generator tests
  *
  * @package    tool_deprovisionuser
- * @copyright  2016 N Herrmann
+ * @category   phpunit
+ * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_deprovisionuser\task;
-use tool_deprovisionuser\db as this_db;
 
-//require_once(__DIR__.'/../../locallib.php');
+defined('MOODLE_INTERNAL') || die();
 
-class cron_task extends \core\task\scheduled_task
-{
 
-    /**
-     * Get a descriptive name for this task (shown to admins).
-     *
-     * @return string
-     */
-    public function get_name()
-    {
-        return get_string('crontask', 'tool_deprovisionuser');
-    }
-
-    /**
-     * Runs the cron job
-     *
-     * @return string
-     */
-    public function execute(){
-
-    }
-
-    /**
-     * Returns the status of a user
-     */
-    public function get_user_status()
-    {
-
-    }
-
-    /**
-     * Changes the status of a user
-     */
-    public function change_user_status(){
-
+/**
+ * PHPUnit data class generator testcase
+ *
+ * @package    tool_deprovisionuser
+ * @category   phpunit
+ * @copyright  2016/17 Nina Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_deprovisionuser_generator_testcase extends advanced_testcase {
+    public function test_generator() {
+        $this->resetAfterTest(true);
     }
 }

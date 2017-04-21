@@ -14,13 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * This file defines the sub-plugins for the deprovisionuser admin tool.
+ * This file contains language strings used in the timechecker sub-plugin.
  *
- * @package tool_deprovisionuser
+ * @package deprovisionuser_userstatus_timechecker
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$string['pluginname'] = 'Timechecker';
+$string['plugintitel'] = 'Timechecker';
+$string['introsettingstext'] = 'In these settings, the time until suspension and the time until deletion can be defined.<br>
+The plugin does apply this to users changed by the plugin and users who are manually suspended or deleted.';
+$string['settingsinformation'] = 'Settings Information';
+$string['timechecker_time_to_archive'] = 'Number of Days a user not signs in, until suspension.';
+$string['timechecker_time_to_delete'] = 'Number of Days a user is suspended, until the user is deleted.';
+$string['suspendtime'] = 'Time until suspension';
+$string['deletetime'] = 'Time until deletion';
 
-$subplugins = array('userstatus' => 'admin/tool/deprovisionuser/userstatus');
