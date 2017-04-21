@@ -57,8 +57,8 @@ This includes:
         - when viewing the page of the user he/she cannot be identified
 
 ## Delete User
-Moodle provides a `delete_user()` function. However when the user is processed after the function was executed, the user is not longer flagged as deleted.
-In the plugin firstly the username is hashed. In case the hashed value already exist the username and the hashed username are hashed again.
+Moodle provides a `delete_user()` function. However, when the user is processed after the function was executed, the user is no longer flagged as deleted.
+In the plugin, firstly the username is hashed. In case the hashed value already exist the username and the hashed username are hashed again.
 
 Afterwards the moodle `delete_user()` function is executed with the following functions:
 - replaces the username with the e-mail address and a timestamp and replaces the email address 
@@ -115,7 +115,7 @@ The arrays that are returned have the `userid` as the key for the specific user.
 least the following information in an additional array: 
   * `userid`: integer not exceeding 10 integers
   * `username`: varchar not exceeding 100 characters
-  * `lastaccess`: a unix timestamp (10 integers)
+  * `lastaccess`: Unix timestamp (10 integers)
   * `suspended`: integer 1 = suspended, 0 = not
   * `deleted`: integer 1 = deleted, 0 = not
   
