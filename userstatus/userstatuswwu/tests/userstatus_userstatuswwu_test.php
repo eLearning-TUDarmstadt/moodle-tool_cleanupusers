@@ -109,14 +109,12 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertArrayNotHasKey($USER->id, $returnneverloggedin);
         $this->assertArrayNotHasKey($USER->id, $returndelete);
 
+        // Userstatuschecker uses default groups. Merely e_user03 is a valid member.
         $myuserstatuschecker = new userstatuswwu($CFG->dirroot .
             '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
-        // In case no groups are listet the default is used.
-        // No user is any longer in a valid group therefore user who were not handled before will be listet.
-        $this->assertEquals($data['e_user03']->id, $returnsuspend[$data['e_user03']->id]->id);
 
         // Admin are still not handled.
         $this->setAdminUser();
@@ -124,7 +122,9 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertArrayNotHasKey($USER->id, $returnneverloggedin);
         $this->assertArrayNotHasKey($USER->id, $returndelete);
 
-        $this->assertEquals($data['userm']->id, $returnsuspend[$data['userm']->id]->id);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnsuspend);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returndelete);
 
         $this->assertEquals($data['n_loged4']->id, $returnneverloggedin[$data['n_loged4']->id]->id);
         $this->assertEquals($data['user']->id, $returnsuspend[$data['user']->id]->id);
@@ -133,7 +133,54 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
 
     }
 
-    public function test_exception() {
+    /**
+     * Sets Config of the userstatuswwu class and assures Plugin still works.
+     */
+    public function test_set_config() {
+        global $CFG, $USER;
+        $data = $this->set_up();
+
+        $this->assertFileExists($CFG->dirroot .
+            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
+        set_config('pathtotxt', $CFG->dirroot .
+            '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt', 'userstatus_userstatuswwu');
+        $userstatuswwu = new userstatuswwu();
+        $returnsuspend = $userstatuswwu->get_to_suspend();
+        $returndelete = $userstatuswwu->get_to_delete();
+        $returnneverloggedin = $userstatuswwu->get_never_logged_in();
+
+        // Several users are generated.
+
+        $this->setAdminUser();
+        $this->assertArrayNotHasKey($USER->id, $returnsuspend);
+        $this->assertArrayNotHasKey($USER->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($USER->id, $returndelete);
+
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnsuspend);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returndelete);
+
+        $this->assertEquals($data['n_loged4']->id, $returnneverloggedin[$data['n_loged4']->id]->id);
+        $this->assertEquals($data['user']->id, $returnsuspend[$data['user']->id]->id);
+        $this->assertEquals($data['d_me09']->id, $returndelete[$data['d_me09']->id]->id);
+        $this->resetAfterTest(true);
+    }
+
+    /**
+     * When the txt_path is null exception is thrown.
+     */
+    public function test_txtpath_null() {
+        $this->expectException('userstatus_userstatuswwu\userstatuswwu_exception');
+        $this->expectExceptionMessage('The path to the .txt file has to be set.');
+        new userstatuswwu();
+
+        $this->resetAfterTest(true);
+    }
+
+    /**
+     * Test exception when file does not exist.
+     */
+    public function test_filenotexist() {
         global $CFG;
         $this->assertFileExists($CFG->dirroot .
             '/admin/tool/deprovisionuser/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
@@ -142,12 +189,11 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->expectExceptionMessage('The reference to the .txt could not be found.');
         new userstatuswwu($CFG->dirroot . '/somenotexistingpath.txt',
             array('member_group' => 'member_group', 'member' => 'member'));
-        $this->resetAfterTest(true);
 
     }
 
     /**
-     * Methodes recommended by moodle to assure database and dataroot is reset.
+     * Function recommended by moodle to assure database and dataroot is reset.
      */
     public function test_deleting() {
         global $DB;
@@ -157,7 +203,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
     }
 
     /**
-     * Methodes recommended by moodle to assure database is reset.
+     * Function recommended by moodle to assure database is reset.
      */
     public function test_user_table_was_reset() {
         global $DB;
