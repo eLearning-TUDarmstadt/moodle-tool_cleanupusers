@@ -30,3 +30,4 @@ The plugin will not handle users who are deleted or suspended manually.';
 $string['pathtotxt'] = 'Enter the path to your txt ';
 $string['path'] = 'Path';
 $string['zivlistnotfound'] = 'The reference to the .txt could not be found.';
+$string['noconfig'] = 'The path to the .txt file has to be set.';

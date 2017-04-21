@@ -77,7 +77,7 @@ class userstatuswwu implements userstatusinterface {
         } else {
             if ($txtpath === null) {
                 // Used as default.
-                $this->txtpathtomemberlist = '/home/nina/data/groups_excerpt_short.txt';
+                throw new userstatuswwu_exception(get_string('noconfig', 'userstatus_userstatuswwu'));
             } else {
                 $this->txtpathtomemberlist = $txtpath;
             }
