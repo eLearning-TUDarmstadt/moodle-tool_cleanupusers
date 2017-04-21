@@ -134,7 +134,8 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
     }
 
     /**
-     * Sets Config of the userstatuswwu class and assures Plugin still works.
+     * Sets Config pathtotxt of the userstatuswwu plugin and assures the class constructor works without setting the
+     * path.
      */
     public function test_set_config() {
         global $CFG;
@@ -149,14 +150,14 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $returndelete = $userstatuswwu->get_to_delete();
         $returnneverloggedin = $userstatuswwu->get_never_logged_in();
 
-        // Several users are generated.
-        $this->assertArrayNotHasKey($data['e_user03']->id, $returnsuspend);
-        $this->assertArrayNotHasKey($data['e_user03']->id, $returnneverloggedin);
-        $this->assertArrayNotHasKey($data['e_user03']->id, $returndelete);
-
-        $this->assertEquals($data['n_loged4']->id, $returnneverloggedin[$data['n_loged4']->id]->id);
-        $this->assertEquals($data['user']->id, $returnsuspend[$data['user']->id]->id);
         $this->assertEquals($data['d_me09']->id, $returndelete[$data['d_me09']->id]->id);
+        $this->assertEquals($data['user']->id, $returnsuspend[$data['user']->id]->id);
+        $this->assertEquals($data['n_loged4']->id, $returnneverloggedin[$data['n_loged4']->id]->id);
+
+        // Several users are generated.
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnneverloggedin);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returnsuspend);
+        $this->assertArrayNotHasKey($data['e_user03']->id, $returndelete);
         $this->resetAfterTest(true);
     }
 
