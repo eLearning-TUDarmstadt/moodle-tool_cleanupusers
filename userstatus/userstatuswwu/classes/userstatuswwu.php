@@ -44,13 +44,13 @@ class userstatuswwu implements userstatusinterface {
     /** @var array of users who never signed in. */
     private $neverloggedin = array();
 
-    /** @var array of users who should be suspended in the next cronjob. */
+    /** @var array of users who should be suspended in the next cron-job. */
     private $tosuspend = array();
 
-    /** @var array of users who should be deleted in the next cronjob. */
+    /** @var array of users who should be deleted in the next cron-job. */
     private $todelete = array();
 
-    /** @var array of users who should be reactivated in the next cronjob. */
+    /** @var array of users who should be reactivated in the next cron-job. */
     private $toreactivate = array();
 
     /**
@@ -97,7 +97,7 @@ class userstatuswwu implements userstatusinterface {
     }
 
     /**
-     * @return array of users who should be suspended in the next cronjob.
+     * @return array of users who should be suspended in the next cron-job.
      */
     public function get_to_suspend() {
         return $this->tosuspend;
@@ -111,7 +111,7 @@ class userstatuswwu implements userstatusinterface {
     }
 
     /**
-     * @return array of users who should be deleted in the next cronjob.
+     * @return array of users who should be deleted in the next cron-job.
      */
     public function get_to_delete() {
         return $this->todelete;
@@ -119,7 +119,7 @@ class userstatuswwu implements userstatusinterface {
 
     /**
      * This function is supposed to return users who should be reactivated, by now it always returns an empty array.
-     * @return array of users who should be reactivated in the next cronjob.
+     * @return array of users who should be reactivated in the next cron-job.
      */
     public function get_to_reactivate() {
         return $this->toreactivate;

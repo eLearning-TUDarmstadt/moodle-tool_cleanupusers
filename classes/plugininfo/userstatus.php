@@ -16,7 +16,7 @@
 
 /**
  * The Plugins of the type userstatus must return values whether users should be deleted, archived or reactivated.
- * The subplugins will be used by the cronjob and manually by the admin to determine the appropriate actions for users.
+ * The subplugins will be used by the cron-job and manually by the admin to determine the appropriate actions for users.
  *
  * @package   tool_deprovisionuser
  * @copyright 2016/17 N. Herrmann

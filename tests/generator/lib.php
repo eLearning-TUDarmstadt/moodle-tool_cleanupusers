@@ -75,7 +75,7 @@ class tool_deprovisionuser_generator extends testing_data_generator {
             'lastaccess' => $timestamponeyearago));
         $data['deleteduser'] = $deleteduser;
 
-        // User that was archived by the plugin and will be deleted in cronjob.
+        // User that was archived by the plugin and will be deleted in cron-job.
         $suspendeduser3 = $generator->create_user(array('username' => 'anonym', 'suspended' => '1', 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $suspendeduser3->id, 'archived' => true,
             'timestamp' => $timestamponeyearago), true, false, true);
@@ -85,7 +85,7 @@ class tool_deprovisionuser_generator extends testing_data_generator {
         $data['archivedbyplugin'] = $suspendeduser3;
 
         $timestampshortago = $mytimestamp - 3456;
-        // User that was archived by the plugin and will be reactivated in cronjob.
+        // User that was archived by the plugin and will be reactivated in cron-job.
         $reactivatebyplugin = $generator->create_user(array('username' => 'anonym2', 'suspended' => '1', 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivatebyplugin->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);
@@ -94,7 +94,7 @@ class tool_deprovisionuser_generator extends testing_data_generator {
             'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
         $data['reactivatebyplugin'] = $reactivatebyplugin;
 
-        // User that was archived by the plugin and will be reactivated in cronjob has as firstname Anonym.
+        // User that was archived by the plugin and will be reactivated in cron-job has as firstname Anonym.
         $reactivatebypluginexception = $generator->create_user(array('username' => 'moreanonym', 'suspended' => '1', 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_deprovisionuser', array('id' => $reactivatebypluginexception->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);

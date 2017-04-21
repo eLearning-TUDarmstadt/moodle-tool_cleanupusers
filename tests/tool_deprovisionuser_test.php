@@ -153,7 +153,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     }
 
     /**
-     * Executes and tests the cronjob.
+     * Executes and tests the cron-job.
      *
      * @see task\archive_user_task
      */
@@ -169,14 +169,14 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $name = $cronjob->get_name();
         $this->assertEquals(get_string('archive_user_task', 'tool_deprovisionuser'), $name);
 
-        // Before cronjob is executed users are not suspended.
+        // Before cron-job is executed users are not suspended.
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
         $this->assertEquals(0, $recordusertable->suspended);
 
         $recordusertable = $DB->get_record('user', array('id' => $data['listuser']->id));
         $this->assertEquals(0, $recordusertable->suspended);
 
-        // Run Cronjob with timechecker plugin.
+        // Run cron-job with timechecker plugin.
         set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
         $cronjob = new tool_deprovisionuser\task\archive_user_task();
         $cronjob->execute();
@@ -184,9 +184,9 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-        $expectedmessage = 'In the last cron job 1 users were archived.In the last cron job 2 users were deleted.In the
- last cron job 0 users caused exception and could not be deleted.In the last cron job 0 users caused exception and
- could not be suspended.In the last cron job 1 users caused exception and could not be reactivated.';
+        $expectedmessage = 'In the last cron-job 1 users were archived.In the last cron-job 2 users were deleted.In the
+ last cron-job 0 users caused exception and could not be deleted.In the last cron-job 0 users caused exception and
+ could not be suspended.In the last cron-job 1 users caused exception and could not be reactivated.';
         $expectedmessage = str_replace(array("\r\n", "\r", "\n"), '', $expectedmessage);
         $msg = str_replace(array("\r\n", "\r", "\n"), '', $messages[0]->body);
         $this->assertEquals($expectedmessage, $msg);
@@ -213,7 +213,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
 
-        // Users that were archived will be deleted by the cronjob.
+        // Users that were archived will be deleted by the cron-job.
         $recordusertable = $DB->get_record('user', array('id' => $data['deleteduser']->id));
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(1, $recordusertable->deleted);
@@ -231,7 +231,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the the deprovisionuser cronjob complete event.
+     * Test the the deprovisionuser cron-job complete event.
      *
      * @see \tool_deprovisionuser\event\deprovisionusercronjob_completed
      */

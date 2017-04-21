@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use \core\event\base;
 /**
- * The tool_deprovisionuser event informs admin about outcome of cronjob.
+ * The tool_deprovisionuser event informs admin about outcome of cron-job.
  *
  * @package    tool_deprovisionuser
  * @copyright  2016/17 N Herrmann
@@ -65,7 +65,7 @@ class deprovisionusercronjob_completed extends base {
 
     /**
      * Generates a message about the number of users deleted and suspended. The message is displayed in the Live Logs
-     * and the Logs table. If no Users are affected the message states that the cronjob was running.
+     * and the Logs table. If no Users are affected the message states that the cron-job was running.
      *
      * @return string
      */

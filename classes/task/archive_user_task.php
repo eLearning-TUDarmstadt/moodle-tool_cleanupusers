@@ -84,14 +84,14 @@ class archive_user_task extends scheduled_task {
         $unabletodelete = $deleteresult['failures'];
         $userdeleted = $deleteresult['countersuccess'];
 
-        // Admin is informed about the Cronjob and the amount of users that are affected.
+        // Admin is informed about the cron-job and the amount of users that are affected.
 
         $admin = get_admin();
         // Number of users suspended or deleted.
         $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) .
             "\r\n" .get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
 
-        // No Problems occured during the cronjob.
+        // No Problems occured during the cron-job.
         if (empty($unabletoactivate) and empty($unabletoarchive) and empty($unabletodelete)) {
             $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_deprovisionuser');
         } else {
@@ -107,7 +107,7 @@ class archive_user_task extends scheduled_task {
         $sender = $user->get_user(-10);
         email_to_user($admin, $sender, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
 
-        // Triggers cronjob_completed event.
+        // Triggers deprovisionusercronjob_completed event.
         $context = \context_system::instance();
         $event = deprovisionusercronjob_completed::create_simple($context, $userarchived, $userdeleted);
         $event->trigger();
