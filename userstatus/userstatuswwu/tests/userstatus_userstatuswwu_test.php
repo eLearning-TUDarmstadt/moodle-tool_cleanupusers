@@ -137,7 +137,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
      * Sets Config of the userstatuswwu class and assures Plugin still works.
      */
     public function test_set_config() {
-        global $CFG, $USER;
+        global $CFG;
         $data = $this->set_up();
 
         $this->assertFileExists($CFG->dirroot .
@@ -150,12 +150,6 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $returnneverloggedin = $userstatuswwu->get_never_logged_in();
 
         // Several users are generated.
-
-        $this->setAdminUser();
-        $this->assertArrayNotHasKey($USER->id, $returnsuspend);
-        $this->assertArrayNotHasKey($USER->id, $returnneverloggedin);
-        $this->assertArrayNotHasKey($USER->id, $returndelete);
-
         $this->assertArrayNotHasKey($data['e_user03']->id, $returnsuspend);
         $this->assertArrayNotHasKey($data['e_user03']->id, $returnneverloggedin);
         $this->assertArrayNotHasKey($data['e_user03']->id, $returndelete);
