@@ -27,9 +27,8 @@ $tasks = array(
     array(
         'classname' => 'tool_deprovisionuser\task\archive_user_task',
         'blocking' => 0,
-        // Temporary runs every minute for development reasons.
-        'minute' => '*/1',
-        'hour' => '*',
+        'minute' => 'R',
+        'hour' => '4',
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
