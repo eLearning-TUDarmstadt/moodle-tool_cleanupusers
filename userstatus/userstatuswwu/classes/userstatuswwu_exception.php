@@ -16,7 +16,7 @@
 /**
  * Create an Exception Class for the userstatus_userstatuswwu
  *
- * @package   tool_deprovisionuser
+ * @package   tool_cleanupusers
  * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

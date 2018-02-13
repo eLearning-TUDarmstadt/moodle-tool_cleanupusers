@@ -16,15 +16,15 @@
 
 /**
  * Version details
- * @package tool_deprovisionuser
+ * @package tool_cleanupusers
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017040500;     // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2018021300;     // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2016052300;     // Requires 31 Moodle version.
-$plugin->component = 'tool_deprovisionuser'; // Full name of the plugin (used for diagnostics).
-$plugin->release = 'v1.0-r0';
+$plugin->component = 'tool_cleanupusers'; // Full name of the plugin (used for diagnostics).
+$plugin->release = 'v1.0-r1';
 $plugin->maturity = MATURITY_ALPHA;

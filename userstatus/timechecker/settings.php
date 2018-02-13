@@ -16,21 +16,21 @@
 
 /**
  * Settings.php
- * @package deprovisionuser_userstatus_timechecker
+ * @package userstatus_timechecker
  * @copyright 2016/17 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-// Included in admin/tool/deprovisionuser/classes/plugininfo/userstatus.php therefore need to include global variable.
+// Included in admin/tool/cleanupusers/classes/plugininfo/userstatus.php therefore need to include global variable.
 global $CFG, $PAGE;
 
 $PAGE->set_title(get_string('pluginname', 'userstatus_timechecker'));
 $PAGE->set_heading(get_string('pluginname', 'userstatus_timechecker'));
 
 if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/timechecker/index.php';
+    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/timechecker/index.php';
     $settings->add(new admin_setting_heading('timechecker_heading', get_string('settingsinformation',
         'userstatus_timechecker'), get_string('introsettingstext', 'userstatus_timechecker')));
     $settings->add(new admin_setting_configtext('userstatus_timechecker/suspendtime',

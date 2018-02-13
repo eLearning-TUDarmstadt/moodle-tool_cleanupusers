@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderer for the Web interface of tool_deprovisionuser.
+ * Renderer for the Web interface of tool_cleanupusers.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Class of the tool_deprovisionuser renderer.
+ * Class of the tool_cleanupusers renderer.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_deprovisionuser_renderer extends plugin_renderer_base {
+class tool_cleanupusers_renderer extends plugin_renderer_base {
 
     /**
      * Function expects three arrays and renders them to three separate tables.
@@ -65,32 +65,32 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
         // Renders the information for each array in a separate html table.
         $output = '';
         if (!empty($renderneverloggedin)) {
-            $output .= $this->render_table_of_users($renderneverloggedin, array(get_string('Neverloggedin', 'tool_deprovisionuser'),
-                get_string('lastaccess', 'tool_deprovisionuser'), get_string('Archived', 'tool_deprovisionuser'),
-                get_string('Willbe', 'tool_deprovisionuser')));
+            $output .= $this->render_table_of_users($renderneverloggedin, array(get_string('Neverloggedin', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
+                get_string('Willbe', 'tool_cleanupusers')));
         }
         if (!empty($rendertosuspend)) {
-            $output .= $this->render_table_of_users($rendertosuspend, array(get_string('oldusers', 'tool_deprovisionuser'),
-                get_string('lastaccess', 'tool_deprovisionuser'),
-                get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
+            $output .= $this->render_table_of_users($rendertosuspend, array(get_string('oldusers', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'),
+                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
         }
         if (!empty($rendertodelete)) {
-            $output .= $this->render_table_of_users($rendertodelete, array(get_string('titletodelete', 'tool_deprovisionuser'),
-                get_string('lastaccess', 'tool_deprovisionuser'),
-                get_string('Archived', 'tool_deprovisionuser'), get_string('Willbe', 'tool_deprovisionuser')));
+            $output .= $this->render_table_of_users($rendertodelete, array(get_string('titletodelete', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'),
+                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
         }
 
         return $output;
     }
 
     /**
-     * Functions returns the heading for the tool_deprovisionuser.
+     * Functions returns the heading for the tool_cleanupusers.
      *
      * @return string
      */
     public function get_heading() {
         $output = '';
-        $output .= $this->heading(get_string('plugintitel', 'tool_deprovisionuser'));
+        $output .= $this->heading(get_string('plugintitel', 'tool_cleanupusers'));
         return $output;
     }
 
@@ -109,16 +109,16 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
-                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
                 if (empty($isarchivid)) {
-                    $userinformation['archived'] = get_string('No', 'tool_deprovisionuser');
+                    $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
-                    $userinformation['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                    $userinformation['archived'] = get_string('Yes', 'tool_cleanupusers');
                 }
-                $userinformation['Willbe'] = get_string('shouldbedelted', 'tool_deprovisionuser');
-                $url = new moodle_url('/admin/tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 'delete'));
+                $userinformation['Willbe'] = get_string('shouldbedelted', 'tool_cleanupusers');
+                $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', array('userid' => $user->id, 'action' => 'delete'));
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/delete'),
-                    get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                    get_string('showuser', 'tool_cleanupusers'), array('class' => "imggroup-" . $user->id)));
             }
             $resultarray[$key] = $userinformation;
         }
@@ -139,19 +139,19 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
 
-                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
                 if (empty($isarchivid)) {
-                    $userinformation['archived'] = get_string('No', 'tool_deprovisionuser');
+                    $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
-                    $userinformation['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                    $userinformation['archived'] = get_string('Yes', 'tool_cleanupusers');
                 }
 
-                $userinformation['Willbe'] = get_string('willbe_archived', 'tool_deprovisionuser');
+                $userinformation['Willbe'] = get_string('willbe_archived', 'tool_cleanupusers');
 
-                $url = new moodle_url('/admin/tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 'suspend'));
+                $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', array('userid' => $user->id, 'action' => 'suspend'));
 
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/hide'),
-                    get_string('hideuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                    get_string('hideuser', 'tool_cleanupusers'), array('class' => "imggroup-" . $user->id)));
             }
             $result[$key] = $userinformation;
         }
@@ -170,17 +170,17 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
             $userinformation = array();
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
-                $userinformation['lastaccess'] = get_string('neverlogged', 'tool_deprovisionuser');
-                $isarchivid = $DB->get_records('tool_deprovisionuser', array('id' => $user->id, 'archived' => 1));
+                $userinformation['lastaccess'] = get_string('neverlogged', 'tool_cleanupusers');
+                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
                 if (empty($isarchivid)) {
-                    $userinformation['archived'] = get_string('No', 'tool_deprovisionuser');
+                    $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
-                    $userinformation['archived'] = get_string('Yes', 'tool_deprovisionuser');
+                    $userinformation['archived'] = get_string('Yes', 'tool_cleanupusers');
                 }
-                $userinformation['Willbe'] = get_string('nothinghappens', 'tool_deprovisionuser');
-                $url = new moodle_url('/admin/tool/deprovisionuser/handleuser.php', array('userid' => $user->id, 'action' => 'delete'));
+                $userinformation['Willbe'] = get_string('nothinghappens', 'tool_cleanupusers');
+                $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', array('userid' => $user->id, 'action' => 'delete'));
                 $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/delete'),
-                    get_string('showuser', 'tool_deprovisionuser'), array('class' => "imggroup-" . $user->id)));
+                    get_string('showuser', 'tool_cleanupusers'), array('class' => "imggroup-" . $user->id)));
             }
             $result[$key] = $userinformation;
         }
@@ -196,7 +196,7 @@ class tool_deprovisionuser_renderer extends plugin_renderer_base {
     private function render_table_of_users($users, $tableheadings) {
         $table = new html_table();
         $table->head = $tableheadings;
-        $table->attributes['class'] = 'generaltable admintable deprovisionuser';
+        $table->attributes['class'] = 'generaltable admintable cleanupusers';
         $table->data = array();
         foreach ($users as $key => $user) {
             $table->data[$key] = $user;

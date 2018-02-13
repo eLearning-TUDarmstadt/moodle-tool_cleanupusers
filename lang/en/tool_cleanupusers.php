@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * This file contains language strings used in the deprovisionuser admin tool.
+ * This file contains language strings used in the cleanupusers admin tool.
  *
- * @package tool_deprovisionuser
+ * @package tool_cleanupusers
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'deprovisionuser';
-$string['plugintitel'] = 'Deprovision of Users';
-$string['subplugintype_userstatus'] = 'Returns the Status of Students';
-$string['subplugintype_userstatus_plural'] = 'Returns the Status of Students';
+$string['pluginname'] = 'Clean up users';
+$string['plugintitel'] = 'Clean up users';
+$string['subplugintype_userstatus'] = 'Returns the status of users';
+$string['subplugintype_userstatus_plural'] = 'Returns the status of users';
 $string['oldusers'] = 'Users';
-$string['lastaccess'] = 'Last Access:';
+$string['lastaccess'] = 'Last access:';
 $string['usersarchived'] = 'The Users have been archived';
 $string['Yes'] = 'Yes';
 $string['No'] = 'No';
@@ -34,8 +34,8 @@ $string['Archived'] = 'Archived:';
 $string['Willbe'] = 'Will be:';
 $string['Neverloggedin'] = 'User that never logged in:';
 $string['titletodelete'] = 'Delete Users';
-$string['usersdeleted'] = 'The User has been deleted.';
-$string['usersreactivated'] = 'The User has been reactivated.';
+$string['usersdeleted'] = 'The user has been deleted.';
+$string['usersreactivated'] = 'The user has been reactivated.';
 $string['showuser'] = 'Activate User';
 $string['hideuser'] = 'Suspend User';
 $string['deleteuser'] = 'Delete User';
@@ -56,7 +56,7 @@ $string['errormessagesubplugin'] = 'The sub-plugin you selected is not available
 $string['e-mail-problematic_delete'] = 'In the last cron-job {$a} users caused exception and could not be deleted.';
 $string['e-mail-problematic_suspend'] = 'In the last cron-job {$a} users caused exception and could not be suspended.';
 $string['e-mail-problematic_reactivate'] = 'In the last cron-job {$a} users caused exception and could not be reactivated.';
-$string['e-mail-noproblem'] = 'No problems occurred in plugin tool_deprovisionuser in the last run.';
-$string['cronjobcomplete'] = 'Deprovisionuser cron-job complete';
-$string['cronjobwasrunning'] = 'The tool_deprovisionuser cron-job was running. No user was suspended or deleted.';
-$string['subpluginsof'] = 'Sub-plugins of deprovisionuser';
+$string['e-mail-noproblem'] = 'No problems occurred in plugin tool_cleanupusers in the last run.';
+$string['cronjobcomplete'] = 'tool_cleanupusers cron job complete';
+$string['cronjobwasrunning'] = 'The tool_cleanupusers cron job was running. No user was suspended or deleted.';
+$string['subpluginsof'] = 'Sub-plugins of tool_cleanupusers';

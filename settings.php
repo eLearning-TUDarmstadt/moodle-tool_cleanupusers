@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adds tool_deprovisionuser link in admin tree
+ * Adds tool_cleanupusers link in admin tree
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/index.php';
-    $ADMIN->add('users', new admin_externalpage('deprovisionuser',
-        get_string('plugintitel', 'tool_deprovisionuser'),
-        "$CFG->wwwroot/$CFG->admin/tool/deprovisionuser/index.php"
+    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/index.php';
+    $ADMIN->add('users', new admin_externalpage('cleanupusers',
+        get_string('plugintitel', 'tool_cleanupusers'),
+        "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/index.php"
     ));
     // Adds an entry for every sub-plugin with an settings.php.
-    $ADMIN->add('users', new admin_category('subplugins', get_string('subpluginsof', 'tool_deprovisionuser')));
+    $ADMIN->add('users', new admin_category('subplugins', get_string('subpluginsof', 'tool_cleanupusers')));
     foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
         global $CFG;
         $plugin->load_settings($ADMIN, 'subplugins', $hassiteconfig);

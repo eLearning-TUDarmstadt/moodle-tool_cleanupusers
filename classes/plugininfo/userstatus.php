@@ -18,12 +18,12 @@
  * The Plugins of the type userstatus must return values whether users should be deleted, archived or reactivated.
  * The sub-plugins will be used by the cron-job and manually by the admin to determine the appropriate actions for users.
  *
- * @package   tool_deprovisionuser
+ * @package   tool_cleanupusers
  * @copyright 2016/17 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_deprovisionuser\plugininfo;
+namespace tool_cleanupusers\plugininfo;
 
 use admin_settingpage;
 use core\plugininfo\base;
@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * The general settings for all sub-plugins of userstatus.
  * Defines the deinstallation settings and adds sub-plugins to the admin tree, if they have a settings.php.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -54,8 +54,7 @@ class userstatus extends base {
             return false;
         }
         // In case the sub-plugin is in use, sub-plugin can not be uninstalled.
-        if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
-            $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
+        if (!empty($subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
             if ($subplugin == $this->name) {
                 return false;
             }
@@ -96,6 +95,6 @@ class userstatus extends base {
      * @return string
      */
     public function get_settings_section_name() {
-        return 'deprovisionuser_userstatus' . $this->name;
+        return 'cleanupusers_userstatus' . $this->name;
     }
 }

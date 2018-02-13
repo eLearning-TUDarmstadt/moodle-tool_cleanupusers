@@ -17,21 +17,21 @@
 /**
  * Sub-plugin timechecker.
  *
- * @package   deprovisionuser_userstatus_timechecker
+ * @package   userstatus_timechecker
  * @copyright 2016/17 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace userstatus_timechecker;
 
-use tool_deprovisionuser\archiveduser;
-use tool_deprovisionuser\userstatusinterface;
+use tool_cleanupusers\archiveduser;
+use tool_cleanupusers\userstatusinterface;
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
  * Class that checks the status of different users depending on the time they did not signed in.
  *
- * @package    deprovisionuser_userstatus_timechecker
+ * @package    userstatus_timechecker
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -106,8 +106,8 @@ class timechecker implements userstatusinterface {
      * All users who should be deleted will be returned in the array.
      * The array includes merely the necessary information which comprises the userid, lastaccess, suspended, deleted
      * and the username.
-     * The function checks the user table and the deprovisionuser_archive table. Therefore users who are suspended by
-     * the tool_deprovisionuser plugin and users who are suspended manually are screened.
+     * The function checks the user table and the cleanupusers_archive table. Therefore users who are suspended by
+     * the tool_cleanupusers plugin and users who are suspended manually are screened.
      *
      * @return array of users who should be deleted.
      */
@@ -129,10 +129,10 @@ class timechecker implements userstatusinterface {
                 if ($user->firstname == 'Anonym' && $user->lastaccess == 0) {
                     $select = 'id=' . $user->id;
 
-                    $record = $DB->get_records_select('tool_deprovisionuser', $select);
+                    $record = $DB->get_records_select('tool_cleanupusers', $select);
                     if (!empty($record) && $record[$user->id]->timestamp != 0) {
                         $suspendedbyplugin = true;
-                        $timearchived = $DB->get_record('tool_deprovisionuser', array('id' => $user->id), 'timestamp');
+                        $timearchived = $DB->get_record('tool_cleanupusers', array('id' => $user->id), 'timestamp');
                         $timenotloggedin = $mytimestamp - $timearchived->timestamp;
                     } else {
                         // Users firstname is Anonym although he is not in the plugin table. It can not be determined
@@ -153,7 +153,7 @@ class timechecker implements userstatusinterface {
                     if ($suspendedbyplugin) {
                         // Users who are suspended by the plugin, therefore the plugin table is used.
                         $select = 'id=' . $user->id;
-                        $pluginuser = $DB->get_record_select('deprovisionuser_archive', $select);
+                        $pluginuser = $DB->get_record_select('cleanupusers_archive', $select);
                         $informationuser = new archiveduser($pluginuser->id, $pluginuser->suspended,
                             $pluginuser->lastaccess, $pluginuser->username, $pluginuser->deleted);
                     } else {
@@ -189,12 +189,12 @@ class timechecker implements userstatusinterface {
                 $mytimestamp = time();
 
                 // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
-                if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
+                if (empty($DB->get_record('cleanupusers_archive', array('id' => $user->id)))) {
                     $timenotloggedin = $mytimestamp - $user->lastaccess;
                     $activateuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
                         $user->deleted);
                 } else {
-                    $shadowtableuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
+                    $shadowtableuser = $DB->get_record('cleanupusers_archive', array('id' => $user->id));
                     // There is an entry in the shadowtable, data from the shadowtable is used.
                     if ($shadowtableuser->lastaccess !== 0) {
                         $timenotloggedin = $mytimestamp - $shadowtableuser->lastaccess;

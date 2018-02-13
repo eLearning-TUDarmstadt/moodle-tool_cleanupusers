@@ -1,7 +1,7 @@
-# moodle-tool_deprovisionuser *(Alpha_candidate)*
+# moodle-tool_cleanupusers *(Alpha_candidate)*
 </br>
 
-The **deprovisionuser plugin** enables the automatic and manual deletion and suspension of users.
+The **clean up users plugin** enables the automatic and manual suspension and deletion of users.
 
 The plugin is written by [Jan Dageförde](https://github.com/Dagefoerde), [Tobias Reischmann](https://github.com/tobiasreischmann) and [Nina Herrmann](https://github.com/NinaHerrmann).
 
@@ -13,8 +13,8 @@ Therefore, the plugin aims to automatically suspend and delete users to custom r
 
 ## Installation
 
-This plugin should go into `admin/tool/deprovisionuser`. 
-No supplementary settings are required in the **deprovisionuser plugin**. 
+This plugin should go into `admin/tool/cleanupusers`. 
+No supplementary settings are required in the **clean up users plugin**. 
 Optionally the sub-plugin can be changed in `Home ► Site administration ► Users ► Deprovision of Users`. 
 By default, the **userstatuswwu sub-plugin** is used. 
 However, it is likely that the sub-plugin requires additional settings therefore please read the information for the [sub-plugins](#sub-plugins). 
@@ -47,7 +47,7 @@ The plugin aims to make users **anonymous** that are suspended.
 
 This includes:
 
-- save necessary data in a shadow table to reactivate users when necessary. (name of the table: `deprovisionuser_archive`)
+- save necessary data in a shadow table to reactivate users when necessary. (name of the table: `cleanupusers_archive`)
 - hide all other references in the `user` table e.g. `username`, ` firstname` etc.
     - the `username` is set to *Anonym* with the `userid` appended
         - usernames must be unique therefore the id is appended.
@@ -92,7 +92,7 @@ To check the technical implementation, look at `/lib/moodlelib.php`.
 
 The Plugin requires at least one sub-plugin that returns users to be handled by the cronjob. 
 Every university can write their own sub-plugin which specifies the conditions to delete, archive and 
-reactivate users. An Interface is included in the directory `deprovisionuser/classes`. 
+reactivate users. An Interface is included in the directory `cleanupusers/classes`. 
 
 The sub-plugin needs to implement four functions:
  - get_to_suspend()

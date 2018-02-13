@@ -16,7 +16,7 @@
 /**
  * PHPUnit data generator tests
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @category   phpunit
  * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,12 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * PHPUnit data class generator testcase
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @category   phpunit
  * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_deprovisionuser_generator_testcase extends advanced_testcase {
+class tool_cleanupusers_generator_testcase extends advanced_testcase {
     public function test_generator() {
         $this->resetAfterTest(true);
     }

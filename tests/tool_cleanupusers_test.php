@@ -15,30 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test script for the moodle tool_deprovisionuser plugin.
+ * Test script for the moodle tool_cleanupusers plugin.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
-use tool_deprovisionuser\task;
+use tool_cleanupusers\task;
 
 
 /**
- * Testcase class for executing phpunit test for the moodle tool_deprovisionuser plugin.
+ * Testcase class for executing phpunit test for the moodle tool_cleanupusers plugin.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_deprovisionuser_testcase extends advanced_testcase {
+class tool_cleanupusers_testcase extends advanced_testcase {
 
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;
-        $generator = $this->getDataGenerator()->get_plugin_generator('tool_deprovisionuser');
+        $generator = $this->getDataGenerator()->get_plugin_generator('tool_cleanupusers');
         $data = $generator->test_create_preparation();
         $this->resetAfterTest(true);
         return $data;
@@ -47,20 +47,20 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     /**
      * Function to test the the archiveduser class.
      *
-     * @see \tool_deprovisionuser\archiveduser
+     * @see \tool_cleanupusers\archiveduser
      */
     public function test_archiveduser() {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        // Users that are archived will be marked as suspended in the user table and in the tool_deprovisionuser table.
+        // Users that are archived will be marked as suspended in the user table and in the tool_cleanupusers table.
         // Additionally they will be anomynised in the user table. Firstname will be Anonym, Username anonym + id.
         // User is not suspended and did sign in.
-        $neutraltosuspended = new \tool_deprovisionuser\archiveduser($data['user']->id, 0,
+        $neutraltosuspended = new \tool_cleanupusers\archiveduser($data['user']->id, 0,
             $data['user']->lastaccess, $data['user']->username, $data['user']->deleted);
         $neutraltosuspended->archive_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['user']->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['user']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(1, $recordtooltable->archived);
@@ -69,41 +69,41 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
 
         // Users that are activated will be marked as suspended=0 in the user table.
         // suspendeduser is only flagged as suspended in the user table
-        $neutraltosuspended = new \tool_deprovisionuser\archiveduser($data['suspendeduser']->id, $data['suspendeduser']->suspended,
+        $neutraltosuspended = new \tool_cleanupusers\archiveduser($data['suspendeduser']->id, $data['suspendeduser']->suspended,
             $data['suspendeduser']->lastaccess, $data['suspendeduser']->username, $data['suspendeduser']->deleted);
         $neutraltosuspended->activate_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser']->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['suspendeduser']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
 
         // Users that are deleted will be marked as deleted in the user table.
-        // The entry the tool_deprovisionuser table will be deleted.
+        // The entry the tool_cleanupusers table will be deleted.
         // Suspenduser2 is marked as suspended in the user table no additional information.
-        $suspendedtodelete = new \tool_deprovisionuser\archiveduser($data['suspendeduser2']->id, 0,
+        $suspendedtodelete = new \tool_cleanupusers\archiveduser($data['suspendeduser2']->id, 0,
             $data['suspendeduser2']->lastaccess, $data['suspendeduser2']->username, $data['suspendeduser2']->deleted);
         $suspendedtodelete->delete_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['suspendeduser2']->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['suspendeduser2']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser2']->id));
         $this->assertEquals(1, $recordusertable->deleted);
         $this->assertNotEmpty($recordusertable);
         $this->assertEmpty($recordtooltable);
 
         // Users that are activated will be marked as active in the user table.
-        // The entry the tool_deprovisionuser table will be deleted.
-        // archivedbyplugin has entry in tool_deprovisionuser and deprovisionuser_archive was suspended one year ago.
-        $suspendedtoactive = new \tool_deprovisionuser\archiveduser($data['archivedbyplugin']->id, $data['archivedbyplugin']->suspended,
+        // The entry the tool_cleanupusers table will be deleted.
+        // archivedbyplugin has entry in tool_cleanupusers and cleanupusers_archive was suspended one year ago.
+        $suspendedtoactive = new \tool_cleanupusers\archiveduser($data['archivedbyplugin']->id, $data['archivedbyplugin']->suspended,
             $data['archivedbyplugin']->lastaccess, $data['archivedbyplugin']->username, $data['archivedbyplugin']->deleted);
         $suspendedtoactive->activate_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['archivedbyplugin']->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['archivedbyplugin']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
 
-        $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebyplugin']->id, 0,
+        $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebyplugin']->id, 0,
             $data['reactivatebyplugin']->lastaccess, $data['reactivatebyplugin']->username, $data['reactivatebyplugin']->deleted);
         $useraccount->activate_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array('id' => $data['reactivatebyplugin']->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['reactivatebyplugin']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['reactivatebyplugin']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
@@ -115,39 +115,39 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebypluginexception']->id, $data['reactivatebypluginexception']->suspended,
+        $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebypluginexception']->id, $data['reactivatebypluginexception']->suspended,
             $data['reactivatebypluginexception']->lastaccess, $data['reactivatebypluginexception']->username,
             $data['reactivatebypluginexception']->deleted);
-        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to activate user.');
         $useraccount->activate_me();
 
-        // When entry in deprovisionuser_archive table is deleted user can not be updated.
-        $useraccount = new \tool_deprovisionuser\archiveduser($data['reactivatebyplugin']->id, $data['reactivatebyplugin']->suspended,
+        // When entry in cleanupusers_archive table is deleted user can not be updated.
+        $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebyplugin']->id, $data['reactivatebyplugin']->suspended,
             $data['reactivatebyplugin']->lastaccess, $data['reactivatebyplugin']->username,
             $data['reactivatebyplugin']->deleted);
-        $DB->delete_records('deprovisionuser_archive', array('id' => $data['reactivatebyplugin']->id));
-        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $DB->delete_records('cleanupusers_archive', array('id' => $data['reactivatebyplugin']->id));
+        $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to activate user.');
         $useraccount->activate_me();
 
         // Admin Users will not be deleted neither archived.
         $this->setAdminUser();
-        $adminaccount = new \tool_deprovisionuser\archiveduser($USER->id, $USER->suspended,
+        $adminaccount = new \tool_cleanupusers\archiveduser($USER->id, $USER->suspended,
             $USER->lastaccess, $USER->username, $USER->deleted);
-        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to suspend user');
         $adminaccount->archive_me();
-        $recordtooltable = $DB->get_record('moodle_deprovisionuser', array('id' => $USER->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $USER->id));
         $this->assertEmpty($recordtooltable);
 
         $this->setAdminUser();
-        $adminaccount = new \tool_deprovisionuser\archiveduser($USER->id, 0,
+        $adminaccount = new \tool_cleanupusers\archiveduser($USER->id, 0,
             $USER->lastaccess, $USER->username, $USER->deleted);
-        $this->expectException('tool_deprovisionuser\deprovisionuser_exception');
+        $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to delete user');
         $adminaccount->delete_me();
-        $recordtooltable = $DB->get_record('tool_deprovisionuser', array($USER->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array($USER->id));
         $this->assertEmpty($recordtooltable);
         $this->resetAfterTest(true);
     }
@@ -165,9 +165,9 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         unset_config('noemailever');
         $sink = $this->redirectEmails();
 
-        $cronjob = new tool_deprovisionuser\task\archive_user_task();
+        $cronjob = new tool_cleanupusers\task\archive_user_task();
         $name = $cronjob->get_name();
-        $this->assertEquals(get_string('archive_user_task', 'tool_deprovisionuser'), $name);
+        $this->assertEquals(get_string('archive_user_task', 'tool_cleanupusers'), $name);
 
         // Before cron-job is executed users are not suspended.
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
@@ -177,8 +177,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         $this->assertEquals(0, $recordusertable->suspended);
 
         // Run cron-job with timechecker plugin.
-        set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
-        $cronjob = new tool_deprovisionuser\task\archive_user_task();
+        set_config('cleanupusers_subplugin', 'timechecker', 'tool_cleanupusers');
+        $cronjob = new tool_cleanupusers\task\archive_user_task();
         $cronjob->execute();
 
         // Administrator should have received an email.
@@ -233,7 +233,7 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     /**
      * Test the the deprovisionuser cron-job complete event.
      *
-     * @see \tool_deprovisionuser\event\deprovisionusercronjob_completed
+     * @see \tool_cleanupusers\event\deprovisionusercronjob_completed
      */
     public function test_logging() {
         global $DB;
@@ -260,12 +260,12 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Necessary to get current logs otherwise $DB get_record does not contain the event.
         $manager = get_log_manager(true);
 
-        set_config('deprovisionuser_subplugin', 'timechecker', 'tool_deprovisionuser');
-        $cronjob = new tool_deprovisionuser\task\archive_user_task();
+        set_config('cleanupusers_subplugin', 'timechecker', 'tool_cleanupusers');
+        $cronjob = new tool_cleanupusers\task\archive_user_task();
         $cronjob->execute();
 
         $logstore = $DB->get_record_select('logstore_standard_log', 'timecreated >=' . $timestamp .
-            'AND eventname = \'\tool_deprovisionuser\event\deprovisionusercronjob_completed\'');
+            'AND eventname = \'\tool_cleanupusers\event\deprovisionusercronjob_completed\'');
         $this->assertEquals('a:2:{s:15:"numbersuspended";i:1;s:13:"numberdeleted";i:2;}', $logstore->other);
 
         $this->resetAfterTest();
@@ -274,14 +274,14 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     /**
      * Test the the sub-plugin_select_form.
      *
-     * @see \tool_deprovisionuser\subplugin_select_form
+     * @see \tool_cleanupusers\subplugin_select_form
      */
     public function test_subpluginform() {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
         // Validation with existing sub-plugin returns true.
-        $subpluginform = new tool_deprovisionuser\subplugin_select_form();
+        $subpluginform = new tool_cleanupusers\subplugin_select_form();
         $validationdata = array ("subplugin" => 'timechecker');
         $return = $subpluginform->validation($validationdata, null);
         $this->assertEquals(true, $return);
@@ -289,8 +289,8 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         // Validation with non-existing sub-plugin returns an array with an errormessage.
         $validationdata = array ("subplugin" => 'nosubplugin');
         $return = $subpluginform->validation($validationdata, null);
-        $errorarray = array('subplugin' => new tool_deprovisionuser\deprovisionuser_subplugin_exception
-            (get_string('errormessagesubplugin', 'tool_deprovisionuser')));
+        $errorarray = array('subplugin' => new tool_cleanupusers\cleanupusers_subplugin_exception
+            (get_string('errormessagesubplugin', 'tool_cleanupusers')));
         $this->assertEquals($errorarray, $return);
         $this->resetAfterTest(true);
 
@@ -303,9 +303,9 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest(true);
         $DB->delete_records('user');
-        $DB->delete_records('tool_deprovisionuser');
+        $DB->delete_records('tool_cleanupusers');
         $this->assertEmpty($DB->get_records('user'));
-        $this->assertEmpty($DB->get_records('tool_deprovisionuser'));
+        $this->assertEmpty($DB->get_records('tool_cleanupusers'));
     }
 
     /**
@@ -314,6 +314,6 @@ class tool_deprovisionuser_testcase extends advanced_testcase {
     public function test_user_table_was_reset() {
         global $DB;
         $this->assertEquals(2, $DB->count_records('user', array()));
-        $this->assertEquals(0, $DB->count_records('tool_deprovisionuser', array()));
+        $this->assertEquals(0, $DB->count_records('tool_cleanupusers', array()));
     }
 }

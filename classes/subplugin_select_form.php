@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Create an Form Class for the tool_deprovisionuser
+ * Create an Form Class for the tool_cleanupusers
  *
- * @package   tool_deprovisionuser
+ * @package   tool_cleanupusers
  * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_deprovisionuser;
+namespace tool_cleanupusers;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
@@ -31,7 +31,7 @@ use core_plugin_manager;
 /**
  * Form Class which allows the sideadmin to select between the available sub-plugins.
  *
- * @package   tool_deprovisionuser
+ * @package   tool_cleanupusers
  * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,7 +51,7 @@ class subplugin_select_form extends moodleform {
             $types[$value->name] = $value->name;
         }
 
-        $ispluginselected = empty(get_config('tool_deprovisionuser'));
+        $ispluginselected = empty(get_config('tool_cleanupusers'));
         // Different text in case no plugin was selected beforehand.
         if ($ispluginselected) {
             $text = 'Please select a subplugin';
@@ -62,7 +62,7 @@ class subplugin_select_form extends moodleform {
 
         // If a plugin is active it is shown as the default.
         if (!$ispluginselected) {
-            $mform->setDefault('subplugin', get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'));
+            $mform->setDefault('subplugin', get_config('tool_cleanupusers', 'cleanupusers_subplugin'));
         }
         $mform->addElement('submit', 'reset', 'Submit');
     }
@@ -85,8 +85,8 @@ class subplugin_select_form extends moodleform {
             }
         }
         if ($issubplugin == false) {
-            $issubplugin['subplugin'] = new deprovisionuser_subplugin_exception
-            (get_string('errormessagesubplugin', 'tool_deprovisionuser'));
+            $issubplugin['subplugin'] = new cleanupusers_subplugin_exception
+            (get_string('errormessagesubplugin', 'tool_cleanupusers'));
         }
         return $issubplugin;
     }

@@ -15,25 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A scheduled task for tool_deprovisionuser cron.
+ * A scheduled task for tool_cleanupusers cron.
  *
  * The Class archive_user_task is supposed to show the admin a page of users which will be archived and expectes a submit or
  * cancel reaction.
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
-namespace tool_deprovisionuser\task;
+namespace tool_cleanupusers\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-use tool_deprovisionuser\deprovisionuser_exception;
+use tool_cleanupusers\cleanupusers_exception;
 // Needed for the default plugin.
 use userstatus_userstatuswwu\userstatuswwu;
-use tool_deprovisionuser\archiveduser;
-use tool_deprovisionuser\event\deprovisionusercronjob_completed;
+use tool_cleanupusers\archiveduser;
+use tool_cleanupusers\event\deprovisionusercronjob_completed;
 use core\task\scheduled_task;
 
 class archive_user_task extends scheduled_task {
@@ -44,7 +44,7 @@ class archive_user_task extends scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('archive_user_task', 'tool_deprovisionuser');
+        return get_string('archive_user_task', 'tool_cleanupusers');
     }
 
     /**
@@ -61,8 +61,7 @@ class archive_user_task extends scheduled_task {
         // This is very unlikely to happen since when installing the plugin a default is defined.
         // It could happen when sub-plugin is deleted manually (Uninstalling sub-plugins that are active is not allowed).
 
-        if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
-            $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
+        if (!empty($subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
             $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
             $userstatuschecker = new $mysubpluginname();
         } else {
@@ -88,24 +87,24 @@ class archive_user_task extends scheduled_task {
 
         $admin = get_admin();
         // Number of users suspended or deleted.
-        $messagetext = get_string('e-mail-archived', 'tool_deprovisionuser', $userarchived) .
-            "\r\n" .get_string('e-mail-deleted', 'tool_deprovisionuser', $userdeleted);
+        $messagetext = get_string('e-mail-archived', 'tool_cleanupusers', $userarchived) .
+            "\r\n" .get_string('e-mail-deleted', 'tool_cleanupusers', $userdeleted);
 
         // No Problems occured during the cron-job.
         if (empty($unabletoactivate) and empty($unabletoarchive) and empty($unabletodelete)) {
-            $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_deprovisionuser');
+            $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_cleanupusers');
         } else {
             // Extra information for problematic users.
-            $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_deprovisionuser',
-                    count($unabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_deprovisionuser',
-                    count($unabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_deprovisionuser',
+            $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_cleanupusers',
+                    count($unabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_cleanupusers',
+                    count($unabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_cleanupusers',
                     count($unabletoactivate));
         }
 
         // Email is send from the do not reply user.
         $user = new \core_user();
         $sender = $user->get_user(-10);
-        email_to_user($admin, $sender, 'Update Infos Cron Job tool_deprovisionuser', $messagetext);
+        email_to_user($admin, $sender, 'Update Infos Cron Job tool_cleanupusers', $messagetext);
 
         // Triggers deprovisionusercronjob_completed event.
         $context = \context_system::instance();
@@ -126,7 +125,7 @@ class archive_user_task extends scheduled_task {
     private function change_user_deprovisionstatus($userarray, $intention) {
         // Checks whether the intention is valid.
         if (!in_array($intention, array('suspend', 'reactivate', 'delete'))) {
-            throw new \coding_exception('Invalid parameters in tool_deprovisionuser.');
+            throw new \coding_exception('Invalid parameters in tool_cleanupusers.');
         }
 
         // Number of successfully changed users.
@@ -156,7 +155,7 @@ class archive_user_task extends scheduled_task {
                         // No default since if-clause checks the intention parameter.
                     }
                     $countersuccess++;
-                } catch (deprovisionuser_exception $e) {
+                } catch (cleanupusers_exception $e) {
                     $failures[$key] = $user->id;
                 }
             }

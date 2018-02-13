@@ -16,7 +16,7 @@
 /**
  * This file contains language strings used in the userstatuswwu sub-plugin.
  *
- * @package tool_deprovisionuser
+ * @package tool_cleanupusers
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

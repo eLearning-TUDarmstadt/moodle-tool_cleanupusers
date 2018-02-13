@@ -16,21 +16,21 @@
 
 /**
  * Settings.php
- * @package deprovisionuser_userstatus_userstatuswwu
+ * @package userstatus_userstatuswwu
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-// Included in admin/tool/deprovisionuser/classes/plugininfo/userstatus.php therefore need to include global variable.
+// Included in admin/tool/cleanupusers/classes/plugininfo/userstatus.php therefore need to include global variable.
 global $CFG, $PAGE;
 
 $PAGE->set_title(get_string('pluginname', 'userstatus_userstatuswwu'));
 $PAGE->set_heading(get_string('pluginname', 'userstatus_userstatuswwu'));
 
 if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/deprovisionuser/userstatus/userstatuswwu/index.php';
+    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/userstatus/userstatuswwu/index.php';
     $settings->add(new admin_setting_heading('userstatus_userstatuswwu/introduction',
         get_string('headingintroduction', 'userstatus_userstatuswwu'),
         get_string('introduction', 'userstatus_userstatuswwu')));
