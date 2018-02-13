@@ -277,7 +277,7 @@ class userstatuswwu implements userstatusinterface {
             if (!empty($moodleuser->timestamp)) {
                 // In case the user was suspended for longer than one year he/she is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    $user = $DB->get_record('cleanupusers_archive', array('id' => $moodleuser->id));
+                    $user = $DB->get_record('tool_cleanupusers_archive', array('id' => $moodleuser->id));
 
                     $againlisted = in_array($user->username, $this->zivmemberlist);
                     if (!$againlisted) {

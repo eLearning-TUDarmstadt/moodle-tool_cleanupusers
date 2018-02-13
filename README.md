@@ -47,7 +47,7 @@ The plugin aims to make users **anonymous** that are suspended.
 
 This includes:
 
-- save necessary data in a shadow table to reactivate users when necessary. (name of the table: `cleanupusers_archive`)
+- save necessary data in a shadow table to reactivate users when necessary. (name of the table: `tool_cleanupusers_archive`)
 - hide all other references in the `user` table e.g. `username`, ` firstname` etc.
     - the `username` is set to *Anonym* with the `userid` appended
         - usernames must be unique therefore the id is appended.

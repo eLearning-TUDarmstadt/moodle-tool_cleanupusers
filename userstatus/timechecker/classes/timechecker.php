@@ -106,7 +106,7 @@ class timechecker implements userstatusinterface {
      * All users who should be deleted will be returned in the array.
      * The array includes merely the necessary information which comprises the userid, lastaccess, suspended, deleted
      * and the username.
-     * The function checks the user table and the cleanupusers_archive table. Therefore users who are suspended by
+     * The function checks the user table and the tool_cleanupusers_archive table. Therefore users who are suspended by
      * the tool_cleanupusers plugin and users who are suspended manually are screened.
      *
      * @return array of users who should be deleted.
@@ -153,7 +153,7 @@ class timechecker implements userstatusinterface {
                     if ($suspendedbyplugin) {
                         // Users who are suspended by the plugin, therefore the plugin table is used.
                         $select = 'id=' . $user->id;
-                        $pluginuser = $DB->get_record_select('cleanupusers_archive', $select);
+                        $pluginuser = $DB->get_record_select('tool_cleanupusers_archive', $select);
                         $informationuser = new archiveduser($pluginuser->id, $pluginuser->suspended,
                             $pluginuser->lastaccess, $pluginuser->username, $pluginuser->deleted);
                     } else {
@@ -189,12 +189,12 @@ class timechecker implements userstatusinterface {
                 $mytimestamp = time();
 
                 // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
-                if (empty($DB->get_record('cleanupusers_archive', array('id' => $user->id)))) {
+                if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
                     $timenotloggedin = $mytimestamp - $user->lastaccess;
                     $activateuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
                         $user->deleted);
                 } else {
-                    $shadowtableuser = $DB->get_record('cleanupusers_archive', array('id' => $user->id));
+                    $shadowtableuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id));
                     // There is an entry in the shadowtable, data from the shadowtable is used.
                     if ($shadowtableuser->lastaccess !== 0) {
                         $timenotloggedin = $mytimestamp - $shadowtableuser->lastaccess;

@@ -108,7 +108,7 @@ class archiveduser {
 
             // Insert copy of user in second DB and replace user in main table when entry was successful.
             $shadowuser = clone $user;
-            $success = $DB->insert_record_raw('cleanupusers_archive', $shadowuser, true, false, true);
+            $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
             if ($success == true) {
                 // Replaces the current user with a pseudo_user that has no reference.
                 $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
@@ -152,20 +152,20 @@ class archiveduser {
                 $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
             }
 
-            // Is user in the shadow table (cleanupusers_archive table)?
-            if (empty($DB->get_record('cleanupusers_archive', array('id' => $user->id)))) {
+            // Is user in the shadow table (tool_cleanupusers_archive table)?
+            if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
 
                 // If there is no user, the main table can not be updated.
                 throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
 
             } else {
                 // If the user is in table replace data.
-                $shadowuser = $DB->get_record('cleanupusers_archive', array('id' => $user->id));
+                $shadowuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id));
                 $shadowuser->suspended = 0;
 
                 $DB->update_record('user', $shadowuser);
-                // Delete records from cleanupusers_archive table.
-                $DB->delete_records('cleanupusers_archive', array('id' => $user->id));
+                // Delete records from tool_cleanupusers_archive table.
+                $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
             }
             // Gets the new user for additional checks.
             $transaction->allow_commit();
@@ -182,7 +182,7 @@ class archiveduser {
      * Deletes the user.
      *
      * Therefore
-     * (1) Deletes the entry in the tool_cleanupusers and the cleanupusers_archive table.
+     * (1) Deletes the entry in the tool_cleanupusers and the tool_cleanupusers_archive table.
      * (2) Hashes the username with the sha256 function.
      * (3) Calls the moodle core delete_user function..
      *
@@ -205,8 +205,8 @@ class archiveduser {
                 $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
             }
 
-            if (!empty($DB->get_records('cleanupusers_archive', array('id' => $user->id)))) {
-                $DB->delete_records('cleanupusers_archive', array('id' => $user->id));
+            if (!empty($DB->get_records('tool_cleanupusers_archive', array('id' => $user->id)))) {
+                $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
             }
 
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.

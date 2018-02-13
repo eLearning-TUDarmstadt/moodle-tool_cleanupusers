@@ -51,7 +51,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
         // notsuspendeduser signed in one year ago
         // suspendeduser2 is suspended
         // deleteuser is suspended signed in one year ago
-        // archivedbyplugin has entry in tool_cleanupusers and cleanupusers_archive was suspended one year ago.
+        // archivedbyplugin has entry in tool_cleanupusers and tool_cleanupusers_archive was suspended one year ago.
         // reactivatebyplugin wassuspended by plugin (has entry in both tables) however lastaccess is only few hours ago.
 
         $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
@@ -79,7 +79,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $suspendeduser3 = $generator->create_user(array('username' => 'anonym', 'suspended' => '1', 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $suspendeduser3->id, 'archived' => true,
             'timestamp' => $timestamponeyearago), true, false, true);
-        $DB->insert_record_raw('cleanupusers_archive', array('id' => $suspendeduser3->id,
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $suspendeduser3->id,
             'username' => 'archivedbyplugin', 'suspended' => 1, 'lastaccess' => $timestamponeyearago),
             true, false, true);
         $data['archivedbyplugin'] = $suspendeduser3;
@@ -89,7 +89,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $reactivatebyplugin = $generator->create_user(array('username' => 'anonym2', 'suspended' => '1', 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebyplugin->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);
-        $DB->insert_record_raw('cleanupusers_archive', array('id' => $reactivatebyplugin->id,
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebyplugin->id,
             'username' => 'reactivatebyplugin',
             'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
         $data['reactivatebyplugin'] = $reactivatebyplugin;
@@ -98,7 +98,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $reactivatebypluginexception = $generator->create_user(array('username' => 'moreanonym', 'suspended' => '1', 'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebypluginexception->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);
-        $DB->insert_record_raw('cleanupusers_archive', array('id' => $reactivatebypluginexception->id,
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebypluginexception->id,
             'username' => 'reactivatebypluginexception', 'firstname' => 'Anonym',
             'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
         $data['reactivatebypluginexception'] = $reactivatebypluginexception;

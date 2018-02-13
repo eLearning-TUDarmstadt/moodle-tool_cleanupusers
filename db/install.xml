@@ -17,7 +17,7 @@
                 <KEY NAME="foreign" TYPE="foreign" FIELDS="id" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="cleanupusers_archive" COMMENT="deprovision user">
+        <TABLE NAME="tool_cleanupusers_archive" COMMENT="deprovision user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 // Copied from mdl_user.
