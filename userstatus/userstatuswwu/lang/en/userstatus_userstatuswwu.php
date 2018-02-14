@@ -22,8 +22,7 @@
  */
 
 $string['pluginname'] = 'Userstatus WWU';
-$string['plugintitel'] = 'Userstatus WWU';
-$string['headingintroduction'] = 'Functions of the userstatuswwu subplugin';
+$string['headingintroduction'] = 'Subplugin information';
 $string['introduction'] = 'Here you define a path to a file which assign usernames to usergroups.
 The usernames have to be equal to the usernames in moodle. The groups are hardcoded and have to be changed in the code.
 The plugin will not handle users who are deleted or suspended manually.';

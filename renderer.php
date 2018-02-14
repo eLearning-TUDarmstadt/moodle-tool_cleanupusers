@@ -90,7 +90,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      */
     public function get_heading() {
         $output = '';
-        $output .= $this->heading(get_string('plugintitel', 'tool_cleanupusers'));
+        $output .= $this->heading(get_string('pluginname', 'tool_cleanupusers'));
         return $output;
     }
 

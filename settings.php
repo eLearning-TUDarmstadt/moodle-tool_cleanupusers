@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
     // Add own category for plugin's  and subplugins' settings.
-    $ADMIN->add('users', new admin_category('tool_cleanupusers', get_string('plugintitel', 'tool_cleanupusers')));
+    $ADMIN->add('users', new admin_category('tool_cleanupusers', get_string('pluginname', 'tool_cleanupusers')));
     // Add entry for own settings.
     $ADMIN->add('tool_cleanupusers', new admin_externalpage('cleanupusers',
         get_string('pluginsettingstitle', 'tool_cleanupusers'),

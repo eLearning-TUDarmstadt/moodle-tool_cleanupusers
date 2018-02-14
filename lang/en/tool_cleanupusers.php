@@ -22,7 +22,6 @@
  */
 
 $string['pluginname'] = 'Clean up users';
-$string['plugintitel'] = 'Clean up users';
 $string['pluginsettingstitle'] = 'General settings';
 $string['subplugintype_userstatus'] = 'Returns the status of users';
 $string['subplugintype_userstatus_plural'] = 'Returns the status of users';
