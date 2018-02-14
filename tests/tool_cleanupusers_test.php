@@ -237,39 +237,32 @@ class tool_cleanupusers_testcase extends advanced_testcase {
      * @see \tool_cleanupusers\event\deprovisionusercronjob_completed
      */
     public function test_logging() {
-        global $DB;
+        $this->resetAfterTest();
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        $dbman = $DB->get_manager();
-
-        // Set logstore configuration.
-        $this->preventResetByRollback();
-
-        // Test all plugins are disabled by this command.
-        set_config('enabled_stores', '', 'tool_log');
-        $manager = get_log_manager(true);
-        $stores = $manager->get_readers();
-        $this->assertCount(0, $stores);
-
-        set_config('enabled_stores', 'logstore_standard', 'tool_log');
-        set_config('buffersize', 0, 'logstore_standard');
-
-        $this->assertTrue($dbman->table_exists('logstore_standard_log'));
         $timestamp = time();
 
-        // Necessary to get current logs otherwise $DB get_record does not contain the event.
-        $manager = get_log_manager(true);
+        $eventsink = $this->redirectEvents();
 
         set_config('cleanupusers_subplugin', 'timechecker', 'tool_cleanupusers');
         $cronjob = new tool_cleanupusers\task\archive_user_task();
         $cronjob->execute();
+        $triggered = $eventsink->get_events();
+        $eventsink->close();
 
-        $logstore = $DB->get_record_select('logstore_standard_log', 'timecreated >= ? ' .
-            'AND eventname = \'\tool_cleanupusers\event\deprovisionusercronjob_completed\'', [$timestamp]);
-        $this->assertEquals('a:2:{s:15:"numbersuspended";i:1;s:13:"numberdeleted";i:2;}', $logstore->other);
-
-        $this->resetAfterTest();
+        $found = false;
+        foreach ($triggered as $event) {
+            if ($event instanceof \tool_cleanupusers\event\deprovisionusercronjob_completed) {
+                $this->assertTrue(true, 'Completion event triggered.');
+                $this->assertTrue($event->timecreated >= $timestamp, 'Completion event triggered correctly.');
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $this->fail('Completion event was not triggered.');
+        }
     }
 
     /**
