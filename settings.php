@@ -25,15 +25,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/index.php';
-    $ADMIN->add('users', new admin_externalpage('cleanupusers',
-        get_string('plugintitel', 'tool_cleanupusers'),
+    // Add own category for plugin's  and subplugins' settings.
+    $ADMIN->add('users', new admin_category('tool_cleanupusers', get_string('plugintitel', 'tool_cleanupusers')));
+    // Add entry for own settings.
+    $ADMIN->add('tool_cleanupusers', new admin_externalpage('cleanupusers',
+        get_string('pluginsettingstitle', 'tool_cleanupusers'),
         "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/index.php"
     ));
     // Adds an entry for every sub-plugin with an settings.php.
-    $ADMIN->add('users', new admin_category('subplugins', get_string('subpluginsof', 'tool_cleanupusers')));
     foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
         global $CFG;
-        $plugin->load_settings($ADMIN, 'subplugins', $hassiteconfig);
+        $plugin->load_settings($ADMIN, 'tool_cleanupusers', $hassiteconfig);
     }
 }
