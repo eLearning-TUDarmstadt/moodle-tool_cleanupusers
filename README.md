@@ -1,5 +1,7 @@
 # moodle-tool_cleanupusers *(Alpha_candidate)*
-</br>
+
+[![Build Status](https://travis-ci.org/learnweb/moodle-tool_cleanupusers.svg?branch=master)](https://travis-ci.org/learnweb/moodle-tool_cleanupusers)
+
 
 The **clean up users plugin** enables the automatic and manual suspension and deletion of users.
 

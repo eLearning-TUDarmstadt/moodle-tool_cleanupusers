@@ -26,9 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 // Included in admin/tool/cleanupusers/classes/plugininfo/userstatus.php therefore need to include global variable.
 global $CFG, $PAGE;
 
-$PAGE->set_title(get_string('pluginname', 'userstatus_timechecker'));
-$PAGE->set_heading(get_string('pluginname', 'userstatus_timechecker'));
-
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/timechecker/index.php';
     $settings->add(new admin_setting_heading('timechecker_heading', get_string('settingsinformation',

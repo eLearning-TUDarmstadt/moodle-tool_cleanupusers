@@ -22,7 +22,7 @@
  */
 
 $string['pluginname'] = 'Clean up users';
-$string['plugintitel'] = 'Clean up users';
+$string['pluginsettingstitle'] = 'General settings';
 $string['subplugintype_userstatus'] = 'Returns the status of users';
 $string['subplugintype_userstatus_plural'] = 'Returns the status of users';
 $string['oldusers'] = 'Users';
@@ -59,4 +59,3 @@ $string['e-mail-problematic_reactivate'] = 'In the last cron-job {$a} users caus
 $string['e-mail-noproblem'] = 'No problems occurred in plugin tool_cleanupusers in the last run.';
 $string['cronjobcomplete'] = 'tool_cleanupusers cron job complete';
 $string['cronjobwasrunning'] = 'The tool_cleanupusers cron job was running. No user was suspended or deleted.';
-$string['subpluginsof'] = 'Sub-plugins of tool_cleanupusers';
