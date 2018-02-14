@@ -264,8 +264,8 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $cronjob = new tool_cleanupusers\task\archive_user_task();
         $cronjob->execute();
 
-        $logstore = $DB->get_record_select('logstore_standard_log', 'timecreated >=' . $timestamp .
-            'AND eventname = \'\tool_cleanupusers\event\deprovisionusercronjob_completed\'');
+        $logstore = $DB->get_record_select('logstore_standard_log', 'timecreated >= ? ' .
+            'AND eventname = \'\tool_cleanupusers\event\deprovisionusercronjob_completed\'', [$timestamp]);
         $this->assertEquals('a:2:{s:15:"numbersuspended";i:1;s:13:"numberdeleted";i:2;}', $logstore->other);
 
         $this->resetAfterTest();
