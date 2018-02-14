@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The tool_deprovisionuser cron job complete event.
+ * The tool_cleanupusers cron job complete event.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_deprovisionuser\event;
+namespace tool_cleanupusers\event;
 defined('MOODLE_INTERNAL') || die();
 
 use \core\event\base;
 /**
- * The tool_deprovisionuser event informs admin about outcome of cron-job.
+ * The tool_cleanupusers event informs admin about outcome of cron-job.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,7 +59,7 @@ class deprovisionusercronjob_completed extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('cronjobcomplete', 'tool_deprovisionuser');
+        return get_string('cronjobcomplete', 'tool_cleanupusers');
     }
 
 
@@ -76,11 +76,11 @@ class deprovisionusercronjob_completed extends base {
 
         // If no user was affected...
         if (empty($archived) and empty($deleted)) {
-            return get_string('cronjobwasrunning', 'tool_deprovisionuser');
+            return get_string('cronjobwasrunning', 'tool_cleanupusers');
         } else {
             // Otherwise number of users affected.
-            return get_string('e-mail-archived', 'tool_deprovisionuser', $archived) . ' ' .
-                get_string('e-mail-deleted', 'tool_deprovisionuser', $deleted);
+            return get_string('e-mail-archived', 'tool_cleanupusers', $archived) . ' ' .
+                get_string('e-mail-deleted', 'tool_cleanupusers', $deleted);
         }
     }
 }

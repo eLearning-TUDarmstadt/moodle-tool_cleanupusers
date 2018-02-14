@@ -67,9 +67,9 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $unixoneyearnintydays = $mytimestamp - 39528000;
 
         $userarchived = $generator->create_user(array('username' => 's_other07', 'lastaccess' => $mytimestamp, 'suspended' => 1));
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $userarchived->id, 'archived' => true,
+        $DB->insert_record_raw('tool_cleanupusers', array('id' => $userarchived->id, 'archived' => true,
             'timestamp' => $unixoneyearnintydays), true, false, true);
-        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $userarchived->id, 'suspended' => 1,
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $userarchived->id, 'suspended' => 1,
             'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 's_other07'), true,
             false, true);
         $data['s_other07'] = $userarchived;
@@ -85,9 +85,9 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
 
         $deleteme = $generator->create_user(array('username' => 'anonym', 'lastaccess' => $unixoneyearnintydays,
             'suspended' => 1, 'firstname' => 'Anonym'));
-        $DB->insert_record_raw('tool_deprovisionuser', array('id' => $deleteme->id, 'archived' => true,
+        $DB->insert_record_raw('tool_cleanupusers', array('id' => $deleteme->id, 'archived' => true,
             'timestamp' => $unixoneyearnintydays), true, false, true);
-        $DB->insert_record_raw('deprovisionuser_archive', array('id' => $deleteme->id, 'suspended' => 1,
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $deleteme->id, 'suspended' => 1,
             'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 'd_me09'), true,
             false, true);
         $data['d_me09'] = $deleteme;

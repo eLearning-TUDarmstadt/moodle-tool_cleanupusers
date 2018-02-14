@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web interface to deprovisionuser.
+ * Web interface to cleanupusers.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 // Get URL parameters.
@@ -32,21 +32,21 @@ $context = context_system::instance();
 require_login();
 require_capability('moodle/site:config', $context);
 
-admin_externalpage_setup('deprovisionuser');
+admin_externalpage_setup('cleanupusers');
 
-$pagetitle = get_string('pluginname', 'tool_deprovisionuser');
-$PAGE->set_title(get_string('pluginname', 'tool_deprovisionuser'));
-$PAGE->set_heading(get_string('pluginname', 'tool_deprovisionuser'));
+$pagetitle = get_string('pluginname', 'tool_cleanupusers');
+$PAGE->set_title(get_string('pluginname', 'tool_cleanupusers'));
+$PAGE->set_heading(get_string('pluginname', 'tool_cleanupusers'));
 $PAGE->set_pagelayout('standard');
 
-$renderer = $PAGE->get_renderer('tool_deprovisionuser');
+$renderer = $PAGE->get_renderer('tool_cleanupusers');
 
 $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
 $content = '';
 
-$mform = new \tool_deprovisionuser\subplugin_select_form();
+$mform = new \tool_cleanupusers\subplugin_select_form();
 $formdata = $mform->get_data();
 $datavalidated = false;
 if (!empty($formdata)) {
@@ -55,7 +55,7 @@ if (!empty($formdata)) {
 }
 // In this case you process validated data.
 if ($datavalidated && !empty($arraydata['subplugin'])) {
-    set_config('deprovisionuser_subplugin', $arraydata['subplugin'], 'tool_deprovisionuser');
+    set_config('cleanupusers_subplugin', $arraydata['subplugin'], 'tool_cleanupusers');
     $content = 'You successfully submitted the Subplugin.';
     $mform->display();
 } else {
@@ -65,8 +65,8 @@ if ($datavalidated && !empty($arraydata['subplugin'])) {
     $mform->display();
 }
 // Assures right sub-plugin is used.
-if (!empty(get_config('tool_deprovisionuser', 'deprovisionuser_subplugin'))) {
-    $subplugin = get_config('tool_deprovisionuser', 'deprovisionuser_subplugin');
+if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
+    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {

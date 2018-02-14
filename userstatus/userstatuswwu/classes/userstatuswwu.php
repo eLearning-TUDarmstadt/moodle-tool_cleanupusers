@@ -23,8 +23,8 @@
  */
 namespace userstatus_userstatuswwu;
 
-use tool_deprovisionuser\userstatusinterface;
-use tool_deprovisionuser\archiveduser;
+use tool_cleanupusers\userstatusinterface;
+use tool_cleanupusers\archiveduser;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -246,7 +246,7 @@ class userstatuswwu implements userstatusinterface {
 
         foreach ($users as $moodleuser) {
             // In case the user is a siteadmin or has an entry in the plugin table he/she will not be displayed.
-            if (is_siteadmin($moodleuser) || !empty($DB->get_record('tool_deprovisionuser', array('id' => $moodleuser->id)))) {
+            if (is_siteadmin($moodleuser) || !empty($DB->get_record('tool_cleanupusers', array('id' => $moodleuser->id)))) {
                 continue;
             }
             // Additional check for properties.
@@ -277,7 +277,7 @@ class userstatuswwu implements userstatusinterface {
             if (!empty($moodleuser->timestamp)) {
                 // In case the user was suspended for longer than one year he/she is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    $user = $DB->get_record('deprovisionuser_archive', array('id' => $moodleuser->id));
+                    $user = $DB->get_record('tool_cleanupusers_archive', array('id' => $moodleuser->id));
 
                     $againlisted = in_array($user->username, $this->zivmemberlist);
                     if (!$againlisted) {
@@ -309,6 +309,6 @@ class userstatuswwu implements userstatusinterface {
      */
     private function get_users_suspended_not_deleted() {
         global $DB;
-        return $DB->get_records('tool_deprovisionuser');
+        return $DB->get_records('tool_cleanupusers');
     }
 }

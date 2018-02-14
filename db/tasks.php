@@ -16,7 +16,7 @@
 /**
  * Tasks definition.
  *
- * @package    tool_deprovisionuser
+ * @package    tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = array(
     array(
-        'classname' => 'tool_deprovisionuser\task\archive_user_task',
+        'classname' => 'tool_cleanupusers\task\archive_user_task',
         'blocking' => 0,
         'minute' => 'R',
         'hour' => '4',

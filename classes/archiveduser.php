@@ -16,11 +16,11 @@
 /**
  * Class archive user.
  *
- * @package   tool_deprovisionuser
+ * @package   tool_cleanupusers
  * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_deprovisionuser;
+namespace tool_cleanupusers;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +32,7 @@ use \core\session\manager;
  * The class collects the necessary information to suspend, delete and activate users.
  * It can be used in sub-plugins, since the constructor assures that all necessary information is transferred.
  *
- * @package   tool_deprovisionuser
+ * @package   tool_cleanupusers
  * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -73,10 +73,10 @@ class archiveduser {
     /**
      * Suspends the user.
      *
-     * Therefore makes an entry in the tool_deprovisionuser table. Throws an error when the user that should be
+     * Therefore makes an entry in the tool_cleanupusers table. Throws an error when the user that should be
      * suspended is already suspended or is the sideadmin.
      *
-     * @throws deprovisionuser_exception
+     * @throws cleanupusers_exception
      */
     public function archive_me() {
         global $DB;
@@ -93,22 +93,22 @@ class archiveduser {
             user_update_user($user, false);
 
             $timestamp = time();
-            $tooluser = $DB->get_record('tool_deprovisionuser', array('id' => $user->id));
+            $tooluser = $DB->get_record('tool_cleanupusers', array('id' => $user->id));
 
             // Document time of editing user in Database.
             // In case there is no entry in the tool table make a new one.
             if (empty($tooluser)) {
-                $DB->insert_record_raw('tool_deprovisionuser', array('id' => $user->id, 'archived' => $user->suspended,
+                $DB->insert_record_raw('tool_cleanupusers', array('id' => $user->id, 'archived' => $user->suspended,
                     'timestamp' => $timestamp), true, false, true);
             } else {
                 // In case an record already exist the timestamp is updated.
                 $tooluser->timestamp = $timestamp;
-                $DB->update_record('tool_deprovisionuser', $tooluser);
+                $DB->update_record('tool_cleanupusers', $tooluser);
             }
 
             // Insert copy of user in second DB and replace user in main table when entry was successful.
             $shadowuser = clone $user;
-            $success = $DB->insert_record_raw('deprovisionuser_archive', $shadowuser, true, false, true);
+            $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
             if ($success == true) {
                 // Replaces the current user with a pseudo_user that has no reference.
                 $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
@@ -117,17 +117,17 @@ class archiveduser {
             $transaction->allow_commit();
             // No error here since user was maybe manually suspended in user table.
         } else {
-            throw new deprovisionuser_exception(get_string('errormessagenotsuspend', 'tool_deprovisionuser'));
+            throw new cleanupusers_exception(get_string('errormessagenotsuspend', 'tool_cleanupusers'));
         }
     }
 
     /**
      * Reactivates the user.
      *
-     * Therefore deletes the entry in the tool_deprovisionuser table and throws an exception when no entry is available
+     * Therefore deletes the entry in the tool_cleanupusers table and throws an exception when no entry is available
      * or the name of the user is 'Anonym' at the end of the function.
      *
-     * @throws deprovisionuser_exception
+     * @throws cleanupusers_exception
      */
     public function activate_me() {
         global $DB;
@@ -147,25 +147,25 @@ class archiveduser {
         } else {
             // The user was archived by the plugin.
 
-            // Deletes record of plugin table tool_deprovisionuser.
-            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
+            // Deletes record of plugin table tool_cleanupusers.
+            if (!empty($DB->get_records('tool_cleanupusers', array('id' => $user->id)))) {
+                $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
             }
 
-            // Is user in the shadow table (deprovisionuser_archive table)?
-            if (empty($DB->get_record('deprovisionuser_archive', array('id' => $user->id)))) {
+            // Is user in the shadow table (tool_cleanupusers_archive table)?
+            if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
 
                 // If there is no user, the main table can not be updated.
-                throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
+                throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
 
             } else {
                 // If the user is in table replace data.
-                $shadowuser = $DB->get_record('deprovisionuser_archive', array('id' => $user->id));
+                $shadowuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id));
                 $shadowuser->suspended = 0;
 
                 $DB->update_record('user', $shadowuser);
-                // Delete records from deprovisionuser_archive table.
-                $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
+                // Delete records from tool_cleanupusers_archive table.
+                $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
             }
             // Gets the new user for additional checks.
             $transaction->allow_commit();
@@ -173,7 +173,7 @@ class archiveduser {
 
             // When username is still 'Anonym' something went wrong.
             if ($user->firstname == 'Anonym') {
-                throw new deprovisionuser_exception(get_string('errormessagenotactive', 'tool_deprovisionuser'));
+                throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
             }
         }
     }
@@ -182,13 +182,13 @@ class archiveduser {
      * Deletes the user.
      *
      * Therefore
-     * (1) Deletes the entry in the tool_deprovisionuser and the deprovisionuser_archive table.
+     * (1) Deletes the entry in the tool_cleanupusers and the tool_cleanupusers_archive table.
      * (2) Hashes the username with the sha256 function.
      * (3) Calls the moodle core delete_user function..
      *
      * Throws an error when the side admin should be deleted or user is already flagged as deleted.
      *
-     * @throws deprovisionuser_exception
+     * @throws cleanupusers_exception
      */
     public function delete_me() {
         global $DB;
@@ -201,12 +201,12 @@ class archiveduser {
             $transaction = $DB->start_delegated_transaction();
 
             // Deletes the records in both plugin tables.
-            if (!empty($DB->get_records('tool_deprovisionuser', array('id' => $user->id)))) {
-                $DB->delete_records('tool_deprovisionuser', array('id' => $user->id));
+            if (!empty($DB->get_records('tool_cleanupusers', array('id' => $user->id)))) {
+                $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
             }
 
-            if (!empty($DB->get_records('deprovisionuser_archive', array('id' => $user->id)))) {
-                $DB->delete_records('deprovisionuser_archive', array('id' => $user->id));
+            if (!empty($DB->get_records('tool_cleanupusers_archive', array('id' => $user->id)))) {
+                $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
             }
 
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
@@ -235,7 +235,7 @@ class archiveduser {
             delete_user($user);
             $transaction->allow_commit();
         } else {
-            throw new deprovisionuser_exception(get_string('errormessagenotdelete', 'tool_deprovisionuser'));
+            throw new cleanupusers_exception(get_string('errormessagenotdelete', 'tool_cleanupusers'));
         }
     }
 

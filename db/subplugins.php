@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * This file defines the sub-plugins for the deprovisionuser admin tool.
+ * This file defines the sub-plugins for the cleanupusers admin tool.
  *
- * @package tool_deprovisionuser
+ * @package tool_cleanupusers
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array('userstatus' => 'admin/tool/deprovisionuser/userstatus');
+$subplugins = array('userstatus' => 'admin/tool/cleanupusers/userstatus');

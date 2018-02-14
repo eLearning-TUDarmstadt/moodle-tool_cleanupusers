@@ -16,7 +16,7 @@
 
 /**
  * Version details
- * @package deprovisionuser_userstatuswwu
+ * @package userstatus_userstatuswwu
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,4 +29,4 @@ $plugin->component = 'userstatus_userstatuswwu'; // Full name of the plugin (use
 $plugin->release = 'v1.0-r0';
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->dependencies = array(
-    'tool_deprovisionuser' => ANY_VERSION);
+    'tool_cleanupusers' => ANY_VERSION);

@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Suspend, delete or reactivate user. This is called when sideadmin changes user from the deprovisionuser
+ * Suspend, delete or reactivate user. This is called when sideadmin changes user from the cleanupusers
  * administration page.
  *
- * @package tool_deprovision
+ * @package tool_cleanupusers
  * @copyright 2016 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,73 +30,73 @@ $userid         = required_param('userid', PARAM_INT);
 // One of: suspend, reactivate or delete.
 $action         = required_param('action', PARAM_TEXT);
 
-$PAGE->set_url('/admin/tool/deprovisionuser/handleuser.php');
+$PAGE->set_url('/admin/tool/cleanupusers/handleuser.php');
 $PAGE->set_context(context_system::instance());
 
 $user = $DB->get_record('user', array('id' => $userid));
 require_capability('moodle/user:update', $PAGE->context);
 
-$url = new moodle_url('/admin/tool/deprovisionuser/index.php');
+$url = new moodle_url('/admin/tool/cleanupusers/index.php');
 
 switch($action){
     // User should be suspended.
     case 'suspend':
         // Sideadmins, the current $USER and user who are already suspended can not be handeled.
         if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess,
+            $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
                 $deprovisionuser->archive_me();
-            } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+            } catch (\tool_cleanupusers\cleanupusers_exception $e) {
                 // Notice user could not be suspended.
-                notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+                notice(get_string('errormessagenoaction', 'tool_cleanupusers'), $url);
             }
             // User was successfully suspended.
-            notice(get_string('usersarchived', 'tool_deprovisionuser'), $url);
+            notice(get_string('usersarchived', 'tool_cleanupusers'), $url);
         } else {
             // Notice user could not be suspended.
-            notice(get_string('errormessagenotsuspend', 'tool_deprovisionuser'), $url);
+            notice(get_string('errormessagenotsuspend', 'tool_cleanupusers'), $url);
         }
         break;
     // User should be reactivated.
     case 'reactivate':
         if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess,
+            $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
                 $deprovisionuser->activate_me();
-            } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
+            } catch (\tool_cleanupusers\cleanupusers_exception $e) {
                 // Notice user could not be reactivated.
-                notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+                notice(get_string('errormessagenoaction', 'tool_cleanupusers'), $url);
             }
             // User successfully reactivated.
-            notice(get_string('usersreactivated', 'tool_deprovisionuser'), $url);
+            notice(get_string('usersreactivated', 'tool_cleanupusers'), $url);
         } else {
             // Notice user could not be reactivated.
-            notice(get_string('errormessagenotactive', 'tool_deprovisionuser'), $url);
+            notice(get_string('errormessagenotactive', 'tool_cleanupusers'), $url);
         }
         break;
     // User should be deleted.
     case 'delete':
         if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
-            $deprovisionuser = new \tool_deprovisionuser\archiveduser($userid, $user->suspended, $user->lastaccess,
+            $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
                 $deprovisionuser->delete_me();
-            } catch (\tool_deprovisionuser\deprovisionuser_exception $e) {
-                $url = new moodle_url('/admin/tool/deprovisionuser/index.php');
+            } catch (\tool_cleanupusers\cleanupusers_exception $e) {
+                $url = new moodle_url('/admin/tool/cleanupusers/index.php');
                 // Notice user could not be deleted.
-                notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+                notice(get_string('errormessagenoaction', 'tool_cleanupusers'), $url);
             }
-            notice(get_string('usersdeleted', 'tool_deprovisionuser'), $url);
+            notice(get_string('usersdeleted', 'tool_cleanupusers'), $url);
         } else {
             // Notice user could not be deleted.
-            notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+            notice(get_string('errormessagenoaction', 'tool_cleanupusers'), $url);
         }
         break;
     // Action is not valid.
     default:
-        notice(get_string('errormessagenoaction', 'tool_deprovisionuser'), $url);
+        notice(get_string('errormessagenoaction', 'tool_cleanupusers'), $url);
         break;
 }
 exit();

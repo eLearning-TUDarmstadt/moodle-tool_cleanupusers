@@ -14,26 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Create an Exception Class for the tool_deprovisionuser
+ * Create an additional Exception Class for the cleanupusers_subplugins.
  *
- * @package   tool_deprovisionuser
+ * @package   tool_cleanupusers
  * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_deprovisionuser;
+namespace tool_cleanupusers;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Exception Class for the tool_deprovisionuser.
+ * Class cleanupusers_subplugin_exception
  *
- * @package   tool_deprovisionuser
- * @copyright 2017 N. Herrmann
+ * @package tool_cleanupusers
+ * @copyright 2016 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class deprovisionuser_exception extends \moodle_exception {
-
+class cleanupusers_subplugin_exception extends \moodle_exception {
     /**
      * Constructor
      * @param string $errorcode The name of the string from webservice.php to print
@@ -41,6 +40,6 @@ class deprovisionuser_exception extends \moodle_exception {
      * @param string $debuginfo Optional information to aid debugging
      */
     public function __construct($errorcode, $a = '', $debuginfo = null) {
-        parent::__construct($errorcode, 'tool_deprovisionuser', '', $a, $debuginfo);
+        parent::__construct($errorcode, 'tool_cleanupusers', '', $a, $debuginfo);
     }
 }

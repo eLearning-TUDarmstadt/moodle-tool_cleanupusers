@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="tool/deprovisionuser/db" VERSION="20120122" COMMENT="XMLDB file for Moodle tool/deprovisionuser"
+<XMLDB PATH="tool/cleanupusers/db" VERSION="20120122" COMMENT="XMLDB file for Moodle tool/cleanupusers"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="tool_deprovisionuser" COMMENT="deprovision user">
+        <TABLE NAME="tool_cleanupusers" COMMENT="deprovision user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 // Copied from mdl_user.
@@ -17,7 +17,7 @@
                 <KEY NAME="foreign" TYPE="foreign" FIELDS="id" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="deprovisionuser_archive" COMMENT="deprovision user">
+        <TABLE NAME="tool_cleanupusers_archive" COMMENT="deprovision user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 // Copied from mdl_user.

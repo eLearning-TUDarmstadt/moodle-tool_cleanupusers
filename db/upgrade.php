@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Upgrade for the tool_deprovisionuser.
+ * Upgrade for the tool_cleanupusers.
  *
- * @package tool_deprovisionuser
+ * @package tool_cleanupusers
  * @copyright 2016/17 N Herrmann
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,9 +24,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Function to upgrade for the tool_deprovisionuser.
+ * Function to upgrade for the tool_cleanupusers.
  */
 
-function xmldb_tool_deprovisionuser_upgrade($oldversion) {
+function xmldb_tool_cleanupusers_upgrade($oldversion) {
     return true;
 }

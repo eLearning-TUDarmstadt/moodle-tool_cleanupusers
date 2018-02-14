@@ -116,9 +116,9 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest(true);
         $DB->delete_records('user');
-        $DB->delete_records('tool_deprovisionuser');
+        $DB->delete_records('tool_cleanupusers');
         $this->assertEmpty($DB->get_records('user'));
-        $this->assertEmpty($DB->get_records('tool_deprovisionuser'));
+        $this->assertEmpty($DB->get_records('tool_cleanupusers'));
     }
     /**
      * Methodes recommended by moodle to assure database is reset.
@@ -126,6 +126,6 @@ class userstatus_timechecker_testcase extends advanced_testcase {
     public function test_user_table_was_reset() {
         global $DB;
         $this->assertEquals(2, $DB->count_records('user', array()));
-        $this->assertEquals(0, $DB->count_records('tool_deprovisionuser', array()));
+        $this->assertEquals(0, $DB->count_records('tool_cleanupusers', array()));
     }
 }
