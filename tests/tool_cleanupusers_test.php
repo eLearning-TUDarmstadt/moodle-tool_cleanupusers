@@ -68,7 +68,7 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $this->assertEquals('anonym' . $data['user']->id, $recordusertable->username);
 
         // Users that are activated will be marked as suspended=0 in the user table.
-        // suspendeduser is only flagged as suspended in the user table
+        // suspendeduser is only flagged as suspended in the user table.
         $neutraltosuspended = new \tool_cleanupusers\archiveduser($data['suspendeduser']->id, $data['suspendeduser']->suspended,
             $data['suspendeduser']->lastaccess, $data['suspendeduser']->username, $data['suspendeduser']->deleted);
         $neutraltosuspended->activate_me();
@@ -92,8 +92,9 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // Users that are activated will be marked as active in the user table.
         // The entry the tool_cleanupusers table will be deleted.
         // archivedbyplugin has entry in tool_cleanupusers and tool_cleanupusers_archive was suspended one year ago.
-        $suspendedtoactive = new \tool_cleanupusers\archiveduser($data['archivedbyplugin']->id, $data['archivedbyplugin']->suspended,
-            $data['archivedbyplugin']->lastaccess, $data['archivedbyplugin']->username, $data['archivedbyplugin']->deleted);
+        $suspendedtoactive = new \tool_cleanupusers\archiveduser($data['archivedbyplugin']->id,
+            $data['archivedbyplugin']->suspended, $data['archivedbyplugin']->lastaccess, $data['archivedbyplugin']->username,
+            $data['archivedbyplugin']->deleted);
         $suspendedtoactive->activate_me();
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['archivedbyplugin']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
@@ -115,9 +116,9 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebypluginexception']->id, $data['reactivatebypluginexception']->suspended,
-            $data['reactivatebypluginexception']->lastaccess, $data['reactivatebypluginexception']->username,
-            $data['reactivatebypluginexception']->deleted);
+        $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebypluginexception']->id,
+            $data['reactivatebypluginexception']->suspended, $data['reactivatebypluginexception']->lastaccess,
+            $data['reactivatebypluginexception']->username, $data['reactivatebypluginexception']->deleted);
         $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to activate user.');
         $useraccount->activate_me();

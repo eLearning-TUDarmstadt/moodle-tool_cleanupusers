@@ -95,7 +95,8 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $data['reactivatebyplugin'] = $reactivatebyplugin;
 
         // User that was archived by the plugin and will be reactivated in cron-job has as firstname Anonym.
-        $reactivatebypluginexception = $generator->create_user(array('username' => 'moreanonym', 'suspended' => '1', 'firstname' => 'Anonym'));
+        $reactivatebypluginexception = $generator->create_user(['username' => 'moreanonym', 'suspended' => '1',
+            'firstname' => 'Anonym']);
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebypluginexception->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebypluginexception->id,
