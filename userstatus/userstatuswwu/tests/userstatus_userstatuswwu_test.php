@@ -51,10 +51,10 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         global $CFG, $USER;
         $data = $this->set_up();
         $this->assertFileExists($CFG->dirroot .
-            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
+            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt');
 
         $myuserstatuschecker = new userstatuswwu($CFG->dirroot .
-            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt',
+            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt',
             array('member_group' => 'member_group', 'member' => 'member'));
         // Calls for plugin function to return array.
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
@@ -111,7 +111,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
 
         // Userstatuschecker uses default groups. Merely e_user03 is a valid member.
         $myuserstatuschecker = new userstatuswwu($CFG->dirroot .
-            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
+            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt');
         $returnsuspend = $myuserstatuschecker->get_to_suspend();
         $returndelete = $myuserstatuschecker->get_to_delete();
         $returnneverloggedin = $myuserstatuschecker->get_never_logged_in();
@@ -142,9 +142,9 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $data = $this->set_up();
 
         $this->assertFileExists($CFG->dirroot .
-            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
+            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt');
         set_config('pathtotxt', $CFG->dirroot .
-            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt', 'userstatus_userstatuswwu');
+            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt', 'userstatus_userstatuswwu');
         $userstatuswwu = new userstatuswwu();
         $returnsuspend = $userstatuswwu->get_to_suspend();
         $returndelete = $userstatuswwu->get_to_delete();
@@ -178,7 +178,7 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
     public function test_filenotexist() {
         global $CFG;
         $this->assertFileExists($CFG->dirroot .
-            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/_files/groups_excerpt_short.txt');
+            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt');
 
         $this->expectException('userstatus_userstatuswwu\userstatuswwu_exception');
         $this->expectExceptionMessage('The reference to the .txt could not be found.');
