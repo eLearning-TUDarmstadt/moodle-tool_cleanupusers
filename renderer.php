@@ -118,7 +118,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['Willbe'] = get_string('shouldbedelted', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
                 $userinformation['link'] = \html_writer::link($url,
-                    $OUTPUT->pix_icon('t/delete', get_string('showuser', 'tool_cleanupusers'), 'moodle',
+                    $OUTPUT->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
                         ['class' => "imggroup-" . $user->id]));
             }
             $resultarray[$key] = $userinformation;
@@ -182,7 +182,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['Willbe'] = get_string('nothinghappens', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
                 $userinformation['link'] = \html_writer::link($url,
-                    $OUTPUT->pix_icon('t/delete', get_string('showuser', 'tool_cleanupusers'), 'moodle',
+                    $OUTPUT->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
                         ['class' => "imggroup-" . $user->id]));
             }
             $result[$key] = $userinformation;
