@@ -144,7 +144,8 @@ class userstatus_userstatuswwu_testcase extends advanced_testcase {
         $this->assertFileExists($CFG->dirroot .
             '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt');
         set_config('pathtotxt', $CFG->dirroot .
-            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt', 'userstatus_userstatuswwu');
+            '/admin/tool/cleanupusers/userstatus/userstatuswwu/tests/fixtures/groups_excerpt_short.txt',
+            'userstatus_userstatuswwu');
         $userstatuswwu = new userstatuswwu();
         $returnsuspend = $userstatuswwu->get_to_suspend();
         $returndelete = $userstatuswwu->get_to_delete();

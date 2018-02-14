@@ -117,8 +117,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 }
                 $userinformation['Willbe'] = get_string('shouldbedelted', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
-                $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/delete'),
-                    get_string('showuser', 'tool_cleanupusers'), array('class' => "imggroup-" . $user->id)));
+                $userinformation['link'] = \html_writer::link($url,
+                    $OUTPUT->pix_icon('t/delete', get_string('showuser', 'tool_cleanupusers'), 'moodle',
+                        ['class' => "imggroup-" . $user->id]));
             }
             $resultarray[$key] = $userinformation;
         }
@@ -150,8 +151,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
 
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'suspend']);
 
-                $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/hide'),
-                    get_string('hideuser', 'tool_cleanupusers'), array('class' => "imggroup-" . $user->id)));
+                $userinformation['link'] = \html_writer::link($url,
+                    $OUTPUT->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
+                        ['class' => "imggroup-" . $user->id]));
             }
             $result[$key] = $userinformation;
         }
@@ -179,8 +181,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 }
                 $userinformation['Willbe'] = get_string('nothinghappens', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
-                $userinformation['link'] = \html_writer::link($url, \html_writer::img($OUTPUT->pix_url('t/delete'),
-                    get_string('showuser', 'tool_cleanupusers'), array('class' => "imggroup-" . $user->id)));
+                $userinformation['link'] = \html_writer::link($url,
+                    $OUTPUT->pix_icon('t/delete', get_string('showuser', 'tool_cleanupusers'), 'moodle',
+                        ['class' => "imggroup-" . $user->id]));
             }
             $result[$key] = $userinformation;
         }
