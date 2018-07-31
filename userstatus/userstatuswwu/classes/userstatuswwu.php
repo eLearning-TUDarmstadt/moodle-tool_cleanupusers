@@ -165,7 +165,7 @@ class userstatuswwu implements userstatusinterface {
                     continue;
                 }
                 // In case no groups were determined the default is used.
-                if (count($this->groups) == null) {
+                if ($this->groups == null || count($this->groups) == null) {
                     // Additional check whether there is a second word in the current line.
                     if (array_key_exists(1, $currentstring)) {
                         $group = rtrim($currentstring[1]);
