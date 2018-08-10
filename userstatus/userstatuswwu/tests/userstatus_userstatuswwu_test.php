@@ -30,7 +30,8 @@ use userstatus_userstatuswwu\userstatuswwu;
  *
  * @package    userstatus_userstatuswwu
  * @category   test
- * @group tool_cleanupusers
+ * @group      tool_cleanupusers
+ * @group      tool_cleanupusers_userstatuswwu
  * @copyright  2017 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
