@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    userstatus_userstatuswwu
  * @category   test
+ * @group      tool_cleanupusers
+ * @group      tool_cleanupusers_userstatuswwu
  * @copyright  2017 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

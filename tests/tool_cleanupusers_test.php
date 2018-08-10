@@ -30,6 +30,7 @@ use tool_cleanupusers\task;
  * Testcase class for executing phpunit test for the moodle tool_cleanupusers plugin.
  *
  * @package    tool_cleanupusers
+ * @group      tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
