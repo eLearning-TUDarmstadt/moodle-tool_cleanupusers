@@ -210,9 +210,10 @@ class userstatuswwu implements userstatusinterface {
      */
     private function order_suspend() {
         $users = $this->get_users_not_suspended();
+        $admins = get_admins();
         foreach ($users as $moodleuser) {
             // Siteadmins will not be suspended.
-            if (is_siteadmin($moodleuser)) {
+            if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
             $ismember = false;
@@ -245,10 +246,11 @@ class userstatuswwu implements userstatusinterface {
         LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
         WHERE t_u.id IS NULL AND u.lastaccess=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
         $users = $DB->get_records_sql($sql);
+        $admins = get_admins();
 
         foreach ($users as $moodleuser) {
             // In case the user is a siteadmin he/she will not be displayed, since admins are never changed by the plugin.
-            if (is_siteadmin($moodleuser)) {
+            if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
             // Additional check for properties.
