@@ -267,7 +267,6 @@ class userstatuswwu implements userstatusinterface {
      * Users who are not in the plugin table will not be handled.
      */
     private function order_delete() {
-        global $DB;
         // Returns all users from the plugin table.
         $users = $this->get_users_suspended_not_deleted();
         foreach ($users as $moodleuser) {
@@ -277,16 +276,13 @@ class userstatuswwu implements userstatusinterface {
             }
             $timestamp = time();
             if (!empty($moodleuser->timestamp)) {
-                // In case the user was suspended for longer than one year he/she is supposed to be deleted.
+                // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    $user = $DB->get_record('tool_cleanupusers_archive', array('id' => $moodleuser->id));
-
-                    $againlisted = in_array($user->username, $this->zivmemberlist);
+                    $againlisted = in_array($moodleuser->username, $this->zivmemberlist);
                     if (!$againlisted) {
-                        // Object with necessary data.
-                        if (!empty($user)) {
-                            $datauser = new archiveduser($user->id, $user->suspended, $user->lastaccess,
-                                $user->username, $user->deleted);
+                        if (!empty($moodleuser)) {
+                            $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                                $moodleuser->username, $moodleuser->deleted);
                             $this->todelete[$moodleuser->id] = $datauser;
                         }
                     }
@@ -306,11 +302,15 @@ class userstatuswwu implements userstatusinterface {
     }
 
     /**
-     * Executes a DB query and returns all users who are suspended and not deleted from the plugin table.
+     * Executes a DB query and returns the id, suspended-status, username, deleted-status, and timestamp of suspension
+     * of all users who are suspended and not deleted from the plugin and the user table.
      * @return array of users
      */
     private function get_users_suspended_not_deleted() {
         global $DB;
-        return $DB->get_records('tool_cleanupusers');
+        $sql = 'SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted, t_u.timestamp
+        FROM {tool_cleanupusers_archive} u
+        JOIN {tool_cleanupusers} t_u ON u.id = t_u.id';
+        return $DB->get_records_sql($sql);
     }
 }
