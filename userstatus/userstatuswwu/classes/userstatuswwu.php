@@ -238,13 +238,12 @@ class userstatuswwu implements userstatusinterface {
      */
     private function order_never_logged_in() {
         global $DB;
-        // Users who never logged in and are not deleted.
-        // Additionally users who are called Anonym with the firstname were suspended with the plugin
-        // therefore they are not displayed.
+        // Users who never logged in are collected due to the following criteria:
+        // User whose access equals 0 and where not deleted previously and are not in the tool table.
         $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
         FROM {user} u
         LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
-        WHERE u.lastaccess=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
+        WHERE t_u.id IS NULL AND u.lastaccess=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
         $users = $DB->get_records_sql($sql);
 
         foreach ($users as $moodleuser) {
