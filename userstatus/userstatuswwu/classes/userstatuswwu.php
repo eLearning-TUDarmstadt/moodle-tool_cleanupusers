@@ -249,7 +249,8 @@ class userstatuswwu implements userstatusinterface {
         $admins = get_admins();
 
         foreach ($users as $moodleuser) {
-            // In case the user is a siteadmin he/she will not be displayed, since admins are never changed by the plugin.
+            // In case the user is a siteadmin he/she will not be displayed, since admins are never changed by the ...
+            // Plugin.
             if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
