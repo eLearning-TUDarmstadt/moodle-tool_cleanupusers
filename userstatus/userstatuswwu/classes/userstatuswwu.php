@@ -241,12 +241,15 @@ class userstatuswwu implements userstatusinterface {
         // Users who never logged in and are not deleted.
         // Additionally users who are called Anonym with the firstname were suspended with the plugin
         // therefore they are not displayed.
-        $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
-        $users = $DB->get_records_select('user', $select);
+        $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
+        FROM {user} u
+        LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
+        WHERE u.lastaccess=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
+        $users = $DB->get_records_sql($sql);
 
         foreach ($users as $moodleuser) {
-            // In case the user is a siteadmin or has an entry in the plugin table he/she will not be displayed.
-            if (is_siteadmin($moodleuser) || !empty($DB->get_record('tool_cleanupusers', array('id' => $moodleuser->id)))) {
+            // In case the user is a siteadmin he/she will not be displayed, since admins are never changed by the plugin.
+            if (is_siteadmin($moodleuser)) {
                 continue;
             }
             // Additional check for properties.
