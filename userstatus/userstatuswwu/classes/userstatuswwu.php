@@ -132,8 +132,8 @@ class userstatuswwu implements userstatusinterface {
      * Fopen() supports other filetypes, these are not tested. Therefore the usage of a .txt file is recommended.
      *
      * This File includes specific groups for the University of Muenster.
-     * When a user belongs to certain group the function adds the user to an array. Therefore the return array includes
-     * all users who are allowed to sign in into the Learnweb.
+     * When a user belongs to certain group the function adds the user to an array (as a key since array_key_exist is
+     * more efficient). The return array includes all users who are allowed to sign in into the Learnweb.
      *
      * @return array of authorized users
      * @throws userstatuswwu_exception
@@ -180,7 +180,7 @@ class userstatuswwu implements userstatusinterface {
                             case 'y1moodle':
                             case 'b5lwmw':
                                 $currentname = $currentstring[0];
-                                array_push($zivuserarray, $currentname);
+                                $zivuserarray[$currentname] = true;
                                 break;
                             default:
                                 continue;
@@ -192,7 +192,7 @@ class userstatuswwu implements userstatusinterface {
                         $group = rtrim($currentstring[1]);
                         if ($group === $membergroup) {
                             $currentname = $currentstring[0];
-                            array_push($zivuserarray, $currentname);
+                            $zivuserarray[$currentname] = true;
                             continue;
                         }
                     }
@@ -216,16 +216,8 @@ class userstatuswwu implements userstatusinterface {
             if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
-            $ismember = false;
-            // Compares every zivmember to the moodleusername.
-            foreach ($this->zivmemberlist as $zivmember) {
-                if ($zivmember == $moodleuser->username) {
-                    $ismember = true;
-                    continue;
-                }
-            }
             // Adds Object of the user to the array if he/she is not a member.
-            if ($ismember == false) {
+            if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {
                 // Only necessary information is saved in the object and transmitted.
                 $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
                     $moodleuser->username, $moodleuser->deleted);
@@ -281,8 +273,8 @@ class userstatuswwu implements userstatusinterface {
             if (!empty($moodleuser->timestamp)) {
                 // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    $againlisted = in_array($moodleuser->username, $this->zivmemberlist);
-                    if (!$againlisted) {
+                    // Check whether the user is again listed.
+                    if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {
                         if (!empty($moodleuser)) {
                             $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
                                 $moodleuser->username, $moodleuser->deleted);
