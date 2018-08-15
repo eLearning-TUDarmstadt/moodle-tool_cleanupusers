@@ -292,8 +292,8 @@ class userstatuswwu implements userstatusinterface {
      */
     private function get_users_not_suspended() {
         global $DB;
-        $select = 'deleted=0 AND suspended=0 AND lastaccess!=0';
-        return $DB->get_records_select('user', $select);
+        $select = 'deleted=0 AND lastaccess!=0 AND suspended=0';
+        return $DB->get_records_select('user', $select, null, '', 'id, suspended, lastaccess, username, deleted');
     }
 
     /**
