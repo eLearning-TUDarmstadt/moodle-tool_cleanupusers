@@ -117,9 +117,15 @@ least the following information for each user that should be handled:
   
 As the default, the sub-plugin of the University of Münster is installed and enabled and cannot be uninstalled.
 Moreover, sub-plugins that are currently in use cannot be uninstalled.
-
+If you implement your own subplugin it should be placed in `admin/tool/cleanupusers/userstatus`.
 ### Userstatuswwu
+This plugin selects user depending on a .txt file. In the installation of the plugin the path to the file has to be defined.
+The .txt file list the usernames followed by an empty space and the group name. If you want to adjust the group names you will need to change the hardcoded names in the plugin.
+Manually suspended users are not considered.
 ### Timechecker
-
+The timechecker plugin suspends and deletes user depending on the last access of the user to the platform. 
+The site administrator can define custom time spans, as a default 90 days have to pass without a user logging in until the 
+user is suspended and 365 days until the user is deleted.
+Currently, users that are manually suspended and did not log in for the defined time are also deleted.  
 ## Desirable Extension
 - prohibit sending messages to suspended users
