@@ -62,8 +62,8 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $returntoreactivate = $myuserstatuschecker->get_to_reactivate();
 
         $this->assertEquals($data['useroneyearnotlogedin']->id, $returnsuspend[$data['useroneyearnotlogedin']->id]->id);
-        $this->assertEquals($data['userarchivedoneyearnintydays']->id,
-            $returndelete[$data['userarchivedoneyearnintydays']->id]->id);
+        // We know from the testcase construction that only one user is deleted for this reason the user is at index 0.
+        $this->assertEquals($data['userarchivedoneyearnintydays']->id, $returndelete[0]->id);
         $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
         // Merely id is compared since plugin only saves necessary data not complete user.
         $this->assertEquals($data['reactivate']->id, $returntoreactivate[$data['reactivate']->id]->id);
@@ -102,14 +102,13 @@ class userstatus_timechecker_testcase extends advanced_testcase {
 
         $this->assertEquals($data['useroneyearnotlogedin']->id, $returnsuspend[$data['useroneyearnotlogedin']->id]->id);
         $this->assertEquals($data['userfifteendays']->id, $returnsuspend[$data['userfifteendays']->id]->id);
-        $this->assertEquals($data['userarchivedoneyearnintydays']->id,
-            $returndelete[$data['userarchivedoneyearnintydays']->id]->id);
+        // We know from the testcase construction that only one user is deleted for this reason the user is at index 0.
+        $this->assertEquals($data['userarchivedoneyearnintydays']->id, $returndelete[0]->id);
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);
         $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
         $this->resetAfterTest(true);
-
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
