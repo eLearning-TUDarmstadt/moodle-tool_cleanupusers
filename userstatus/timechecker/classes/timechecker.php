@@ -183,11 +183,13 @@ class timechecker implements userstatusinterface {
         $users = $DB->get_records_select('user', $select);
         $archived = $DB->get_records('tool_cleanupusers_archive', null, '','id, username, lastaccess, suspended, deleted');
         $toactivate = array();
+        $admins = get_admins();
 
         foreach ($users as $key => $user) {
-            if ($user->suspended == 1 && $user->deleted == 0 && !is_siteadmin($user)) {
+            if (array_key_exists($user->id, $admins)) {
+                continue;
+            } else {
                 $mytimestamp = time();
-
                 // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
                 if (!array_key_exists($user->id, $archived)) {
                     $timenotloggedin = $mytimestamp - $user->lastaccess;
