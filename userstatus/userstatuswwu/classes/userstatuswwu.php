@@ -264,9 +264,11 @@ class userstatuswwu implements userstatusinterface {
     private function order_delete() {
         // Returns all users from the plugin table.
         $users = $this->get_users_suspended_not_deleted();
+        $admins = get_admins();
+
         foreach ($users as $moodleuser) {
             // Siteadmin will be ignored.
-            if (is_siteadmin($moodleuser->id)) {
+            if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
             $timestamp = time();
