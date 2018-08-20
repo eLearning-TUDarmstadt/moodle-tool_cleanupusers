@@ -62,9 +62,7 @@ class timechecker implements userstatusinterface {
      * @return array of users to suspend
      */
     public function get_to_suspend() {
-        global $DB;
-        $select = 'deleted=0 AND suspended=0 AND lastaccess!=0';
-        $users = $DB->get_records_select('user', $select);
+        $users = $this->get_users_not_suspended_by_plugin();
         $admins = get_admins();
         $tosuspend = array();
         foreach ($users as $key => $user) {
@@ -74,7 +72,7 @@ class timechecker implements userstatusinterface {
 
             $mytimestamp = time();
             $timenotloggedin = $mytimestamp - $user->lastaccess;
-            if ($timenotloggedin > $this->timesuspend && $user->suspended == 0) {
+            if ($timenotloggedin > $this->timesuspend) {
                 $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
                     $user->deleted);
                 $tosuspend[$key] = $informationuser;
@@ -120,35 +118,13 @@ class timechecker implements userstatusinterface {
         // The last possible date users must have logged in before they get deleted.
         $datetodelete = $mytimestamp - $this->timedelete;
 
-        // 1. Get all users manually suspended who logged in before the critical date ...
-        // Remark: User suspended by the plugin have lastaccess set to null.
-
-        $sql = "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted FROM {user} u
-          WHERE u.deleted=0
-          AND u.suspended=1
-          AND u.lastaccess!=0
-          AND u.lastaccess < :dat";
-        $params = array('dat' => $datetodelete);
-        $usersmanuallysuspended = $DB->get_recordset_sql($sql, $params);
         $todeleteusers = array();
         $admins = get_admins();
-        // Users who are not suspended by the plugin but are marked as suspended in the main table.
-        foreach ($usersmanuallysuspended as $user) {
-            if (array_key_exists($user->id, $admins)) {
-                continue;
-            } else {
-                $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess,
-                    $user->username, $user->deleted);
-                array_push($todeleteusers, $informationuser);
-            }
-        }
 
         // 1. Get all users automatic suspended by the plugin.
-
         $sql = "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted FROM {tool_cleanupusers_archive} u
           JOIN {tool_cleanupusers} tcu ON u.id = tcu.id
           WHERE u.deleted=0
-          AND u.suspended=1
           AND u.lastaccess!=0
           AND tcu.timestamp < :dat";
         $params = array('dat' => $datetodelete);
@@ -160,7 +136,7 @@ class timechecker implements userstatusinterface {
             } else {
                 $informationuser = new archiveduser($user->id, $user->suspended,
                 $user->lastaccess, $user->username, $user->deleted);
-                array_push($todeleteusers, $informationuser);
+                $todeleteusers[$user->id] = $informationuser;
             }
         }
 
@@ -218,5 +194,16 @@ class timechecker implements userstatusinterface {
         }
         return $toactivate;
     }
-
+    /**
+     * Executes a DB query and returns all users who are not suspended, not deleted and logged at least once in.
+     * @return array of users
+     */
+    private function get_users_not_suspended_by_plugin() {
+        global $DB;
+        $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
+        FROM {user} u
+        LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
+        WHERE t_u.id IS NULL AND u.lastaccess!=0 AND u.deleted=0';
+        return $users = $DB->get_records_sql($sql);
+    }
 }
