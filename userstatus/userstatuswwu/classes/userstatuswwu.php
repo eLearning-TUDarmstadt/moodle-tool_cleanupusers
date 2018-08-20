@@ -94,6 +94,7 @@ class userstatuswwu implements userstatusinterface {
         $this->order_suspend();
         $this->order_delete();
         $this->order_never_logged_in();
+        $this->order_to_reactivate();
     }
 
     /**
@@ -124,7 +125,22 @@ class userstatuswwu implements userstatusinterface {
     public function get_to_reactivate() {
         return $this->toreactivate;
     }
-
+    /**
+     * Compares the user of the groups.txt file with the users currently suspended by the plugin and return the users
+     * that are listed in the file to be reactivated.
+     */
+    private function order_to_reactivate() {
+        $users = $this->get_users_suspended_not_deleted();
+        foreach ($users as $moodleuser) {
+            // Adds Object of the user to the array if he/she is not a member.
+            if (array_key_exists($moodleuser->username, $this->zivmemberlist)) {
+                // Only necessary information is saved in the object and transmitted.
+                $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                    $moodleuser->username, $moodleuser->deleted);
+                $this->toreactivate[$moodleuser->id] = $informationuser;
+            }
+        }
+    }
     /**
      * Scans a given .txt file for specific groups.
      *
@@ -272,7 +288,7 @@ class userstatuswwu implements userstatusinterface {
                 continue;
             }
             $timestamp = time();
-            if (!empty($moodleuser->timestamp)) {
+            if (!empty($moodleuser->timestamp) && !array_key_exists($moodleuser->username, $this->zivmemberlist)) {
                 // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she ...
                 // ... is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
@@ -298,7 +314,7 @@ class userstatuswwu implements userstatusinterface {
         $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
         FROM {user} u
         LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
-        WHERE t_u.id IS NULL AND u.lastaccess!=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
+        WHERE t_u.id IS NULL AND u.lastaccess!=0 AND u.deleted=0';
         return $users = $DB->get_records_sql($sql);
     }
 

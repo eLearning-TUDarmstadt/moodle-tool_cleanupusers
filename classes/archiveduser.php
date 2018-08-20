@@ -123,8 +123,7 @@ class archiveduser {
     /**
      * Reactivates the user.
      *
-     * Therefore deletes the entry in the tool_cleanupusers table and throws an exception when no entry is available
-     * or the name of the user is 'Anonym' at the end of the function.
+     * Therefore deletes the entry in the tool_cleanupusers table and throws an exception when no entry is available.
      *
      * @throws cleanupusers_exception
      */
@@ -135,41 +134,24 @@ class archiveduser {
 
         $user = $thiscoreuser->get_user($this->id);
 
-        // The User to activate was not archived by this plugin.
-        if ($user->firstname !== 'Anonym') {
-            $transaction->allow_commit();
-            return;
+
+        // Deletes record of plugin table tool_cleanupusers.
+        if (empty($DB->get_records('tool_cleanupusers', array('id' => $user->id)))) {
+            throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
+        } elseif (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
+            throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
         } else {
-            // The user was archived by the plugin.
+            // Both record exist so we have a user which can be reactivated.
+            $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
+            // If the user is in table replace data.
+            $shadowuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id));
 
-            // Deletes record of plugin table tool_cleanupusers.
-            if (!empty($DB->get_records('tool_cleanupusers', array('id' => $user->id)))) {
-                $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
-            }
-
-            // Is user in the shadow table (tool_cleanupusers_archive table)?
-            if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
-
-                // If there is no user, the main table can not be updated.
-                throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
-
-            } else {
-                // If the user is in table replace data.
-                $shadowuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id));
-
-                $DB->update_record('user', $shadowuser);
-                // Delete records from tool_cleanupusers_archive table.
-                $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
-            }
-            // Gets the new user for additional checks.
-            $transaction->allow_commit();
-            $user = $thiscoreuser->get_user($this->id);
-
-            // When username is still 'Anonym' something went wrong.
-            if ($user->firstname == 'Anonym') {
-                throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
-            }
+            $DB->update_record('user', $shadowuser);
+            // Delete records from tool_cleanupusers_archive table.
+            $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
         }
+        // Gets the new user for additional checks.
+        $transaction->allow_commit();
     }
 
     /**
