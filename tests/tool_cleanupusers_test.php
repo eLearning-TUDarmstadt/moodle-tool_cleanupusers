@@ -72,6 +72,7 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // suspendeduser is only flagged as suspended in the user table.
         $neutraltosuspended = new \tool_cleanupusers\archiveduser($data['suspendeduser']->id, $data['suspendeduser']->suspended,
             $data['suspendeduser']->lastaccess, $data['suspendeduser']->username, $data['suspendeduser']->deleted);
+
         $neutraltosuspended->activate_me();
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['suspendeduser']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
@@ -199,9 +200,8 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-        $expectedmessage = 'In the last cron-job 2 users were archived.In the last cron-job 2 users were deleted.In the
- last cron-job 0 users caused exception and could not be deleted.In the last cron-job 0 users caused exception and
- could not be suspended.In the last cron-job 1 users caused exception and could not be reactivated.';
+        $expectedmessage = 'In the last cron-job 2 users were archived.In the last cron-job 2 users were deleted
+.No problems occurred in plugin tool_cleanupusers in the last run.';
         $expectedmessage = str_replace(array("\r\n", "\r", "\n"), '', $expectedmessage);
         $msg = str_replace(array("\r\n", "\r", "\n"), '', $messages[0]->body);
         $this->assertEquals($expectedmessage, $msg);

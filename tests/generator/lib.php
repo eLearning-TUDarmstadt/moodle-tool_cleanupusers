@@ -60,7 +60,13 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $listuser = $generator->create_user(array('username' => 'n_merr03', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
         $data['listuser'] = $listuser;
 
+        $tendaysago = $mytimestamp - 864000;
         $suspendeduser = $generator->create_user(array('username' => 'suspendeduser', 'suspended' => '1'));
+        $DB->insert_record_raw('tool_cleanupusers', array('id' => $suspendeduser->id, 'archived' => 1,
+            'timestamp' => $tendaysago), true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $suspendeduser->id,
+            'username' => $suspendeduser->username, 'suspended' => $suspendeduser->suspended,
+            'lastaccess' => $tendaysago),true, false, true);
         $data['suspendeduser'] = $suspendeduser;
 
         $timestamponeyearago = $mytimestamp - 31622600;
