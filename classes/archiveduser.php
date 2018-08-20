@@ -134,11 +134,10 @@ class archiveduser {
 
         $user = $thiscoreuser->get_user($this->id);
 
-
         // Deletes record of plugin table tool_cleanupusers.
         if (empty($DB->get_records('tool_cleanupusers', array('id' => $user->id)))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
-        } elseif (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
+        } else if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
         } else {
             // Both record exist so we have a user which can be reactivated.
