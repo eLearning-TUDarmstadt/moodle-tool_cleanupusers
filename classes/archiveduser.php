@@ -84,13 +84,16 @@ class archiveduser {
         $thiscoreuser = new \core_user();
         $user = $thiscoreuser->get_user($this->id);
 
-        if ($user->suspended == 0 and !is_siteadmin($user)) {
+        if (!is_siteadmin($user)) {
             $transaction = $DB->start_delegated_transaction();
-
-            // Suspend user and kill session.
-            $user->suspended = 1;
-            manager::kill_user_sessions($user->id);
-            user_update_user($user, false);
+            // We are already getting the shadowuser here to keep the original suspended status.
+            $shadowuser = clone $user;
+            // In case the user was not suspended previously he/she might be logged in we kill his/her session.
+            if ($user->suspended = 0) {
+                $user->suspended = 1;
+                manager::kill_user_sessions($user->id);
+                user_update_user($user, false);
+            }
 
             $timestamp = time();
             $tooluser = $DB->get_record('tool_cleanupusers', array('id' => $user->id));
@@ -100,18 +103,14 @@ class archiveduser {
             if (empty($tooluser)) {
                 $DB->insert_record_raw('tool_cleanupusers', array('id' => $user->id, 'archived' => $user->suspended,
                     'timestamp' => $timestamp), true, false, true);
-            } else {
-                // In case an record already exist the timestamp is updated.
-                $tooluser->timestamp = $timestamp;
-                $DB->update_record('tool_cleanupusers', $tooluser);
             }
 
             // Insert copy of user in second DB and replace user in main table when entry was successful.
-            $shadowuser = clone $user;
             $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
             if ($success == true) {
                 // Replaces the current user with a pseudo_user that has no reference.
                 $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
+                $cloneuser->suspended = 1;
                 user_update_user($cloneuser, false);
             }
             $transaction->allow_commit();
@@ -133,13 +132,9 @@ class archiveduser {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
         $thiscoreuser = new \core_user();
+
         $user = $thiscoreuser->get_user($this->id);
 
-        // Is user suspended in main table?
-        if ($user->suspended == 1) {
-            $user->suspended = 0;
-            user_update_user($user, false);
-        }
         // The User to activate was not archived by this plugin.
         if ($user->firstname !== 'Anonym') {
             $transaction->allow_commit();
@@ -161,7 +156,6 @@ class archiveduser {
             } else {
                 // If the user is in table replace data.
                 $shadowuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id));
-                $shadowuser->suspended = 0;
 
                 $DB->update_record('user', $shadowuser);
                 // Delete records from tool_cleanupusers_archive table.
