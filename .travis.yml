@@ -17,7 +17,7 @@ php:
  - 7.2
 
 matrix:
- exclude:
+  exclude:
    - php: 7.0
      env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
    - php: 7.0
@@ -26,13 +26,9 @@ matrix:
      env: DB=pgsql MOODLE_BRANCH=master
    - php: 7.0
      env: DB=mysqli MOODLE_BRANCH=master
-fast_finish: true
-
-matrix:
   allow_failures:
   - env: DB=pgsql MOODLE_BRANCH=master
   - env: DB=mysqli MOODLE_BRANCH=master
-
   fast_finish: true
 
 env:
@@ -50,8 +46,6 @@ env:
   - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
   - DB=mysqli MOODLE_BRANCH=master
-
-
 
 before_install:
   - phpenv config-rm xdebug.ini
