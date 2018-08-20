@@ -209,7 +209,7 @@ class userstatuswwu implements userstatusinterface {
      * In case a user is not a member of the list, the user will be saved in the $tosuspend array.
      */
     private function order_suspend() {
-        $users = $this->get_users_not_suspended();
+        $users = $this->get_users_not_suspended_by_plugin();
         $admins = get_admins();
         foreach ($users as $moodleuser) {
             // Siteadmins will not be suspended.
@@ -293,10 +293,13 @@ class userstatuswwu implements userstatusinterface {
      * Executes a DB query and returns all users who are not suspended, not deleted and logged at least once in.
      * @return array of users
      */
-    private function get_users_not_suspended() {
+    private function get_users_not_suspended_by_plugin() {
         global $DB;
-        $select = 'deleted=0 AND lastaccess!=0 AND suspended=0';
-        return $DB->get_records_select('user', $select, null, '', 'id, suspended, lastaccess, username, deleted');
+        $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
+        FROM {user} u
+        LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
+        WHERE t_u.id IS NULL AND u.lastaccess!=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
+        return $users = $DB->get_records_sql($sql);
     }
 
     /**
