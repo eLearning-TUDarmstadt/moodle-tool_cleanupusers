@@ -64,7 +64,7 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['user']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
         $this->assertEquals(1, $recordusertable->suspended);
-        $this->assertEquals(1, $recordtooltable->archived);
+        $this->assertEquals(0, $recordtooltable->archived);
         $this->assertEquals('Anonym', $recordusertable->firstname);
         $this->assertEquals('anonym' . $data['user']->id, $recordusertable->username);
 
@@ -75,7 +75,9 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $neutraltosuspended->activate_me();
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['suspendeduser']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['suspendeduser']->id));
-        $this->assertEquals(0, $recordusertable->suspended);
+        // Since the Shadowtable states that the user was previously suspended he/she is marked as suspended in the ...
+        // ... real table.
+        $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
 
         // Users that are deleted will be marked as deleted in the user table.
@@ -90,15 +92,26 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $this->assertNotEmpty($recordusertable);
         $this->assertEmpty($recordtooltable);
 
-        // Users that are activated will be marked as active in the user table.
+        // Users that are activated will transfer their previous suspended status from the shadow table.
         // The entry the tool_cleanupusers table will be deleted.
         // archivedbyplugin has entry in tool_cleanupusers and tool_cleanupusers_archive was suspended one year ago.
+        // 1. User that was previously suspended.
         $suspendedtoactive = new \tool_cleanupusers\archiveduser($data['archivedbyplugin']->id,
             $data['archivedbyplugin']->suspended, $data['archivedbyplugin']->lastaccess, $data['archivedbyplugin']->username,
             $data['archivedbyplugin']->deleted);
         $suspendedtoactive->activate_me();
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['archivedbyplugin']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
+        $this->assertEquals(1, $recordusertable->suspended);
+        $this->assertEmpty($recordtooltable);
+
+        // 2. User that was previously not suspended.
+        $suspendedtoactive = new \tool_cleanupusers\archiveduser($data['archivedbyplugin2']->id,
+            $data['archivedbyplugin2']->suspended, $data['archivedbyplugin2']->lastaccess, $data['archivedbyplugin2']->username,
+            $data['archivedbyplugin2']->deleted);
+        $suspendedtoactive->activate_me();
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['archivedbyplugin2']->id));
+        $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin2']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
 
