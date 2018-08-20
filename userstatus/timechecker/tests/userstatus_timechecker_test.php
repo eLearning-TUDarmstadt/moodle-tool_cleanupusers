@@ -63,7 +63,8 @@ class userstatus_timechecker_testcase extends advanced_testcase {
 
         $this->assertEquals($data['useroneyearnotlogedin']->id, $returnsuspend[$data['useroneyearnotlogedin']->id]->id);
         // We know from the testcase construction that only one user is deleted for this reason the user is at index 0.
-        $this->assertEquals($data['userarchivedoneyearnintydays']->id, $returndelete[0]->id);
+        $this->assertEquals($data['userarchivedoneyearnintydaysautomatically']->id,
+            $returndelete[$data['userarchivedoneyearnintydaysautomatically']->id]->id);
         $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
         // Merely id is compared since plugin only saves necessary data not complete user.
         $this->assertEquals($data['reactivate']->id, $returntoreactivate[$data['reactivate']->id]->id);
@@ -88,9 +89,12 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertNotContains($data['useroneyearnotlogedin']->username, $returnsuspend);
         $this->assertNotContains($data['useroneyearnotlogedin']->username, $returndelete);
         $this->assertNotContains($data['useroneyearnotlogedin']->username, $returnneverloggedin);
-        $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returnsuspend);
-        $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returndelete);
-        $this->assertNotContains($data['userarchivedoneyearnintydays']->username, $returnneverloggedin);
+        $this->assertNotContains($data['userarchivedoneyearnintydaysautomatically']->username, $returnsuspend);
+        $this->assertNotContains($data['userarchivedoneyearnintydaysautomatically']->username, $returndelete);
+        $this->assertNotContains($data['userarchivedoneyearnintydaysautomatically']->username, $returnneverloggedin);
+        $this->assertNotContains($data['userarchivedoneyearnintydaysmanually']->username, $returnsuspend);
+        $this->assertNotContains($data['userarchivedoneyearnintydaysmanually']->username, $returndelete);
+        $this->assertNotContains($data['userarchivedoneyearnintydaysmanually']->username, $returnneverloggedin);
         $this->assertEquals($data['neverloggedin']->id, $returnneverloggedin[$data['neverloggedin']->id]->id);
 
         set_config('suspendtime', 10 , 'userstatus_timechecker');
@@ -103,7 +107,8 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         $this->assertEquals($data['useroneyearnotlogedin']->id, $returnsuspend[$data['useroneyearnotlogedin']->id]->id);
         $this->assertEquals($data['userfifteendays']->id, $returnsuspend[$data['userfifteendays']->id]->id);
         // We know from the testcase construction that only one user is deleted for this reason the user is at index 0.
-        $this->assertEquals($data['userarchivedoneyearnintydays']->id, $returndelete[0]->id);
+        $this->assertEquals($data['userarchivedoneyearnintydaysautomatically']->id,
+            $returndelete[$data['userarchivedoneyearnintydaysautomatically']->id]->id);
         $this->assertNotContains($data['user']->username, $returnsuspend);
         $this->assertNotContains($data['user']->username, $returndelete);
         $this->assertNotContains($data['user']->username, $returnneverloggedin);

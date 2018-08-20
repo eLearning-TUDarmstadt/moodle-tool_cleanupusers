@@ -199,7 +199,7 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-        $expectedmessage = 'In the last cron-job 1 users were archived.In the last cron-job 2 users were deleted.In the
+        $expectedmessage = 'In the last cron-job 2 users were archived.In the last cron-job 2 users were deleted.In the
  last cron-job 0 users caused exception and could not be deleted.In the last cron-job 0 users caused exception and
  could not be suspended.In the last cron-job 1 users caused exception and could not be reactivated.';
         $expectedmessage = str_replace(array("\r\n", "\r", "\n"), '', $expectedmessage);
@@ -231,7 +231,7 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // Users that were archived will be deleted by the cron-job.
         $recordusertable = $DB->get_record('user', array('id' => $data['deleteduser']->id));
         $this->assertEquals(1, $recordusertable->suspended);
-        $this->assertEquals(1, $recordusertable->deleted);
+        $this->assertEquals(0, $recordusertable->deleted);
 
         $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin']->id));
         $this->assertEquals(1, $recordusertable->suspended);
