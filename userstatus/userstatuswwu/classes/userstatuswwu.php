@@ -273,7 +273,8 @@ class userstatuswwu implements userstatusinterface {
             }
             $timestamp = time();
             if (!empty($moodleuser->timestamp)) {
-                // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she is supposed to be deleted.
+                // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she ...
+                // ... is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
                     // Check whether the user is again listed.
                     if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {

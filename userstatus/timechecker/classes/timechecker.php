@@ -124,8 +124,8 @@ class timechecker implements userstatusinterface {
         // Remark: User suspended by the plugin have lastaccess set to null.
 
         $sql = "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted FROM {user} u
-          WHERE u.deleted=0 
-          AND u.suspended=1 
+          WHERE u.deleted=0
+          AND u.suspended=1
           AND u.lastaccess!=0
           AND u.lastaccess < :dat";
         $params = array('dat' => $datetodelete);
@@ -147,8 +147,8 @@ class timechecker implements userstatusinterface {
 
         $sql = "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted FROM {tool_cleanupusers_archive} u
           JOIN {tool_cleanupusers} tcu ON u.id = tcu.id
-          WHERE u.deleted=0 
-          AND u.suspended=1 
+          WHERE u.deleted=0
+          AND u.suspended=1
           AND u.lastaccess!=0
           AND tcu.timestamp < :dat";
         $params = array('dat' => $datetodelete);
@@ -158,9 +158,9 @@ class timechecker implements userstatusinterface {
             if (array_key_exists($user->id, $admins)) {
                 continue;
             } else {
-            $informationuser = new archiveduser($user->id, $user->suspended,
+                $informationuser = new archiveduser($user->id, $user->suspended,
                 $user->lastaccess, $user->username, $user->deleted);
-            array_push($todeleteusers, $informationuser);
+                array_push($todeleteusers, $informationuser);
             }
         }
 
@@ -181,7 +181,8 @@ class timechecker implements userstatusinterface {
         // Only users who are currently suspended are relevant.
         $select = 'deleted=0 AND suspended=1';
         $users = $DB->get_records_select('user', $select);
-        $archived = $DB->get_records('tool_cleanupusers_archive', null, '','id, username, lastaccess, suspended, deleted');
+        $archived = $DB->get_records('tool_cleanupusers_archive', null, '',
+            'id, username, lastaccess, suspended, deleted');
         $toactivate = array();
         $admins = get_admins();
 
