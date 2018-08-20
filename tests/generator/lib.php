@@ -66,7 +66,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
             'timestamp' => $tendaysago), true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $suspendeduser->id,
             'username' => $suspendeduser->username, 'suspended' => $suspendeduser->suspended,
-            'lastaccess' => $tendaysago),true, false, true);
+            'lastaccess' => $tendaysago), true, false, true);
         $data['suspendeduser'] = $suspendeduser;
 
         $timestamponeyearago = $mytimestamp - 31622600;
