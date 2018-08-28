@@ -91,7 +91,8 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $data['archivedbyplugin'] = $suspendeduser3;
 
         // User that was archived by the plugin and will be deleted in cron-job.
-        $suspendeduser3 = $generator->create_user(array('username' => 'anonym3', 'suspended' => '1', 'firstname' => 'Anonym'));
+        $suspendeduser3 = $generator->create_user(array('username' => 'anonym3', 'suspended' => '1',
+            'firstname' => 'Anonym', 'idnumber' => 3));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $suspendeduser3->id, 'archived' => true,
             'timestamp' => $timestamponeyearago), true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $suspendeduser3->id,
@@ -101,7 +102,8 @@ class tool_cleanupusers_generator extends testing_data_generator {
 
         $timestampshortago = $mytimestamp - 3456;
         // User that was archived by the plugin and will be reactivated in cron-job.
-        $reactivatebyplugin = $generator->create_user(array('username' => 'anonym2', 'suspended' => '1', 'firstname' => 'Anonym'));
+        $reactivatebyplugin = $generator->create_user(array('username' => 'anonym2', 'suspended' => '1',
+            'firstname' => 'Anonym', 'idnumber' => 2));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebyplugin->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebyplugin->id,
