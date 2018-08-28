@@ -131,12 +131,13 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebypluginexception']->id,
-            $data['reactivatebypluginexception']->suspended, $data['reactivatebypluginexception']->lastaccess,
-            $data['reactivatebypluginexception']->username, $data['reactivatebypluginexception']->deleted);
+        $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebyplugin2']->id,
+            $data['reactivatebyplugin2']->suspended, $data['reactivatebyplugin2']->lastaccess,
+            $data['reactivatebyplugin2']->username, $data['reactivatebyplugin2']->deleted);
         $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to activate user.');
         $useraccount->activate_me();
+        // TODO There should not be exception in here!
 
         // When entry in tool_cleanupusers_archive table is deleted user can not be updated.
         $useraccount = new \tool_cleanupusers\archiveduser($data['reactivatebyplugin']->id, $data['reactivatebyplugin']->suspended,
