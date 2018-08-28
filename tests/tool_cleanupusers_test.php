@@ -107,11 +107,10 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $this->assertEmpty($recordtooltable);
 
         // 2. User that was previously not suspended.
-        $suspendedtoactive = new \tool_cleanupusers\archiveduser($data['archivedbyplugin2']->id,
-            $data['archivedbyplugin2']->suspended, $data['archivedbyplugin2']->lastaccess, $data['archivedbyplugin2']->username,
-            $data['archivedbyplugin2']->deleted);
+        $userdata = $DB->get_record('tool_cleanupusers_archive', array('id' => $data['archivedbyplugin2']->id));
+        $suspendedtoactive = new \tool_cleanupusers\archiveduser($userdata->id, $userdata->suspended,
+            $userdata->lastaccess, $userdata->username, $userdata->deleted);
         $suspendedtoactive->activate_me();
-        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['archivedbyplugin2']->id));
         $recordusertable = $DB->get_record('user', array('id' => $data['archivedbyplugin2']->id));
         $this->assertEquals(0, $recordusertable->suspended);
         $this->assertEmpty($recordtooltable);
