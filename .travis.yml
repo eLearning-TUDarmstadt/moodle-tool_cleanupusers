@@ -52,7 +52,7 @@ before_install:
 
 jobs:
   include:
-    # Prechecks against latest Moodle stable only.
+    # Prechecks against version running in the learnweb.
     - stage: static
       php: 7.1
       env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE

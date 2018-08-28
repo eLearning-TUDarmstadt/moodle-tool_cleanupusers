@@ -109,15 +109,15 @@ class tool_cleanupusers_generator extends testing_data_generator {
             'suspended' => 0, 'lastaccess' => $mytimestamp), true, false, true);
         $data['reactivatebyplugin'] = $reactivatebyplugin;
 
-        // User that was archived by the plugin and will be reactivated in cron-job has as firstname Anonym.
-        $reactivatebypluginexception = $generator->create_user(['username' => 'moreanonym', 'suspended' => '1',
+        // User that was archived by the plugin and will be reactivated in cron-job although has as firstname Anonym.
+        $reactivatebyplugin2 = $generator->create_user(['username' => 'moreanonym', 'suspended' => '1',
             'firstname' => 'Anonym']);
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebypluginexception->id, 'archived' => true,
+        $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebyplugin2->id, 'archived' => true,
             'timestamp' => $timestampshortago), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebypluginexception->id,
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebyplugin2->id,
             'username' => 'reactivatebypluginexception', 'firstname' => 'Anonym',
             'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
-        $data['reactivatebypluginexception'] = $reactivatebypluginexception;
+        $data['reactivatebyplugin2'] = $reactivatebyplugin2;
 
         return $data; // Return the user, course and group objects.
     }
