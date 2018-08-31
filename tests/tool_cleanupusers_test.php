@@ -452,6 +452,7 @@ class tool_cleanupusers_testcase extends advanced_testcase {
             $this->fail('Completion event was not triggered.');
         }
     }
+    
     /**
      * Methods recommended by moodle to assure database and dataroot is reset.
      */
