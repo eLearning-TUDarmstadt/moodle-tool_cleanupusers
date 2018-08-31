@@ -315,7 +315,7 @@ class userstatuswwu implements userstatusinterface {
         FROM {user} u
         LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
         WHERE t_u.id IS NULL AND u.lastaccess!=0 AND u.deleted=0';
-        return $users = $DB->get_records_sql($sql);
+        return $DB->get_records_sql($sql);
     }
 
     /**

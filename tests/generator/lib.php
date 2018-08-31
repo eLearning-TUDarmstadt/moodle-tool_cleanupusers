@@ -34,8 +34,19 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_cleanupusers_generator extends testing_data_generator {
+
     /**
      * Creates User to test the tool_cleanupusers plugin.
+     * Username                         |   signed in   | suspended manually | suspended by plugin | deleted
+     * --------------------------------------------------------------------------------------------------------
+     *  user                             | yes           | no                 | no                  | no
+     *  userdeleted                      | oneyearago    | no                 | yes                 | yes
+     *  usersuspendedmanually            | no            | yes                | no                  | no
+     *  usersuspendedbyplugin            | oneyearago    | yes                | yes                 | no
+     *  userinconsistentsuspended        | oneyearago    | no                 | partly              | no
+     *  usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
+     * @return array
+     * @throws dml_exception
      */
     public function test_create_preparation () {
         global $DB;
@@ -43,15 +54,6 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $data = array();
 
         $mytimestamp = time();
-        // Creates several user:
-        //  Username                         |   signed in   | suspended manually | suspended by plugin | deleted
-        // --------------------------------------------------------------------------------------------------------
-        //  user                             | yes           | no                 | no                  | no
-        //  userdeleted                      | oneyearago    | no                 | yes                 | yes
-        //  usersuspendedmanually            | no            | yes                | no                  | no
-        //  usersuspendedbyplugin            | oneyearago    | yes                | yes                 | no
-        //  userinconsistentsuspended        | oneyearago    | no                 | partly              | no
-        //  usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
 
         // Timestamps are created to set the last access so we can test later the cronjob with the timechecker plugin.
         $tendaysago = $mytimestamp - 864000;
