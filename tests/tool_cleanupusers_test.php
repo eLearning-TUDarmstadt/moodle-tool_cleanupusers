@@ -423,6 +423,36 @@ class tool_cleanupusers_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the the deprovisionuser cron-job complete event.
+     *
+     * @see \tool_cleanupusers\event\deprovisionusercronjob_completed
+     */
+    public function test_logging() {
+        $data = $this->set_up();
+        $this->assertNotEmpty($data);
+        $timestamp = time();
+
+        $eventsink = $this->redirectEvents();
+
+        set_config('cleanupusers_subplugin', 'timechecker', 'tool_cleanupusers');
+        $cronjob = new tool_cleanupusers\task\archive_user_task();
+        $cronjob->execute();
+        $triggered = $eventsink->get_events();
+        $eventsink->close();
+        $found = false;
+        foreach ($triggered as $event) {
+            if ($event instanceof \tool_cleanupusers\event\deprovisionusercronjob_completed) {
+                $this->assertTrue(true, 'Completion event triggered.');
+                $this->assertTrue($event->timecreated >= $timestamp, 'Completion event triggered correctly.');
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $this->fail('Completion event was not triggered.');
+        }
+    }
+    /**
      * Methods recommended by moodle to assure database and dataroot is reset.
      */
     public function test_deleting() {
