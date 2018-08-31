@@ -128,7 +128,7 @@ class archiveduser {
     /**
      * Reactivates the user.
      * Therefore deletes the entry in the tool_cleanupusers table and throws an exception when no entry is available.
-     *
+     * In case a user with the same name exist this user is deleted and the plugin user is restored.
      * @throws cleanupusers_exception
      */
     public function activate_me() {
@@ -144,7 +144,12 @@ class archiveduser {
         } else if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
         } else {
-            // TODO check if username already exist in main table.
+            $usersamename = $DB->get_record('user', array('username' => $this->username));
+            if ($usersamename != false) {
+                // There exist a second user with the same username.
+                manager::kill_user_sessions($usersamename->id);
+                delete_user($usersamename);
+            }
             // Both record exist so we have a user which can be reactivated.
             $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
             // If the user is in table replace data.
