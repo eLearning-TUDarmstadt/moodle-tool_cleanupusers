@@ -37,11 +37,13 @@ class tool_cleanupusers_generator extends testing_data_generator {
 
     /**
      * Creates User to test the tool_cleanupusers plugin.
-     * Username                         |   signed in   | suspended manually | suspended by plugin | deleted
+     * Username                          |   signed in    | suspended manually | suspended by plugin | deleted
      * --------------------------------------------------------------------------------------------------------
-     *  user                             | yes           | no                 | no                  | no
+     *  user                             | tendaysago    | no                 | no                  | no
      *  userdeleted                      | oneyearago    | no                 | yes                 | yes
-     *  usersuspendedmanually            | no            | yes                | no                  | no
+     *  userneverloggedin                | -             | no                 | no                  | no
+     *  usersuspendedmanually            | -             | yes                | no                  | no
+     *  useroneyearnotloggedin           | oneyearago    | no                 | no                  | no
      *  usersuspendedbyplugin            | oneyearago    | yes                | yes                 | no
      *  userinconsistentsuspended        | oneyearago    | no                 | partly              | no
      *  usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
@@ -59,13 +61,17 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $tendaysago = $mytimestamp - 864000;
         $timestamponeyearago = $mytimestamp - 31622600;
 
-        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
+        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0'));
+        $userneverloggedin = $generator->create_user(array('username' => 'userneverloggedin', 'lastaccess' => '',
+            'suspended' => '0'));
+        $useroneyearnotloggedin = $generator->create_user(array('username' => 'useroneyearnotloggedin',
+            'lastaccess' => $timestamponeyearago, 'suspended' => '0'));
 
-        $usersuspendedbypluginandmanually = $generator->create_user(array('username' => 'suspendeduser', 'suspended' => '1'));
+        $usersuspendedbypluginandmanually = $generator->create_user(array('username' => 'Anonym-x', 'suspended' => '1'));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $usersuspendedbypluginandmanually->id, 'archived' => 1,
             'timestamp' => $tendaysago), true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $usersuspendedbypluginandmanually->id,
-            'username' => $usersuspendedbypluginandmanually->username, 'suspended' => $usersuspendedbypluginandmanually->suspended,
+            'username' => 'Somerealusername', 'suspended' => $usersuspendedbypluginandmanually->suspended,
             'lastaccess' => $tendaysago), true, false, true);
 
         $usersuspendedmanually = $generator->create_user(array('username' => 'usersuspendedmanually', 'suspended' => '1'));
@@ -73,7 +79,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $userdeleted = $generator->create_user(array('username' => 'userdeleted', 'suspended' => '1', 'deleted' => '1',
             'lastaccess' => $timestamponeyearago));
 
-        $usersuspendedbyplugin = $generator->create_user(array('username' => 'usersuspendedbyplugin', 'suspended' => '1',
+        $usersuspendedbyplugin = $generator->create_user(array('username' => 'Anonym-y', 'suspended' => '1',
             'firstname' => 'Anonym'));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $usersuspendedbyplugin->id, 'archived' => true,
             'timestamp' => $timestamponeyearago), true, false, true);
@@ -82,13 +88,15 @@ class tool_cleanupusers_generator extends testing_data_generator {
             true, false, true);
 
         $userinconsistentsuspended = $generator->create_user(array('username' => 'userinconsistentarchivedbyplugin',
-            'suspended' => '1', 'firstname' => 'Anonym'));
+            'suspended' => '1', 'firstname' => 'Anonym', 'lastaccess' => $timestamponeyearago));
         $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $userinconsistentsuspended->id,
             'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago),
             true, false, true);
 
         $data['user'] = $user;
         $data['userdeleted'] = $userdeleted;
+        $data['userneverloggedin'] = $userneverloggedin;
+        $data['useroneyearnotloggedin'] = $useroneyearnotloggedin;
         $data['usersuspendedmanually'] = $usersuspendedmanually;
         $data['usersuspendedbyplugin'] = $usersuspendedbyplugin;
         $data['userinconsistentsuspended'] = $userinconsistentsuspended;
