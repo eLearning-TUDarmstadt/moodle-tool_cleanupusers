@@ -106,7 +106,11 @@ class archiveduser {
             }
 
             // Insert copy of user in second DB and replace user in main table when entry was successful.
+            if (!empty($DB->get_record('tool_cleanupusers_archive', array('id' => $shadowuser->id)))) {
+                $DB->delete_records('tool_cleanupusers_archive', array('id' => $shadowuser->id));
+            }
             $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
+
             if ($success == true) {
                 // Replaces the current user with a pseudo_user that has no reference.
                 $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
@@ -168,10 +172,10 @@ class archiveduser {
     public function delete_me() {
         global $DB;
 
-        $thiscoreuser = new \core_user();
-        $user = $thiscoreuser->get_user($this->id);
+        $user = new \core_user();
+        $user = $user->get_user($this->id);
 
-        if ($user->deleted == 0 and !is_siteadmin($user)) {
+        if ($user != false and $user->deleted == 0 and !is_siteadmin($user)) {
 
             $transaction = $DB->start_delegated_transaction();
 
