@@ -41,7 +41,9 @@ class tool_cleanupusers_generator extends testing_data_generator {
      * --------------------------------------------------------------------------------------------------------
      *  user                             | tendaysago    | no                 | no                  | no
      *  userdeleted                      | oneyearago    | no                 | yes                 | yes
+     *  originaluser                     | oneyearago    | no                 | yes                 | no
      *  userneverloggedin                | -             | no                 | no                  | no
+     *  userduplicatedname               | -             | no                 | no                  | no
      *  usersuspendedmanually            | -             | yes                | no                  | no
      *  useroneyearnotloggedin           | oneyearago    | no                 | no                  | no
      *  usersuspendedbyplugin            | oneyearago    | yes                | yes                 | no
