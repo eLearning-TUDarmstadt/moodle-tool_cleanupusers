@@ -163,6 +163,23 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         $this->assertEmpty($recordtooltable);
         $this->assertEmpty($recordtooltable2);
 
+        // User has a duplicate user in the usertable with different id but same username.
+        $usersuspendedbypluginandmanually = new \tool_cleanupusers\archiveduser($data['originaluser']->id,
+            0, $data['originaluser']->lastaccess, $data['userduplicatedname']->username,
+            $data['originaluser']->deleted);
+        $usersuspendedbypluginandmanually->activate_me();
+        $recordtooltableoriginaluser = $DB->get_record('tool_cleanupusers',
+            array('id' => $data['originaluser']->id));
+        $recordtooltable2originaluser = $DB->get_record('tool_cleanupusers_archive',
+            array('id' => $data['originaluser']->id));
+        $recordusertableoriginal = $DB->get_record('user', array('id' => $data['originaluser']->id));
+        $recordusertableduplicate = $DB->get_record('user', array('id' => $data['userduplicatedname']->id));
+        $this->assertEquals('duplicatedname', $recordusertableoriginal->username);
+        $this->assertNotEquals('duplicatedname', $recordusertableduplicate->username);
+        $this->assertEquals(0, $recordusertableoriginal->suspended);
+        $this->assertEmpty($recordtooltableoriginaluser);
+        $this->assertEmpty($recordtooltable2originaluser);
+
         $this->resetAfterTest(true);
     }
 
