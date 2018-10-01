@@ -44,6 +44,22 @@ $renderer = $PAGE->get_renderer('tool_cleanupusers');
 $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
+
+if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
+    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+    $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
+    $userstatuschecker = new $mysubpluginname();
+} else {
+    $subplugin = 'userstatuswwu';
+    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
+}
+
+// Request arrays from the sub-plugin.
+$archivearray = $userstatuschecker->get_to_suspend();
+var_dump($archivearray);
 $content = 'Sometime a beautiful table will be here which displays all users which should be archived';
+
+$content .= $renderer->render_archive_page($archivearray);
+
 echo $content;
 echo $OUTPUT->footer();

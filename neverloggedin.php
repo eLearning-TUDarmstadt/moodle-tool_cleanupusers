@@ -23,6 +23,7 @@
  */
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/tablelib.php');
 
 // Get URL parameters.
 
@@ -45,5 +46,21 @@ $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
 $content = 'Sometime a beautiful table will be here which displays all users who never logged in';
+
+if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
+    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+    $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
+    $userstatuschecker = new $mysubpluginname();
+} else {
+    $subplugin = 'userstatuswwu';
+    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
+}
+
+// Request arrays from the sub-plugin.
+$neverloggedinarray = $userstatuschecker->get_never_logged_in();
+$content = 'Sometime a beautiful table will be here which displays all users which should be archived';
+
+$content .= $renderer->render_neverloggedin_page($neverloggedinarray);
+
 echo $content;
 echo $OUTPUT->footer();
