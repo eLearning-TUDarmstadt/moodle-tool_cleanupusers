@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+require_once($CFG->libdir.'/tablelib.php');
 /**
  * Class of the tool_cleanupusers renderer.
  *
@@ -84,6 +84,50 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Renders the table for users to suspend.
+     * @param $userstosuspend
+     * @return bool|string
+     * @throws coding_exception
+     */
+    public function render_archive_page($userstosuspend) {
+        if (empty($userstosuspend)) {
+            return "Currently no users will be suspended by the next cronjob";
+        } else {
+            $table = new flexible_table('tool_cleanupuser_toarchive');
+            $table->define_columns(array('oldusers', 'lastaccess', 'Archived', 'Willbe'));
+            $table->define_headers(array(get_string('oldusers', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'),
+                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
+            return $table->print_html();
+        }
+    }
+
+    /**
+     * Renders the table for users who never logged in.
+     * @param $usersneverloggedin
+     * @return bool|string
+     * @throws coding_exception
+     */
+    public function render_neverloggedin_page($usersneverloggedin) {
+        if (empty($usersneverloggedin)) {
+            return "Currently no users will be suspended by the next cronjob";
+        } else {
+            $table = new flexible_table('tool_cleanupuser_neverloggedin');
+            $table->define_columns(array('Neverloggedin', 'lastaccess', 'Archived', 'Willbe'));
+            $table->define_headers(array(get_string('Neverloggedin', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
+                get_string('Willbe', 'tool_cleanupusers')));
+            $table->setup();
+            $rows = array();
+            foreach ($usersneverloggedin as $key => $user) {
+                // TODO Convert the archiveduserobect to a usefulformat for display in table.
+                $row[$key] = $user;
+            }
+            $table->add_data($rows);
+            return $table->print_html();
+        }
+    }
     /**
      * Functions returns the heading for the tool_cleanupusers.
      *
