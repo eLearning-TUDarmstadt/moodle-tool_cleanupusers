@@ -110,22 +110,24 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @throws coding_exception
      */
     public function render_neverloggedin_page($usersneverloggedin) {
+        global $DB, $CFG;
         if (empty($usersneverloggedin)) {
-            return "Currently no users will be suspended by the next cronjob";
+            return "Currently no users never logged in by the next cronjob";
         } else {
-            $table = new flexible_table('tool_cleanupuser_neverloggedin');
-            $table->define_columns(array('Neverloggedin', 'lastaccess', 'Archived', 'Willbe'));
-            $table->define_headers(array(get_string('Neverloggedin', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
-                get_string('Willbe', 'tool_cleanupusers')));
-            $table->setup();
-            $rows = array();
-            foreach ($usersneverloggedin as $key => $user) {
-                // TODO Convert the archiveduserobect to a usefulformat for display in table.
-                $row[$key] = $user;
+            $idsasstring = '';
+            foreach($usersneverloggedin as $user) {
+                $idsasstring .= $user->id . ',';
             }
-            $table->add_data($rows);
-            return $table->print_html();
+            $idsasstring = rtrim( $idsasstring , ',');
+            $table = new table_sql('tool_deprovisionuser_neverloggedin');
+            $table->define_columns(array('username', 'lastaccess', 'suspended'));
+            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/neverloggedin.php');
+            $table->define_headers(array(get_string('Neverloggedin', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
+            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'user', 'id in (' . $idsasstring . ')');
+            $table->setup();
+            $tableobject = $table->out(30, true);
+            return $tableobject;
         }
     }
     /**
