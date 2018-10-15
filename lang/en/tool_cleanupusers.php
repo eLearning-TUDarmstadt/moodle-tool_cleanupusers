@@ -32,6 +32,7 @@ $string['oldusers'] = 'Users';
 $string['lastaccess'] = 'Last access:';
 $string['usersarchived'] = 'The Users have been archived';
 $string['Yes'] = 'Yes';
+$string['id'] = 'ID';
 $string['No'] = 'No';
 $string['Archived'] = 'Archived:';
 $string['Willbe'] = 'Will be:';
