@@ -95,7 +95,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             return "Currently no users will be suspended by the next cronjob";
         } else {
             $idsasstring = '';
-            foreach($userstosuspend as $user) {
+            foreach ($userstosuspend as $user) {
                 $idsasstring .= $user->id . ',';
             }
             $idsasstring = rtrim( $idsasstring , ',');
@@ -105,7 +105,8 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             $table->define_headers(array(get_string('aresuspended', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
             // TODO Customize the archived status.
-            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'tool_cleanupusers_archive', 'id in (' . $idsasstring . ')');
+            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'tool_cleanupusers_archive',
+                'id in (' . $idsasstring . ')');
             $table->setup();
             $tableobject = $table->out(30, true);
             return $tableobject;
@@ -124,16 +125,13 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             return "Currently no users never logged in by the next cronjob";
         } else {
             $idsasstring = '';
-            foreach($usersneverloggedin as $user) {
+            foreach ($usersneverloggedin as $user) {
                 $idsasstring .= $user->id . ',';
             }
             $idsasstring = rtrim( $idsasstring , ',');
-            $table = new table_sql('tool_deprovisionuser_neverloggedin');
-            $table->define_columns(array('username', 'lastaccess', 'suspended'));
+            $table = new \tool_cleanupusers\neverloggedintable('tool_deprovisionuser_neverloggedin');
             $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/neverloggedin.php');
-            $table->define_headers(array(get_string('Neverloggedin', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
-            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'user', 'id in (' . $idsasstring . ')');
+            $table->set_sql('id, username, lastaccess, suspended', $DB->get_prefix() . 'user', 'id in (' . $idsasstring . ')');
             $table->setup();
             $tableobject = $table->out(30, true);
             return $tableobject;
