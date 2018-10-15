@@ -91,15 +91,25 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @throws coding_exception
      */
     public function render_archive_page($userstosuspend) {
+        global $CFG, $DB;
         if (empty($userstosuspend)) {
             return "Currently no users will be suspended by the next cronjob";
         } else {
-            $table = new flexible_table('tool_cleanupuser_toarchive');
-            $table->define_columns(array('oldusers', 'lastaccess', 'Archived', 'Willbe'));
-            $table->define_headers(array(get_string('oldusers', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'),
-                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
-            return $table->print_html();
+            $idsasstring = '';
+            foreach($userstosuspend as $user) {
+                $idsasstring .= $user->id . ',';
+            }
+            $idsasstring = rtrim( $idsasstring , ',');
+            $table = new table_sql('tool_deprovisionuser_usertosuspend');
+            $table->define_columns(array('username', 'lastaccess', 'suspended'));
+            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/toarchive.php');
+            $table->define_headers(array(get_string('aresuspended', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
+            // TODO Customize the archived status.
+            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'tool_cleanupusers_archive', 'id in (' . $idsasstring . ')');
+            $table->setup();
+            $tableobject = $table->out(30, true);
+            return $tableobject;
         }
     }
 
