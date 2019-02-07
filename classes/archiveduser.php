@@ -53,7 +53,6 @@ class archiveduser {
     /** @var int user deleted? */
     public $deleted;
 
-
     /**
      * Archiveduser constructor.
      * @param int $id
@@ -79,43 +78,48 @@ class archiveduser {
      * @throws cleanupusers_exception
      */
     public function archive_me() {
-        global $DB;
+        global $DB, $USER;
         // Get the current user.
         $thiscoreuser = new \core_user();
         $user = $thiscoreuser->get_user($this->id);
 
         if ($user->suspended == 0 and !is_siteadmin($user)) {
-            $transaction = $DB->start_delegated_transaction();
-
-            // Suspend user and kill session.
-            $user->suspended = 1;
-            manager::kill_user_sessions($user->id);
-            user_update_user($user, false);
-
-            $timestamp = time();
-            $tooluser = $DB->get_record('tool_cleanupusers', array('id' => $user->id));
-
-            // Document time of editing user in Database.
-            // In case there is no entry in the tool table make a new one.
-            if (empty($tooluser)) {
-                $DB->insert_record_raw('tool_cleanupusers', array('id' => $user->id, 'archived' => $user->suspended,
-                    'timestamp' => $timestamp), true, false, true);
+            // Only apply to users with correct name
+            if ($user->username !== \core_user::clean_field($user->username, 'username')) {
+                print_r("Skipping user due to wrong username: ".$user->username."\n");
             } else {
-                // In case an record already exist the timestamp is updated.
-                $tooluser->timestamp = $timestamp;
-                $DB->update_record('tool_cleanupusers', $tooluser);
-            }
+                $transaction = $DB->start_delegated_transaction();
 
-            // Insert copy of user in second DB and replace user in main table when entry was successful.
-            $shadowuser = clone $user;
-            $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
-            if ($success == true) {
-                // Replaces the current user with a pseudo_user that has no reference.
-                $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
-                user_update_user($cloneuser, false);
+                // Suspend user and kill session.
+                $user->suspended = 1;
+                manager::kill_user_sessions($user->id);
+                user_update_user($user, false);
+
+                $timestamp = time();
+                $tooluser = $DB->get_record('tool_cleanupusers', array('id' => $user->id));
+
+                // Document time of editing user in Database.
+                // In case there is no entry in the tool table make a new one.
+                if (empty($tooluser)) {
+                    $DB->insert_record_raw('tool_cleanupusers', array('id' => $user->id, 'archived' => $user->suspended,
+                        'timestamp' => $timestamp), true, false, true);
+                } else {
+                    // In case an record already exist the timestamp is updated.
+                    $tooluser->timestamp = $timestamp;
+                    $DB->update_record('tool_cleanupusers', $tooluser);
+                }
+
+                // Insert copy of user in second DB and replace user in main table when entry was successful.
+                $shadowuser = clone $user;
+                $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
+                if ($success == true) {
+                    // Replaces the current user with a pseudo_user that has no reference.
+                    $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
+                    user_update_user($cloneuser, false);
+                }
+                $transaction->allow_commit();
+                // No error here since user was maybe manually suspended in user table.
             }
-            $transaction->allow_commit();
-            // No error here since user was maybe manually suspended in user table.
         } else {
             throw new cleanupusers_exception(get_string('errormessagenotsuspend', 'tool_cleanupusers'));
         }
@@ -210,7 +214,7 @@ class archiveduser {
             }
 
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
-            $newusername = hash('sha256', $user->username);
+            $newusername = hash('md5', $user->username);
 
             // Checks whether the username already exist (possible but unlikely).
             if (empty($DB->get_record('user', array("username" => $newusername)))) {
