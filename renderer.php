@@ -123,7 +123,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     public function render_neverloggedin_page($usersneverloggedin) {
         global $DB, $CFG;
         if (empty($usersneverloggedin)) {
-            return "Currently no users never logged in by the next cronjob";
+            return "Currently no users never logged in.";
         } else {
             $idsasstring = '';
             foreach ($usersneverloggedin as $user) {
