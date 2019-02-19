@@ -1,6 +1,10 @@
 language: php
 
+<<<<<<< HEAD
 sudo: required
+=======
+sudo: false
+>>>>>>> adjusted travis.yml for right node version
 dist: trusty
 
 addons:
