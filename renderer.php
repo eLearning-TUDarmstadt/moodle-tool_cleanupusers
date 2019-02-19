@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+require_once($CFG->libdir.'/tablelib.php');
 /**
  * Class of the tool_cleanupusers renderer.
  *
@@ -84,6 +84,60 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Renders the table for users to suspend.
+     * @param $userstosuspend
+     * @return bool|string
+     * @throws coding_exception
+     */
+    public function render_archive_page($userstosuspend) {
+        global $CFG, $DB;
+        if (empty($userstosuspend)) {
+            return "Currently no users will be suspended by the next cronjob";
+        } else {
+            $idsasstring = '';
+            foreach ($userstosuspend as $user) {
+                $idsasstring .= $user->id . ',';
+            }
+            $idsasstring = rtrim( $idsasstring , ',');
+            $table = new table_sql('tool_deprovisionuser_usertosuspend');
+            $table->define_columns(array('username', 'lastaccess', 'suspended'));
+            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/toarchive.php');
+            $table->define_headers(array(get_string('aresuspended', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
+            // TODO Customize the archived status.
+            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'tool_cleanupusers_archive',
+                'id in (' . $idsasstring . ')');
+            $table->setup();
+            $tableobject = $table->out(30, true);
+            return $tableobject;
+        }
+    }
+
+    /**
+     * Renders the table for users who never logged in.
+     * @param $usersneverloggedin
+     * @return bool|string
+     * @throws coding_exception
+     */
+    public function render_neverloggedin_page($usersneverloggedin) {
+        global $DB, $CFG;
+        if (empty($usersneverloggedin)) {
+            return "Currently no users never logged in.";
+        } else {
+            $idsasstring = '';
+            foreach ($usersneverloggedin as $user) {
+                $idsasstring .= $user->id . ',';
+            }
+            $idsasstring = rtrim( $idsasstring , ',');
+            $table = new \tool_cleanupusers\neverloggedintable('tool_deprovisionuser_neverloggedin');
+            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/neverloggedin.php');
+            $table->set_sql('id, username, lastaccess, suspended', $DB->get_prefix() . 'user', 'id in (' . $idsasstring . ')');
+            $table->setup();
+            $tableobject = $table->out(30, true);
+            return $tableobject;
+        }
+    }
     /**
      * Functions returns the heading for the tool_cleanupusers.
      *
