@@ -166,12 +166,12 @@ class userstatuswwu implements userstatusinterface {
         if ($handle) {
             while (!feof($handle)) {
                 $buffer = fgets($handle);
+                $currentstring = explode(' ', $buffer);
                 // When the next line begins with the current username, there is no need for additional checks,
                 // since the username was already saved as a valid user.
-                if (!empty($currentname) and strpos($buffer, $currentname) === 0) {
+                if (!empty($currentname) and $currentstring['0'] === $currentname) {
                     continue;
                 }
-                $currentstring = explode(' ', $buffer);
                 // In case the line does not have two words, it can not be handled.
                 if (count($currentstring) != 2) {
                     continue;
