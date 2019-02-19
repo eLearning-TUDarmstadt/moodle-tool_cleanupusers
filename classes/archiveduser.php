@@ -142,13 +142,9 @@ class archiveduser {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
         } else if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
+        } else if ($DB->get_record('user', array('username' => $this->username)) != false) {
+            throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
         } else {
-            $usersamename = $DB->get_record('user', array('username' => $this->username));
-            if ($usersamename != false) {
-                // There exist a second user with the same username.
-                manager::kill_user_sessions($usersamename->id);
-                delete_user($usersamename);
-            }
             // Both record exist so we have a user which can be reactivated.
             $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
             // If the user is in table replace data.
