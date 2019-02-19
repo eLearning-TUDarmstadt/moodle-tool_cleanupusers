@@ -1,7 +1,6 @@
 language: php
 
 sudo: false
-dist: trusty
 
 addons:
   postgresql: "9.3"
@@ -46,6 +45,7 @@ env:
 before_install:
   - phpenv config-rm xdebug.ini
   - nvm install --lts
+  - npm i -g npm@8.9.0
   - cd ../..
   - composer selfupdate
   - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
