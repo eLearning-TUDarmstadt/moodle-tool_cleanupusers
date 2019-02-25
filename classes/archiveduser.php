@@ -53,7 +53,6 @@ class archiveduser {
     /** @var int user deleted? */
     public $deleted;
 
-
     /**
      * Archiveduser constructor.
      * @param int $id
@@ -84,7 +83,8 @@ class archiveduser {
         $thiscoreuser = new \core_user();
         $user = $thiscoreuser->get_user($this->id);
 
-        if ($user->suspended == 0 and !is_siteadmin($user)) {
+        // Only apply to users who are not zet suspended, not admins, and to users with correct name
+        if ($user->suspended == 0 and !is_siteadmin($user) and $user->username == \core_user::clean_field($user->username, 'username')) {
             $transaction = $DB->start_delegated_transaction();
 
             // Suspend user and kill session.
@@ -116,6 +116,7 @@ class archiveduser {
             }
             $transaction->allow_commit();
             // No error here since user was maybe manually suspended in user table.
+
         } else {
             throw new cleanupusers_exception(get_string('errormessagenotsuspend', 'tool_cleanupusers'));
         }
@@ -210,7 +211,7 @@ class archiveduser {
             }
 
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
-            $newusername = hash('sha256', $user->username);
+            $newusername = hash('md5', $user->username);
 
             // Checks whether the username already exist (possible but unlikely).
             if (empty($DB->get_record('user', array("username" => $newusername)))) {
