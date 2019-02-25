@@ -78,48 +78,45 @@ class archiveduser {
      * @throws cleanupusers_exception
      */
     public function archive_me() {
-        global $DB, $USER;
+        global $DB;
         // Get the current user.
         $thiscoreuser = new \core_user();
         $user = $thiscoreuser->get_user($this->id);
 
-        if ($user->suspended == 0 and !is_siteadmin($user)) {
-            // Only apply to users with correct name
-            if ($user->username !== \core_user::clean_field($user->username, 'username')) {
-                print_r("Skipping user due to wrong username: ".$user->username."\n");
+        // Only apply to users who are not zet suspended, not admins, and to users with correct name
+        if ($user->suspended == 0 and !is_siteadmin($user) and $user->username == \core_user::clean_field($user->username, 'username')) {
+            $transaction = $DB->start_delegated_transaction();
+
+            // Suspend user and kill session.
+            $user->suspended = 1;
+            manager::kill_user_sessions($user->id);
+            user_update_user($user, false);
+
+            $timestamp = time();
+            $tooluser = $DB->get_record('tool_cleanupusers', array('id' => $user->id));
+
+            // Document time of editing user in Database.
+            // In case there is no entry in the tool table make a new one.
+            if (empty($tooluser)) {
+                $DB->insert_record_raw('tool_cleanupusers', array('id' => $user->id, 'archived' => $user->suspended,
+                    'timestamp' => $timestamp), true, false, true);
             } else {
-                $transaction = $DB->start_delegated_transaction();
-
-                // Suspend user and kill session.
-                $user->suspended = 1;
-                manager::kill_user_sessions($user->id);
-                user_update_user($user, false);
-
-                $timestamp = time();
-                $tooluser = $DB->get_record('tool_cleanupusers', array('id' => $user->id));
-
-                // Document time of editing user in Database.
-                // In case there is no entry in the tool table make a new one.
-                if (empty($tooluser)) {
-                    $DB->insert_record_raw('tool_cleanupusers', array('id' => $user->id, 'archived' => $user->suspended,
-                        'timestamp' => $timestamp), true, false, true);
-                } else {
-                    // In case an record already exist the timestamp is updated.
-                    $tooluser->timestamp = $timestamp;
-                    $DB->update_record('tool_cleanupusers', $tooluser);
-                }
-
-                // Insert copy of user in second DB and replace user in main table when entry was successful.
-                $shadowuser = clone $user;
-                $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
-                if ($success == true) {
-                    // Replaces the current user with a pseudo_user that has no reference.
-                    $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
-                    user_update_user($cloneuser, false);
-                }
-                $transaction->allow_commit();
-                // No error here since user was maybe manually suspended in user table.
+                // In case an record already exist the timestamp is updated.
+                $tooluser->timestamp = $timestamp;
+                $DB->update_record('tool_cleanupusers', $tooluser);
             }
+
+            // Insert copy of user in second DB and replace user in main table when entry was successful.
+            $shadowuser = clone $user;
+            $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
+            if ($success == true) {
+                // Replaces the current user with a pseudo_user that has no reference.
+                $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);
+                user_update_user($cloneuser, false);
+            }
+            $transaction->allow_commit();
+            // No error here since user was maybe manually suspended in user table.
+
         } else {
             throw new cleanupusers_exception(get_string('errormessagenotsuspend', 'tool_cleanupusers'));
         }
