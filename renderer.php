@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+require_once($CFG->libdir.'/tablelib.php');
 /**
  * Class of the tool_cleanupusers renderer.
  *
@@ -43,23 +43,24 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      */
     public function render_index_page($userstosuspend, $usertodelete, $usersneverloggedin) {
         global $DB;
-
         // Checks if one of the given arrays is empty to prevent rendering empty arrays.
         // If not empty renders the information needed.
+        $cleanupusers = $DB->get_records('tool_cleanupusers', array('archived' => 1));
+
         if (empty($usertodelete)) {
             $rendertodelete = array();
         } else {
-            $rendertodelete = $this->information_user_delete($usertodelete);
+            $rendertodelete = $this->information_user_delete($usertodelete, $cleanupusers);
         }
         if (empty($usersneverloggedin)) {
             $renderneverloggedin = array();
         } else {
-            $renderneverloggedin = $this->information_user_notloggedin($usersneverloggedin);
+            $renderneverloggedin = $this->information_user_notloggedin($usersneverloggedin, $cleanupusers);
         }
         if (empty($userstosuspend)) {
             $rendertosuspend = array();
         } else {
-            $rendertosuspend = $this->information_user_suspend($userstosuspend);
+            $rendertosuspend = $this->information_user_suspend($userstosuspend, $cleanupusers);
         }
 
         // Renders the information for each array in a separate html table.
@@ -84,6 +85,60 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders the table for users to suspend.
+     * @param $userstosuspend
+     * @return bool|string
+     * @throws coding_exception
+     */
+    public function render_archive_page($userstosuspend) {
+        global $CFG, $DB;
+        if (empty($userstosuspend)) {
+            return "Currently no users will be suspended by the next cronjob";
+        } else {
+            $idsasstring = '';
+            foreach ($userstosuspend as $user) {
+                $idsasstring .= $user->id . ',';
+            }
+            $idsasstring = rtrim( $idsasstring , ',');
+            $table = new table_sql('tool_deprovisionuser_usertosuspend');
+            $table->define_columns(array('username', 'lastaccess', 'suspended'));
+            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/toarchive.php');
+            $table->define_headers(array(get_string('aresuspended', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
+            // TODO Customize the archived status.
+            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'tool_cleanupusers_archive',
+                'id in (' . $idsasstring . ')');
+            $table->setup();
+            $tableobject = $table->out(30, true);
+            return $tableobject;
+        }
+    }
+
+    /**
+     * Renders the table for users who never logged in.
+     * @param $usersneverloggedin
+     * @return bool|string
+     * @throws coding_exception
+     */
+    public function render_neverloggedin_page($usersneverloggedin) {
+        global $DB, $CFG;
+        if (empty($usersneverloggedin)) {
+            return "Currently no users never logged in.";
+        } else {
+            $idsasstring = '';
+            foreach ($usersneverloggedin as $user) {
+                $idsasstring .= $user->id . ',';
+            }
+            $idsasstring = rtrim( $idsasstring , ',');
+            $table = new \tool_cleanupusers\neverloggedintable('tool_deprovisionuser_neverloggedin');
+            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/neverloggedin.php');
+            $table->set_sql('id, username, lastaccess, suspended', $DB->get_prefix() . 'user', 'id in (' . $idsasstring . ')');
+            $table->setup();
+            $tableobject = $table->out(30, true);
+            return $tableobject;
+        }
+    }
+    /**
      * Functions returns the heading for the tool_cleanupusers.
      *
      * @return string
@@ -97,11 +152,11 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     /**
      * Formats information for users that are identified by the sub-plugin for deletion.
      * @param array $users array of objects of the user std_class
+     * @param array $cleanupusers all users that are currently archived by the plugin.
      * @return array
      */
-    private function information_user_delete($users) {
-        global $DB, $OUTPUT;
-
+    private function information_user_delete($users, $cleanupusers) {
+        global $OUTPUT;
         $resultarray = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -109,7 +164,8 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
-                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
+
+                $isarchivid = array_key_exists($user->id, $cleanupusers);
                 if (empty($isarchivid)) {
                     $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
@@ -129,10 +185,12 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     /**
      * Safes relevant information for users that are identified by the sub-plugin for suspending.
      * @param array $users array of objects of the user std_class
+     * @param array $cleanupusers all users that are currently archived by the plugin.
      * @return array
      */
-    private function information_user_suspend($users) {
-        global $DB, $OUTPUT;
+    private function information_user_suspend($users, $cleanupusers) {
+        global $OUTPUT;
+
         $result = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -140,7 +198,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
 
-                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
+                $isarchivid = array_key_exists($user->id, $cleanupusers);
                 if (empty($isarchivid)) {
                     $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
@@ -163,17 +221,18 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     /**
      * Safes relevant information for users who never logged in.
      * @param array $users array of objects of the user std_class
+     * @param array $cleanupusers all users that are currently archived by the plugin.
      * @return array userid as key for user information
      */
-    private function information_user_notloggedin($users) {
-        global $DB, $OUTPUT;
+    private function information_user_notloggedin($users, $cleanupusers) {
+        global $OUTPUT;
         $result = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = get_string('neverlogged', 'tool_cleanupusers');
-                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
+                $isarchivid = array_key_exists($user->id, $cleanupusers);
                 if (empty($isarchivid)) {
                     $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {

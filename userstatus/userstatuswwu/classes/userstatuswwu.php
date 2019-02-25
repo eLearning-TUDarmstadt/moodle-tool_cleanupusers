@@ -94,6 +94,7 @@ class userstatuswwu implements userstatusinterface {
         $this->order_suspend();
         $this->order_delete();
         $this->order_never_logged_in();
+        $this->order_to_reactivate();
     }
 
     /**
@@ -124,7 +125,22 @@ class userstatuswwu implements userstatusinterface {
     public function get_to_reactivate() {
         return $this->toreactivate;
     }
-
+    /**
+     * Compares the user of the groups.txt file with the users currently suspended by the plugin and return the users
+     * that are listed in the file to be reactivated.
+     */
+    private function order_to_reactivate() {
+        $users = $this->get_users_suspended_not_deleted();
+        foreach ($users as $moodleuser) {
+            // Adds Object of the user to the array if he/she is not a member.
+            if (array_key_exists($moodleuser->username, $this->zivmemberlist)) {
+                // Only necessary information is saved in the object and transmitted.
+                $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                    $moodleuser->username, $moodleuser->deleted);
+                $this->toreactivate[$moodleuser->id] = $informationuser;
+            }
+        }
+    }
     /**
      * Scans a given .txt file for specific groups.
      *
@@ -132,8 +148,8 @@ class userstatuswwu implements userstatusinterface {
      * Fopen() supports other filetypes, these are not tested. Therefore the usage of a .txt file is recommended.
      *
      * This File includes specific groups for the University of Muenster.
-     * When a user belongs to certain group the function adds the user to an array. Therefore the return array includes
-     * all users who are allowed to sign in into the Learnweb.
+     * When a user belongs to certain group the function adds the user to an array (as a key since array_key_exist is
+     * more efficient). The return array includes all users who are allowed to sign in into the Learnweb.
      *
      * @return array of authorized users
      * @throws userstatuswwu_exception
@@ -165,7 +181,7 @@ class userstatuswwu implements userstatusinterface {
                     continue;
                 }
                 // In case no groups were determined the default is used.
-                if (count($this->groups) == null) {
+                if ($this->groups == null || count($this->groups) == null) {
                     // Additional check whether there is a second word in the current line.
                     if (array_key_exists(1, $currentstring)) {
                         $group = rtrim($currentstring[1]);
@@ -180,7 +196,7 @@ class userstatuswwu implements userstatusinterface {
                             case 'y1moodle':
                             case 'b5lwmw':
                                 $currentname = $currentstring[0];
-                                array_push($zivuserarray, $currentname);
+                                $zivuserarray[$currentname] = true;
                                 break;
                             default:
                                 continue;
@@ -192,7 +208,7 @@ class userstatuswwu implements userstatusinterface {
                         $group = rtrim($currentstring[1]);
                         if ($group === $membergroup) {
                             $currentname = $currentstring[0];
-                            array_push($zivuserarray, $currentname);
+                            $zivuserarray[$currentname] = true;
                             continue;
                         }
                     }
@@ -209,22 +225,15 @@ class userstatuswwu implements userstatusinterface {
      * In case a user is not a member of the list, the user will be saved in the $tosuspend array.
      */
     private function order_suspend() {
-        $users = $this->get_users_not_suspended();
+        $users = $this->get_users_not_suspended_by_plugin();
+        $admins = get_admins();
         foreach ($users as $moodleuser) {
             // Siteadmins will not be suspended.
-            if (is_siteadmin($moodleuser)) {
+            if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
-            $ismember = false;
-            // Compares every zivmember to the moodleusername.
-            foreach ($this->zivmemberlist as $zivmember) {
-                if ($zivmember == $moodleuser->username) {
-                    $ismember = true;
-                    continue;
-                }
-            }
             // Adds Object of the user to the array if he/she is not a member.
-            if ($ismember == false) {
+            if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {
                 // Only necessary information is saved in the object and transmitted.
                 $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
                     $moodleuser->username, $moodleuser->deleted);
@@ -238,15 +247,19 @@ class userstatuswwu implements userstatusinterface {
      */
     private function order_never_logged_in() {
         global $DB;
-        // Users who never logged in and are not deleted.
-        // Additionally users who are called Anonym with the firstname were suspended with the plugin
-        // therefore they are not displayed.
-        $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
-        $users = $DB->get_records_select('user', $select);
+        // Users who never logged in are collected due to the following criteria:
+        // User whose access equals 0 and where not deleted previously and are not in the tool table.
+        $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
+        FROM {user} u
+        LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
+        WHERE t_u.id IS NULL AND u.lastaccess=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
+        $users = $DB->get_records_sql($sql);
+        $admins = get_admins();
 
         foreach ($users as $moodleuser) {
-            // In case the user is a siteadmin or has an entry in the plugin table he/she will not be displayed.
-            if (is_siteadmin($moodleuser) || !empty($DB->get_record('tool_cleanupusers', array('id' => $moodleuser->id)))) {
+            // In case the user is a siteadmin he/she will not be displayed, since admins are never changed by the ...
+            // Plugin.
+            if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
             // Additional check for properties.
@@ -265,26 +278,25 @@ class userstatuswwu implements userstatusinterface {
      * Users who are not in the plugin table will not be handled.
      */
     private function order_delete() {
-        global $DB;
         // Returns all users from the plugin table.
         $users = $this->get_users_suspended_not_deleted();
+        $admins = get_admins();
+
         foreach ($users as $moodleuser) {
             // Siteadmin will be ignored.
-            if (is_siteadmin($moodleuser->id)) {
+            if (array_key_exists($moodleuser->id, $admins)) {
                 continue;
             }
             $timestamp = time();
-            if (!empty($moodleuser->timestamp)) {
-                // In case the user was suspended for longer than one year he/she is supposed to be deleted.
+            if (!empty($moodleuser->timestamp) && !array_key_exists($moodleuser->username, $this->zivmemberlist)) {
+                // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she ...
+                // ... is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    $user = $DB->get_record('tool_cleanupusers_archive', array('id' => $moodleuser->id));
-
-                    $againlisted = in_array($user->username, $this->zivmemberlist);
-                    if (!$againlisted) {
-                        // Object with necessary data.
-                        if (!empty($user)) {
-                            $datauser = new archiveduser($user->id, $user->suspended, $user->lastaccess,
-                                $user->username, $user->deleted);
+                    // Check whether the user is again listed.
+                    if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {
+                        if (!empty($moodleuser)) {
+                            $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                                $moodleuser->username, $moodleuser->deleted);
                             $this->todelete[$moodleuser->id] = $datauser;
                         }
                     }
@@ -297,18 +309,25 @@ class userstatuswwu implements userstatusinterface {
      * Executes a DB query and returns all users who are not suspended, not deleted and logged at least once in.
      * @return array of users
      */
-    private function get_users_not_suspended() {
+    private function get_users_not_suspended_by_plugin() {
         global $DB;
-        $select = 'deleted=0 AND suspended=0 AND lastaccess!=0';
-        return $DB->get_records_select('user', $select);
+        $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
+        FROM {user} u
+        LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
+        WHERE t_u.id IS NULL AND u.lastaccess!=0 AND u.deleted=0';
+        return $DB->get_records_sql($sql);
     }
 
     /**
-     * Executes a DB query and returns all users who are suspended and not deleted from the plugin table.
+     * Executes a DB query and returns the id, suspended-status, username, deleted-status, and timestamp of suspension
+     * of all users who are suspended and not deleted from the plugin and the user table.
      * @return array of users
      */
     private function get_users_suspended_not_deleted() {
         global $DB;
-        return $DB->get_records('tool_cleanupusers');
+        $sql = 'SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted, t_u.timestamp
+        FROM {tool_cleanupusers_archive} u
+        JOIN {tool_cleanupusers} t_u ON u.id = t_u.id';
+        return $DB->get_records_sql($sql);
     }
 }
