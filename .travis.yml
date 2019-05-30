@@ -4,7 +4,8 @@ sudo: required
 dist: trusty
 
 addons:
-  postgresql: "9.3"
+  postgresql: "9.4"
+
 
 cache:
   directories:
@@ -12,7 +13,6 @@ cache:
     - $HOME/.npm
 
 php:
- - 7.0
  - 7.1
  - 7.2
 
@@ -49,7 +49,9 @@ env:
   - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
-- DB=mysqli MOODLE_BRANCH=master
+  - DB=mysqli MOODLE_BRANCH=master
+
+
 
 before_install:
   - phpenv config-rm xdebug.ini
