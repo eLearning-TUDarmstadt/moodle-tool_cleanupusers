@@ -1,13 +1,11 @@
 language: php
 
-sudo: false
+sudo: required
+dist: trusty
 
 addons:
   postgresql: "9.4"
-  apt:
-    packages:
-      - oracle-java8-installer
-      - oracle-java8-set-default
+
 
 cache:
   directories:
@@ -16,14 +14,24 @@ cache:
 
 php:
  - 7.1
+ - 7.2
+
+matrix:
+ exclude:
+   - php: 7.0
+     env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
+   - php: 7.0
+     env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
+   - php: 7.0
+     env: DB=pgsql MOODLE_BRANCH=master
+   - php: 7.0
+     env: DB=mysqli MOODLE_BRANCH=master
+fast_finish: true
 
 matrix:
   allow_failures:
   - env: DB=pgsql MOODLE_BRANCH=master
   - env: DB=mysqli MOODLE_BRANCH=master
-  #exclude:
-  #- php: 5.6
-  #  env: DB=pgsql MOODLE_BRANCH=master
 
   fast_finish: true
 
@@ -32,20 +40,22 @@ env:
   - BEHAT=yes
   - MUSTACHE_IGNORE_NAMES="email_html_body.mustache, email_html.mustache, email_text.mustache"
  matrix:
-  - DB=pgsql MOODLE_BRANCH=MOODLE_33_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
   - DB=pgsql MOODLE_BRANCH=master
-  - DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
   - DB=mysqli MOODLE_BRANCH=master
+
+
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install v8.9.0
+  - nvm install 8.9.4
   - cd ../..
   - composer selfupdate
   - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
@@ -55,8 +65,8 @@ jobs:
   include:
     # Prechecks against latest Moodle stable only.
     - stage: static
-      php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
+      php: 7.2
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
       install:
       - moodle-plugin-ci install --no-init
       script:
@@ -71,8 +81,8 @@ jobs:
 
     # Smaller build matrix for development builds
     - stage: develop
-      php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
+      php: 7.2
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
       install:
       - moodle-plugin-ci install
       script:
