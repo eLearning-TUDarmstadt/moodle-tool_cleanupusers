@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    userstatus_timechecker
  * @category   phpunit
+ * @group tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
