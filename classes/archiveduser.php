@@ -268,7 +268,7 @@ class archiveduser {
         $cloneuser->address = '';
         $cloneuser->city = '';
         $cloneuser->country = '';
-        $cloneuser->lang = '';
+        $cloneuser->lang = 'en';
         $cloneuser->calendartype = '';
         $cloneuser->firstaccess = 0;
         $cloneuser->lastaccess = 0;
