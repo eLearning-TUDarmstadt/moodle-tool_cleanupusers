@@ -32,10 +32,8 @@ class never_logged_in_table extends \table_sql
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      */
-    public function __construct($users, $sqlwhere, $param)
-    {
+    public function __construct($users, $sqlwhere, $param) {
         global $DB;
-        $DB->set_debug(true);
         parent::__construct('tool_cleanupusers_never_logged_in_table');
         // Define the list of columns to show.
         $columns = array('id', 'username', 'fullname', 'suspended', 'deleted');
@@ -56,24 +54,18 @@ class never_logged_in_table extends \table_sql
         if ($sqlwhere != null && $sqlwhere != '') {
             $where .= ' AND ' . $sqlwhere;
         }
-        $extrasql = ' UNION SELECT id, username, lastaccess, suspended, ' . get_all_user_name_fields(true) .
-            ' FROM {tool_cleanupusers_archive} WHERE ' . $where;
 
-        $this->set_sql('id, username, lastaccess, suspended, ' . get_all_user_name_fields(true), '{user}', $where . $extrasql, $param);
-
-        $countsql = "SELECT COUNT(1) FROM ( " .
-            "    SELECT id FROM {user}" .
-            "    WHERE $where" .
-            "    UNION SELECT id FROM {tool_cleanupusers_archive} " .
-            "    WHERE $where" .
-            ") s";
-
-        $this->set_count_sql($countsql);
+        $this->set_sql('id, username, lastaccess, suspended, ' . get_all_user_name_fields(true), '{user}', $where, $param);
     }
 
-
-    public function col_suspended($row)
-    {
+    /**
+     * Renders the suspended column.
+     *
+     * @param $row
+     * @return string
+     * @throws \coding_exception
+     */
+    public function col_suspended($row) {
         return $row->suspended ? get_string('yes') : get_string('no');
     }
 
@@ -84,21 +76,20 @@ class never_logged_in_table extends \table_sql
      * @param object $values Contains object with all the values of record.
      * @return $string Return link for reactivation or suspension
      */
-    public function col_deleted($values)
-    {
+    public function col_deleted($values) {
         global $OUTPUT;
         // If the data is being downloaded than we don't want to show HTML.
         if ($values->suspended == 0) {
             $url = new \moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $values->id, 'action' => 'suspend']);
 
             return \html_writer::link($url,
-                $OUTPUT->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
+                $OUTPUT->pix_icon('t/removecontact', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
                     ['class' => "imggroup-" . $values->id]));
         } else {
             $url = new \moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $values->id, 'action' => 'reactivate']);
 
             return \html_writer::link($url,
-                $OUTPUT->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
+                $OUTPUT->pix_icon('t/reload', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
                     ['class' => "imggroup-" . $values->id]));
         }
     }
