@@ -24,6 +24,7 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->dirroot.'/user/filters/lib.php');
 
 // Get URL parameters.
 
@@ -59,7 +60,17 @@ if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
 // Request arrays from the sub-plugin.
 $neverloggedinarray = $userstatuschecker->get_never_logged_in();
 
-$content .= $renderer->render_neverloggedin_page($neverloggedinarray);
+if (empty($neverloggedinarray)) {
+    echo "Currently no users have never logged in.";
+} else {
+    $userfilter = new user_filtering();
+    $userfilter->display_add();
+    $userfilter->display_active();
+    list($sql, $param) = $userfilter->get_sql_filter();
+    $neverloggedintable = new \tool_cleanupusers\table\never_logged_in_table($neverloggedinarray, $sql, $param);
+    $neverloggedintable->define_baseurl(new moodle_url('admin/tool/cleanupusers/neverloggedin.php'));
+    $neverloggedintable->out(20, false);
+}
 
 echo $content;
 echo $OUTPUT->footer();

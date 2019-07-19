@@ -23,6 +23,7 @@
  */
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot.'/user/filters/lib.php');
 
 // Get URL parameters.
 
@@ -44,6 +45,29 @@ $renderer = $PAGE->get_renderer('tool_cleanupusers');
 $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
-$content = 'Sometime a beautiful table will be here which displays all users which should be deleted';
+
+if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
+    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+    $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
+    $userstatuschecker = new $mysubpluginname();
+} else {
+    $subplugin = 'userstatuswwu';
+    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
+}
+
+// Request arrays from the sub-plugin.
+$deletearray = $userstatuschecker->get_to_suspend();
+
+if (empty($deletearray)) {
+    echo "Currently no users will be deleted by the next cronjob";
+} else {
+    $userfilter = new user_filtering();
+    $userfilter->display_add();
+    $userfilter->display_active();
+    list($sql, $param) = $userfilter->get_sql_filter();
+    $deletetable = new \tool_cleanupusers\table\users_table($deletearray, $sql, $param);
+    $deletetable->out(20, false);
+}
+
 echo $content;
 echo $OUTPUT->footer();

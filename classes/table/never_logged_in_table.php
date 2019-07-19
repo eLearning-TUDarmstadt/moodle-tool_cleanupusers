@@ -21,26 +21,60 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_cleanupusers;
+namespace tool_cleanupusers\table;
 defined('MOODLE_INTERNAL') || die();
 
-class neverloggedintable extends \table_sql {
+class never_logged_in_table extends \table_sql
+{
 
     /**
      * Constructor
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      */
-    public function __construct($uniqueid) {
-        parent::__construct($uniqueid);
+    public function __construct($users, $sqlwhere, $param)
+    {
+        global $DB;
+        $DB->set_debug(true);
+        parent::__construct('tool_cleanupusers_never_logged_in_table');
         // Define the list of columns to show.
-        $columns = array('id', 'username', 'lastaccess', 'suspended', 'deleted');
+        $columns = array('id', 'username', 'fullname', 'suspended', 'deleted');
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array(get_string('id', 'tool_cleanupusers' ), get_string('Neverloggedin', 'tool_cleanupusers'),
-            get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'), 'Archive');
+        $headers = array(get_string('id', 'tool_cleanupusers'), get_string('Neverloggedin', 'tool_cleanupusers'),
+            get_string('fullname'), get_string('Archived', 'tool_cleanupusers'), 'Archive');
         $this->define_headers($headers);
+
+        $idsasstring = '';
+        foreach ($users as $user) {
+            $idsasstring .= $user->id . ',';
+        }
+        $idsasstring = rtrim($idsasstring, ',');
+        $where = 'id IN (' . $idsasstring . ')';
+
+        if ($sqlwhere != null && $sqlwhere != '') {
+            $where .= ' AND ' . $sqlwhere;
+        }
+        $extrasql = ' UNION SELECT id, username, lastaccess, suspended, ' . get_all_user_name_fields(true) .
+            ' FROM {tool_cleanupusers_archive} WHERE ' . $where;
+
+        $this->set_sql('id, username, lastaccess, suspended, ' . get_all_user_name_fields(true), '{user}', $where . $extrasql, $param);
+
+        $countsql = "SELECT COUNT(1) FROM ( " .
+            "    SELECT id FROM {user}" .
+            "    WHERE $where" .
+            "    UNION SELECT id FROM {tool_cleanupusers_archive} " .
+            "    WHERE $where" .
+            ") s";
+
+        $this->set_count_sql($countsql);
+    }
+
+
+    public function col_suspended($row)
+    {
+        return $row->suspended ? get_string('yes') : get_string('no');
     }
 
     /**
@@ -50,19 +84,20 @@ class neverloggedintable extends \table_sql {
      * @param object $values Contains object with all the values of record.
      * @return $string Return link for reactivation or suspension
      */
-    public function col_deleted($values) {
+    public function col_deleted($values)
+    {
         global $OUTPUT;
         // If the data is being downloaded than we don't want to show HTML.
         if ($values->suspended == 0) {
             $url = new \moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $values->id, 'action' => 'suspend']);
 
-            return  \html_writer::link($url,
+            return \html_writer::link($url,
                 $OUTPUT->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
                     ['class' => "imggroup-" . $values->id]));
         } else {
             $url = new \moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $values->id, 'action' => 'reactivate']);
 
-            return  \html_writer::link($url,
+            return \html_writer::link($url,
                 $OUTPUT->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
                     ['class' => "imggroup-" . $values->id]));
         }
