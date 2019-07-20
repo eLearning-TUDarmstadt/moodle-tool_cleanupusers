@@ -387,23 +387,23 @@ class tool_cleanupusers_testcase extends advanced_testcase {
 
         // Users not changed by the Cronjob.
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
-        $this->assertUserEquals($data['user'], $recordusertable);
+        $this->assert_user_equals($data['user'], $recordusertable);
 
         $recordusertable = $DB->get_record('user', array('id' => $data['userdeleted']->id));
-        $this->assertUserEquals($data['userdeleted'], $recordusertable);
+        $this->assert_user_equals($data['userdeleted'], $recordusertable);
 
         $recordusertable = $DB->get_record('user', array('id' => $data['userneverloggedin']->id));
-        $this->assertUserEquals($data['userneverloggedin'], $recordusertable);
+        $this->assert_user_equals($data['userneverloggedin'], $recordusertable);
 
         $recordusertable = $DB->get_record('user', array('id' => $data['usersuspendedmanually']->id));
-        $this->assertUserEquals($data['usersuspendedmanually'], $recordusertable);
+        $this->assert_user_equals($data['usersuspendedmanually'], $recordusertable);
 
         // User is suspended.
         $recordusertable = $DB->get_record('user', array('id' => $data['useroneyearnotloggedin']->id));
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['useroneyearnotloggedin']->id));
         $recordtooltable2 = $DB->get_record('tool_cleanupusers_archive', array('id' => $data['useroneyearnotloggedin']->id));
         $this->assertNotEmpty($recordtooltable);
-        $this->assertUserEquals($data['useroneyearnotloggedin'], $recordtooltable2);
+        $this->assert_user_equals($data['useroneyearnotloggedin'], $recordtooltable2);
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordtooltable2->suspended);
         $this->assertEquals('anonym' . $data['useroneyearnotloggedin']->id, $recordusertable->username);
@@ -443,11 +443,11 @@ class tool_cleanupusers_testcase extends advanced_testcase {
     /**
      * Testing equality of userdata arrays disregarding the realusername field.
      */
-    public function assertUserEquals($expected, $actual) {
+    public function assert_user_equals($expected, $actual) {
         $expected = (array) $expected;
         $actual = (array) $actual;
         foreach ($expected as $k => $v) {
-            if($k != 'realusername') {
+            if ($k != 'realusername') {
                 $this->assertEquals($v, $actual[$k]);
             }
         }
