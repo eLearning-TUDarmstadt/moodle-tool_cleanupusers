@@ -50,7 +50,7 @@ class users_table extends \table_sql {
         $idsasstring = rtrim( $idsasstring , ',');
         $where = 'id IN (' . $idsasstring . ')';
         if ($sqlwhere != null && $sqlwhere != '') {
-           $where .= ' AND ' . $sqlwhere;
+            $where .= ' AND ' . $sqlwhere;
         }
         $this->set_sql('id, username, lastaccess, ' . get_all_user_name_fields(true), '{user}', $where, $param);
     }
