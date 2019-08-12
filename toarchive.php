@@ -23,6 +23,7 @@
  */
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot.'/user/filters/lib.php');
 
 // Get URL parameters.
 
@@ -56,9 +57,17 @@ if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
 
 // Request arrays from the sub-plugin.
 $archivearray = $userstatuschecker->get_to_suspend();
-$content = 'Sometime a beautiful table will be here which displays all users which should be archived';
 
-$content .= $renderer->render_archive_page($archivearray);
+if (empty($archivearray)) {
+    echo "Currently no users will be suspended by the next cronjob";
+} else {
+    $userfilter = new user_filtering();
+    $userfilter->display_add();
+    $userfilter->display_active();
+    list($sql, $param) = $userfilter->get_sql_filter();
+    $archivetable = new \tool_cleanupusers\table\users_table($archivearray, $sql, $param);
+    $archivetable->out(20, false);
+}
 
 echo $content;
 echo $OUTPUT->footer();
