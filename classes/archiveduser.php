@@ -81,8 +81,7 @@ class archiveduser {
     public function archive_me() {
         global $DB;
         // Get the current user.
-        $thiscoreuser = new \core_user();
-        $user = $thiscoreuser->get_user($this->id);
+        $user = \core_user::get_user($this->id);
 
         // Only apply to users who are not zet suspended, not admins, and to users with correct name
         if (!is_siteadmin($user) and $user->username == \core_user::clean_field($user->username, 'username')) {
@@ -107,9 +106,8 @@ class archiveduser {
             }
 
             // Insert copy of user in second DB and replace user in main table when entry was successful.
-            if (!empty($DB->get_record('tool_cleanupusers_archive', array('id' => $shadowuser->id)))) {
-                $DB->delete_records('tool_cleanupusers_archive', array('id' => $shadowuser->id));
-            }
+            $DB->delete_records('tool_cleanupusers_archive', array('id' => $shadowuser->id));
+
             $success = $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
 
             if ($success == true) {
@@ -134,16 +132,14 @@ class archiveduser {
     public function activate_me() {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
-        $thiscoreuser = new \core_user();
-
-        $user = $thiscoreuser->get_user($this->id);
+        $user = \core_user::get_user($this->id);
 
         // Deletes record of plugin table tool_cleanupusers.
-        if (empty($DB->get_records('tool_cleanupusers', array('id' => $user->id)))) {
+        if (!$DB->record_exists('tool_cleanupusers', array('id' => $user->id))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
-        } else if (empty($DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
+        } else if (!$DB->record_exists('tool_cleanupusers_archive', array('id' => $user->id))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
-        } else if ($DB->get_record('user', array('username' => $this->username)) != false) {
+        } else if ($DB->record_exists('user', array('username' => $this->username))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
         } else {
             // Both record exist so we have a user which can be reactivated.
@@ -174,34 +170,29 @@ class archiveduser {
     public function delete_me() {
         global $DB;
 
-        $user = new \core_user();
-        $user = $user->get_user($this->id);
+        $user = \core_user::get_user($this->id);
 
         if ($user != false and $user->deleted == 0 and !is_siteadmin($user)) {
 
             $transaction = $DB->start_delegated_transaction();
 
             // Deletes the records in both plugin tables.
-            if (!empty($DB->get_records('tool_cleanupusers', array('id' => $user->id)))) {
-                $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
-            }
+            $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
 
-            if (!empty($DB->get_records('tool_cleanupusers_archive', array('id' => $user->id)))) {
-                $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
-            }
+            $DB->delete_records('tool_cleanupusers_archive', array('id' => $user->id));
 
             // To secure that plugins that reference the user table do not fail create empty user with a hash as username.
             $newusername = hash('md5', $user->username);
 
             // Checks whether the username already exist (possible but unlikely).
-            if (empty($DB->get_record('user', array("username" => $newusername)))) {
+            if (!$DB->record_exists('user', array("username" => $newusername))) {
                 $user->username = $newusername;
                 user_update_user($user, false);
             } else {
                 // In the unlikely case that hash(username) exist in the table, while loop generates new username.
-                while (!empty($DB->get_record('user', array("username" => $newusername)))) {
+                while ($DB->record_exists('user', array("username" => $newusername))) {
                     $tempname = $newusername;
-                    $newusername = hash('sha256', $user->username . $tempname);
+                    $newusername = hash('md5', $user->username . $tempname);
                 }
                 $user->username = $newusername;
                 user_update_user($user, false);
@@ -228,7 +219,7 @@ class archiveduser {
      * @return object
      */
     private function give_suspended_pseudo_user($id, $timestamp) {
-        $cloneuser = (object) 0;
+        $cloneuser = new \stdClass();
         $cloneuser->id = $id;
         // Usernames have to be unique therefore the id is used.
         $cloneuser->username = 'anonym' . $id;
