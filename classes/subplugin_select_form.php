@@ -51,9 +51,9 @@ class subplugin_select_form extends moodleform {
             $types[$value->name] = $value->name;
         }
 
-        $ispluginselected = empty(get_config('tool_cleanupusers'));
+        $isnopluginselected = empty(get_config('tool_cleanupusers'));
         // Different text in case no plugin was selected beforehand.
-        if ($ispluginselected) {
+        if ($isnopluginselected) {
             $text = 'Please select a subplugin';
         } else {
             $text = 'Change the subplugin';
@@ -61,7 +61,7 @@ class subplugin_select_form extends moodleform {
         $mform->addElement('select', 'subplugin', $text, $types);
 
         // If a plugin is active it is shown as the default.
-        if (!$ispluginselected) {
+        if (!$isnopluginselected) {
             $mform->setDefault('subplugin', get_config('tool_cleanupusers', 'cleanupusers_subplugin'));
         }
         $mform->addElement('submit', 'reset', 'Submit');
@@ -73,7 +73,7 @@ class subplugin_select_form extends moodleform {
      *
      * @param array $data
      * @param array $files
-     * @return bool/array array in case the sub-plugin is not valid, otherwise true.
+     * @return bool|array array in case the sub-plugin is not valid, otherwise true.
      */
     public function validation($data, $files) {
         $plugins = core_plugin_manager::instance()->get_plugins_of_type('userstatus');
@@ -85,8 +85,7 @@ class subplugin_select_form extends moodleform {
             }
         }
         if ($issubplugin == false) {
-            $issubplugin['subplugin'] = new cleanupusers_subplugin_exception
-            (get_string('errormessagesubplugin', 'tool_cleanupusers'));
+            return ['subplugin' => get_string('errormessagesubplugin', 'tool_cleanupusers')];
         }
         return $issubplugin;
     }
