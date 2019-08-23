@@ -330,8 +330,7 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // Validation with non-existing sub-plugin returns an array with an errormessage.
         $validationdata = array ("subplugin" => 'nosubplugin');
         $return = $subpluginform->validation($validationdata, null);
-        $errorarray = array('subplugin' => new tool_cleanupusers\cleanupusers_subplugin_exception
-            (get_string('errormessagesubplugin', 'tool_cleanupusers')));
+        $errorarray = array('subplugin' => get_string('errormessagesubplugin', 'tool_cleanupusers'));
         $this->assertEquals($errorarray, $return);
         $this->resetAfterTest(true);
 
