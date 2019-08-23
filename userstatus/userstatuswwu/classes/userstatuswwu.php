@@ -209,7 +209,7 @@ class userstatuswwu implements userstatusinterface {
                         if ($group === $membergroup) {
                             $currentname = $currentstring[0];
                             $zivuserarray[$currentname] = true;
-                            continue;
+                            break;
                         }
                     }
                 }
@@ -292,14 +292,9 @@ class userstatuswwu implements userstatusinterface {
                 // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she ...
                 // ... is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    // Check whether the user is again listed.
-                    if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {
-                        if (!empty($moodleuser)) {
-                            $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
-                                $moodleuser->username, $moodleuser->deleted);
-                            $this->todelete[$moodleuser->id] = $datauser;
-                        }
-                    }
+                    $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                            $moodleuser->username, $moodleuser->deleted);
+                    $this->todelete[$moodleuser->id] = $datauser;
                 }
             }
         }
