@@ -68,7 +68,7 @@ if ($config) {
 }
 
 // Informs the user about the currently used plugin.
-$content .= 'You are currently using the <b>' . $subplugin . '</b> Plugin';
+$content .= get_string('using-plugin', 'tool_cleanupusers', $subplugin);
 
 // Request arrays from the sub-plugin.
 $archivearray = $userstatuschecker->get_to_suspend();
