@@ -37,8 +37,8 @@ require_capability('moodle/site:config', $context);
 admin_externalpage_setup('cleanupusers');
 
 $pagetitle = get_string('neverloggedin', 'tool_cleanupusers');
-$PAGE->set_title(get_string('neverloggedin', 'tool_cleanupusers'));
-$PAGE->set_heading(get_string('neverloggedin', 'tool_cleanupusers'));
+$PAGE->set_title($pagetitle);
+$PAGE->set_heading($pagetitle);
 $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('tool_cleanupusers');
@@ -46,10 +46,10 @@ $renderer = $PAGE->get_renderer('tool_cleanupusers');
 $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
-$content = 'Sometime a beautiful table will be here which displays all users who never logged in';
 
-if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
-    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+$config = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+if ($config) {
+    $subplugin = $config;
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {

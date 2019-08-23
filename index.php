@@ -57,8 +57,9 @@ if ($formdata = $mform->get_data()) {
 $mform->display();
 
 // Assures right sub-plugin is used.
-if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
-    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+$config = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+if ($config) {
+    $subplugin = $config;
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {
