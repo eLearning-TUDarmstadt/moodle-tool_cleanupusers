@@ -180,33 +180,29 @@ class userstatuswwu implements userstatusinterface {
                 if (strpos($currentstring['0'], '@')) {
                     continue;
                 }
+                $currentgroup = rtrim($currentstring[1]);
                 // In case no groups were determined the default is used.
-                if (empty($this->groups) && count($this->groups) == null) {
-                    // Additional check whether there is a second word in the current line.
-                    if (array_key_exists(1, $currentstring)) {
-                        $group = rtrim($currentstring[1]);
-                        switch ($group) {
-                            // If the user is member of one of the groups, he/she is a valid user.
-                            case 'sys=aix-urz':
-                            case 'y5lwspz':
-                            case 'y5lwzfl':
-                            case 'v0csalum':
-                            case 'sys=ad-ka':
-                            case 'y5lwext':
-                            case 'y1moodle':
-                            case 'b5lwmw':
-                                $currentname = $currentstring[0];
-                                $zivuserarray[$currentname] = true;
-                                break;
-                            default:
-                                continue;
-                        }
+                if (empty($this->groups) || count($this->groups) == 0) {
+                    switch ($currentgroup) {
+                        // If the user is member of one of the groups, he/she is a valid user.
+                        case 'sys=aix-urz':
+                        case 'y5lwspz':
+                        case 'y5lwzfl':
+                        case 'v0csalum':
+                        case 'sys=ad-ka':
+                        case 'y5lwext':
+                        case 'y1moodle':
+                        case 'b5lwmw':
+                            $currentname = $currentstring[0];
+                            $zivuserarray[$currentname] = true;
+                            break;
+                        default:
+                            continue;
                     }
                 } else {
                     // In case other groups are used...
                     foreach ($this->groups as $membergroup) {
-                        $group = rtrim($currentstring[1]);
-                        if ($group === $membergroup) {
+                        if ($currentgroup === $membergroup) {
                             $currentname = $currentstring[0];
                             $zivuserarray[$currentname] = true;
                             break;
