@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    tool_cleanupusers
  * @category   phpunit
+ * @group      tool_cleanupusers
  * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

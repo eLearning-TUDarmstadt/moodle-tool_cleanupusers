@@ -38,7 +38,7 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
     /**
      * Creates Users with different suspend, and deleted settings.
      */
-    public function test_create_preparation () {
+    public function test_create_preparation() {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = array();
