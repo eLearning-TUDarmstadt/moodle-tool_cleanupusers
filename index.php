@@ -56,26 +56,7 @@ if ($formdata = $mform->get_data()) {
 }
 $mform->display();
 
-// Assures right sub-plugin is used.
-$config = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
-if ($config) {
-    $subplugin = $config;
-    $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
-    $userstatuschecker = new $mysubpluginname();
-} else {
-    $subplugin = 'userstatuswwu';
-    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
-}
-
-// Informs the user about the currently used plugin.
-$content .= get_string('using-plugin', 'tool_cleanupusers', $subplugin);
-
-// Request arrays from the sub-plugin.
-$archivearray = $userstatuschecker->get_to_suspend();
-$arraytodelete = $userstatuschecker->get_to_delete();
-$arrayneverloggedin = $userstatuschecker->get_never_logged_in();
-
-$content .= $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
+$content .= $renderer->render_index_page();
 
 echo $content;
 echo $OUTPUT->footer();
