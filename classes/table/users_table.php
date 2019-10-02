@@ -54,4 +54,14 @@ class users_table extends \table_sql {
         }
         $this->set_sql('id, username, lastaccess, ' . get_all_user_name_fields(true), '{user}', $where, $param);
     }
+    /**
+     * This function is called for each data row to change the lastaccess to a datetime format
+     * @return string return processed value. Return NULL if no change has
+     *     been made.
+     */
+    function other_cols($colname, $value) {
+        if ($colname == 'lastaccess') {
+            return gmdate("Y-m-d H:i:s", $value->lastaccess);
+        }
+    }
 }
