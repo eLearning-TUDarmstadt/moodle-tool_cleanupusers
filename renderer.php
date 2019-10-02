@@ -44,7 +44,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         $output = '';
         $url = new moodle_url("/admin/tool/cleanupusers/neverloggedin.php");
         $output .= get_string("neverloggedin", 'tool_cleanupusers') . " " .
-            html_writer::link( $url, "here", array()) . ".<br>" ;
+            html_writer::link( $url, "here", array()) . ".<br>";
         $url = new moodle_url("/admin/tool/cleanupusers/toarchive.php");
         $output .= get_string("toarchive", 'tool_cleanupusers') . " " .
             html_writer::link( $url, "here", array()) . ".<br>";
