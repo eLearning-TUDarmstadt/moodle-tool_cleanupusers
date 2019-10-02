@@ -40,6 +40,7 @@ $pagetitle = get_string('neverloggedin', 'tool_cleanupusers');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
 $PAGE->set_pagelayout('standard');
+$PAGE->set_url(new moodle_url('/admin/tool/cleanupusers/neverloggedin.php'));
 
 $renderer = $PAGE->get_renderer('tool_cleanupusers');
 
@@ -68,7 +69,7 @@ if (empty($neverloggedinarray)) {
     $userfilter->display_active();
     list($sql, $param) = $userfilter->get_sql_filter();
     $neverloggedintable = new \tool_cleanupusers\table\never_logged_in_table($neverloggedinarray, $sql, $param);
-    $neverloggedintable->define_baseurl(new moodle_url('admin/tool/cleanupusers/neverloggedin.php'));
+    $neverloggedintable->define_baseurl($PAGE->url);
     $neverloggedintable->out(20, false);
 }
 
