@@ -47,26 +47,19 @@ echo $renderer->get_heading();
 $content = '';
 
 $mform = new \tool_cleanupusers\subplugin_select_form();
-$formdata = $mform->get_data();
-$datavalidated = false;
-if (!empty($formdata)) {
+if ($formdata = $mform->get_data()) {
     $arraydata = get_object_vars($formdata);
-    $datavalidated = $mform->validation($arraydata, null);
-}
-// In this case you process validated data.
-if ($datavalidated && !empty($arraydata['subplugin'])) {
-    set_config('cleanupusers_subplugin', $arraydata['subplugin'], 'tool_cleanupusers');
-    $content = 'You successfully submitted the Subplugin.';
-    $mform->display();
-} else {
-    if (!empty($datavalidated['subplugin'])) {
-        $content .= $datavalidated['subplugin'];
+    if ($mform->is_validated()) {
+        set_config('cleanupusers_subplugin', $arraydata['subplugin'], 'tool_cleanupusers');
+        $content = 'You successfully submitted the subplugin.';
     }
-    $mform->display();
 }
+$mform->display();
+
 // Assures right sub-plugin is used.
-if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
-    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+$config = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+if ($config) {
+    $subplugin = $config;
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {
@@ -75,7 +68,7 @@ if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
 }
 
 // Informs the user about the currently used plugin.
-$content .= 'You are currently using the <b>' . $subplugin . '</b> Plugin';
+$content .= get_string('using-plugin', 'tool_cleanupusers', $subplugin);
 
 // Request arrays from the sub-plugin.
 $archivearray = $userstatuschecker->get_to_suspend();

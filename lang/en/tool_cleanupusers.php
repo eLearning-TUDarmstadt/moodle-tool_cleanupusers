@@ -63,3 +63,4 @@ $string['e-mail-problematic_reactivate'] = 'In the last cron-job {$a} users caus
 $string['e-mail-noproblem'] = 'No problems occurred in plugin tool_cleanupusers in the last run.';
 $string['cronjobcomplete'] = 'tool_cleanupusers cron job complete';
 $string['cronjobwasrunning'] = 'The tool_cleanupusers cron job was running. No user was suspended or deleted.';
+$string['using-plugin'] = 'You are currently using the <b>{$a}</b> Plugin';

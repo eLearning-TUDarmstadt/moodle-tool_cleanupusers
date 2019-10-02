@@ -7,7 +7,7 @@
         <TABLE NAME="tool_cleanupusers" COMMENT="deprovision user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-                // Copied from mdl_user.
+                <!-- Copied from mdl_user. -->
                 <FIELD NAME="archived" TYPE="int" LENGTH="1" NOTNULL="true"  DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
 
@@ -20,7 +20,7 @@
         <TABLE NAME="tool_cleanupusers_archive" COMMENT="deprovision user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-                // Copied from mdl_user.
+                <!-- Copied from mdl_user. -->
                 <FIELD NAME="auth" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="manual" SEQUENCE="false"/>
                 <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="policyagreed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

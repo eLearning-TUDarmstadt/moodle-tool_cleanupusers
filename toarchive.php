@@ -39,6 +39,7 @@ $pagetitle = get_string('toarchive', 'tool_cleanupusers');
 $PAGE->set_title(get_string('toarchive', 'tool_cleanupusers'));
 $PAGE->set_heading(get_string('toarchive', 'tool_cleanupusers'));
 $PAGE->set_pagelayout('standard');
+$PAGE->set_url(new moodle_url('/admin/tool/cleanupusers/toarchive.php'));
 
 $renderer = $PAGE->get_renderer('tool_cleanupusers');
 
@@ -46,8 +47,9 @@ $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
 
-if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
-    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+$config = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+if ($config) {
+    $subplugin = $config;
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {
@@ -65,7 +67,8 @@ if (empty($archivearray)) {
     $userfilter->display_add();
     $userfilter->display_active();
     list($sql, $param) = $userfilter->get_sql_filter();
-    $archivetable = new \tool_cleanupusers\table\users_table($archivearray, $sql, $param);
+    $archivetable = new \tool_cleanupusers\table\users_table('tool_cleanupusers_toarchive_table', $archivearray, $sql, $param);
+    $archivetable->define_baseurl($PAGE->url);
     $archivetable->out(20, false);
 }
 

@@ -180,36 +180,32 @@ class userstatuswwu implements userstatusinterface {
                 if (strpos($currentstring['0'], '@')) {
                     continue;
                 }
+                $currentgroup = rtrim($currentstring[1]);
                 // In case no groups were determined the default is used.
                 if ($this->groups === null || count($this->groups) == null) {
-                    // Additional check whether there is a second word in the current line.
-                    if (array_key_exists(1, $currentstring)) {
-                        $group = rtrim($currentstring[1]);
-                        switch ($group) {
-                            // If the user is member of one of the groups, he/she is a valid user.
-                            case 'sys=aix-urz':
-                            case 'y5lwspz':
-                            case 'y5lwzfl':
-                            case 'v0csalum':
-                            case 'sys=ad-ka':
-                            case 'y5lwext':
-                            case 'y1moodle':
-                            case 'b5lwmw':
-                                $currentname = $currentstring[0];
-                                $zivuserarray[$currentname] = true;
-                                break;
-                            default:
-                                continue;
-                        }
+                    switch ($currentgroup) {
+                        // If the user is member of one of the groups, he/she is a valid user.
+                        case 'sys=aix-urz':
+                        case 'y5lwspz':
+                        case 'y5lwzfl':
+                        case 'v0csalum':
+                        case 'sys=ad-ka':
+                        case 'y5lwext':
+                        case 'y1moodle':
+                        case 'b5lwmw':
+                            $currentname = $currentstring[0];
+                            $zivuserarray[$currentname] = true;
+                            break;
+                        default:
+                            continue;
                     }
                 } else {
                     // In case other groups are used...
                     foreach ($this->groups as $membergroup) {
-                        $group = rtrim($currentstring[1]);
-                        if ($group === $membergroup) {
+                        if ($currentgroup === $membergroup) {
                             $currentname = $currentstring[0];
                             $zivuserarray[$currentname] = true;
-                            continue;
+                            break;
                         }
                     }
                 }
@@ -292,14 +288,9 @@ class userstatuswwu implements userstatusinterface {
                 // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she ...
                 // ... is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    // Check whether the user is again listed.
-                    if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {
-                        if (!empty($moodleuser)) {
-                            $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
-                                $moodleuser->username, $moodleuser->deleted);
-                            $this->todelete[$moodleuser->id] = $datauser;
-                        }
-                    }
+                    $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
+                            $moodleuser->username, $moodleuser->deleted);
+                    $this->todelete[$moodleuser->id] = $datauser;
                 }
             }
         }
