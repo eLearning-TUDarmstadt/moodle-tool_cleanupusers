@@ -58,7 +58,7 @@ if ($config) {
 }
 
 // Request arrays from the sub-plugin.
-$deletearray = $userstatuschecker->get_to_suspend();
+$deletearray = $userstatuschecker->get_to_delete();
 
 if (empty($deletearray)) {
     echo "Currently no users will be deleted by the next cronjob";
