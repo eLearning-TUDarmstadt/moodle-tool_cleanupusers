@@ -1,0 +1,5 @@
+{
+    "plugintypes": {
+        "userstatus": "admin/tool/cleanupusers/userstatus"
+    }
+}

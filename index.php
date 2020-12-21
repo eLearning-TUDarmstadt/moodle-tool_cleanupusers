@@ -81,8 +81,8 @@ $content .= 'You are currently using the <b>' . $subplugin . '</b> Plugin';
 $archivearray = $userstatuschecker->get_to_suspend();
 $arraytodelete = $userstatuschecker->get_to_delete();
 $arrayneverloggedin = $userstatuschecker->get_never_logged_in();
-
-$content .= $renderer->render_index_page($archivearray, $arraytodelete, $arrayneverloggedin);
+$arrayreactivate = $userstatuschecker->get_to_reactivate();
+$content .= $renderer->render_index_page($arrayreactivate, $archivearray, $arraytodelete, $arrayneverloggedin);
 
 echo $content;
 echo $OUTPUT->footer();
