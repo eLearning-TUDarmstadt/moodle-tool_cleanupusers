@@ -31,16 +31,16 @@ function xmldb_tool_cleanupusers_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if($oldversion <= 2018021401) {
+    if($oldversion < 2018021401) {
         $table = new xmldb_table('tool_cleanupusers_archive');
         $field = new xmldb_field('moodlenetprofile', XMLDB_TYPE_CHAR, '255');
 
         // Conditionally create the table.
         if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table);
+            $dbman->add_field($table, $field);
         }
-        upgrade_plugin_savepoint(true, 2018021401, 'tool', 'cleanupusers');
 
+        upgrade_plugin_savepoint(true, 2018021401, 'tool', 'cleanupusers');
     }
     return true;
 }
