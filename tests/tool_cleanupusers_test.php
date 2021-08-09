@@ -378,12 +378,15 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-        $expectedmessage = 'In the last cron-job 2 users were archived.In the last cron-job 1 users were deleted
-.In the last cron-job 1 users caused exception and could not be deleted.In the last cron-job 0 users caused exception
- and could not be suspended.In the last cron-job 0 users caused exception and could not be reactivated.';
-        $expectedmessage = str_replace(array("\r\n", "\r", "\n"), '', $expectedmessage);
-        $msg = str_replace(array("\r\n", "\r", "\n"), '', $messages[0]->body);
-        $this->assertEquals($expectedmessage, $msg);
+
+
+        $msg = str_replace(array("\r\n", "\r", "\n", "<br>", "</br>"), '', $messages[0]->body);
+
+        $this->assertStringContainsString('In the last cron-job 1 users were archived', $msg);
+        $this->assertStringContainsString('In the last cron-job 2 users were deleted', $msg);
+        $this->assertStringContainsString('In the last cron-job 0 users caused exception and could not be deleted', $msg);
+        $this->assertStringContainsString('In the last cron-job 0 users caused exception and could not be suspended', $msg);
+        $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be reactivated', $msg);
 
         // Users not changed by the Cronjob.
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
@@ -471,6 +474,8 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         set_config('cleanupusers_subplugin', 'timechecker', 'tool_cleanupusers');
         $cronjob = new tool_cleanupusers\task\archive_user_task();
         $cronjob->execute();
+        $sink = $this->redirectEmails();
+        $sink->get_messages();
         $triggered = $eventsink->get_events();
         $eventsink->close();
         $found = false;

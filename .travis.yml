@@ -1,13 +1,7 @@
 language: php
 
-sudo: false
-
-addons:
-  postgresql: "9.3"
-  apt:
-    packages:
-      - oracle-java9-installer
-      - oracle-java9-set-default
+os: linux
+dist: xenial
 
 cache:
   directories:
@@ -15,81 +9,81 @@ cache:
     - $HOME/.npm
 
 php:
- - 7.0
- - 7.1
+  - 7.2
+  - 7.3
+  - 7.4
 
-matrix:
-  allow_failures:
-  - env: DB=pgsql MOODLE_BRANCH=master
-  - env: DB=mysqli MOODLE_BRANCH=master
-  #exclude:
-  #- php: 5.6
-  #  env: DB=pgsql MOODLE_BRANCH=master
+addons:
+  postgresql: "9.6"
 
-  fast_finish: true
+services:
+  - mysql
+  - docker
 
 env:
- global:
-  - BEHAT=yes
-  - MUSTACHE_IGNORE_NAMES="email_html_body.mustache, email_html.mustache, email_text.mustache"
- matrix:
-  - DB=pgsql MOODLE_BRANCH=MOODLE_33_STABLE
-  - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
-  - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
-  - DB=pgsql MOODLE_BRANCH=master
-  - DB=mysqli MOODLE_BRANCH=MOODLE_33_STABLE
-  - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
-  - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
-  - DB=mysqli MOODLE_BRANCH=master
+  global:
+    - IGNORE_PATHS=amd/build BEHAT=yes
+  jobs:
+    - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+    - DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
+    - DB=pgsql MOODLE_BRANCH=MOODLE_39_STABLE
+    - DB=pgsql MOODLE_BRANCH=MOODLE_310_STABLE
+    - DB=pgsql MOODLE_BRANCH=MOODLE_311_STABLE
+    - DB=pgsql MOODLE_BRANCH=master
+    - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+    - DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
+    - DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
+    - DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
+    - DB=mysqli MOODLE_BRANCH=MOODLE_311_STABLE
+    - DB=mysqli MOODLE_BRANCH=master
+
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install 8.9
-  - nvm use 8.9
   - cd ../..
   - composer selfupdate
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 jobs:
+  fast_finish: true
   include:
     # Prechecks against version running in the learnweb.
     - stage: static
-      php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
-      install:
-      - moodle-plugin-ci install --no-init
+      php: 7.4
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
+      install: moodle-plugin-ci install --no-init
       script:
-      - moodle-plugin-ci phplint
-      - moodle-plugin-ci phpcpd
-      - moodle-plugin-ci phpmd
-      - moodle-plugin-ci codechecker
-      - moodle-plugin-ci validate
-      - moodle-plugin-ci savepoints
-      - moodle-plugin-ci mustache
-      - moodle-plugin-ci grunt
-
+        - moodle-plugin-ci phplint
+        # - moodle-plugin-ci phpcpd
+        - moodle-plugin-ci phpmd
+        # - moodle-plugin-ci codechecker
+        - moodle-plugin-ci savepoints
+        # - moodle-plugin-ci mustache
+        - moodle-plugin-ci grunt
+        - moodle-plugin-ci validate
     # Smaller build matrix for development builds
     - stage: develop
-      php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
-      install:
-      - moodle-plugin-ci install
-      script:
-      - moodle-plugin-ci phpunit --coverage-clover
-      - moodle-plugin-ci behat
+      php: 7.4
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
+  exclude:
+    - php: 7.3
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.3
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.4
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.4
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
 
-# Default 'test' stage: Unit tests and behat tests against full matrix.
+# Unit tests and behat tests against full matrix.
 install:
   - moodle-plugin-ci install
-
 script:
   - moodle-plugin-ci phpunit --coverage-clover
   - moodle-plugin-ci behat
-
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-
 stages:
   - static
   - name: develop

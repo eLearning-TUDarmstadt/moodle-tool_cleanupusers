@@ -1,4 +1,4 @@
-# moodle-tool_cleanupusers *(Alpha_candidate)*
+# moodle-tool_cleanupusers *(Alpha_candidate)* WIP!
 
 [![Build Status](https://travis-ci.org/learnweb/moodle-tool_cleanupusers.svg?branch=master)](https://travis-ci.org/learnweb/moodle-tool_cleanupusers)
 
