@@ -1,4 +1,5 @@
 language: php
+
 os: linux
 dist: xenial
 
@@ -27,11 +28,13 @@ env:
     - DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
     - DB=pgsql MOODLE_BRANCH=MOODLE_39_STABLE
     - DB=pgsql MOODLE_BRANCH=MOODLE_310_STABLE
+    - DB=pgsql MOODLE_BRANCH=MOODLE_311_STABLE
     - DB=pgsql MOODLE_BRANCH=master
     - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
     - DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
     - DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
     - DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
+    - DB=mysqli MOODLE_BRANCH=MOODLE_311_STABLE
     - DB=mysqli MOODLE_BRANCH=master
 
 
@@ -45,7 +48,7 @@ before_install:
 jobs:
   fast_finish: true
   include:
-    # Prechecks against latest Moodle stable only.
+    # Prechecks against version running in the learnweb.
     - stage: static
       php: 7.4
       env: DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE

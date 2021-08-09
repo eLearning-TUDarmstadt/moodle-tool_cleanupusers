@@ -70,15 +70,16 @@ class archive_user_task extends scheduled_task {
 
         // Private function is executed to suspend, delete and activate users.
         $archivearray = $userstatuschecker->get_to_suspend();
+        $reactivatearray = $userstatuschecker->get_to_reactivate();
+        $arraytodelete = $userstatuschecker->get_to_delete();
+
         $suspendresult = $this->change_user_deprovisionstatus($archivearray, 'suspend');
         $unabletoarchive = $suspendresult['failures'];
         $userarchived = $suspendresult['countersuccess'];
 
-        $reactivatearray = $userstatuschecker->get_to_reactivate();
         $result = $this->change_user_deprovisionstatus($reactivatearray, 'reactivate');
         $unabletoactivate = $result['failures'];
 
-        $arraytodelete = $userstatuschecker->get_to_delete();
         $deleteresult = $this->change_user_deprovisionstatus($arraytodelete, 'delete');
         $unabletodelete = $deleteresult['failures'];
         $userdeleted = $deleteresult['countersuccess'];

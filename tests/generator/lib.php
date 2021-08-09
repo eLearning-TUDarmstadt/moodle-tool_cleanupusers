@@ -34,8 +34,23 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_cleanupusers_generator extends testing_data_generator {
+
     /**
      * Creates User to test the tool_cleanupusers plugin.
+     * Username                          |   signed in    | suspended manually | suspended by plugin | deleted
+     * --------------------------------------------------------------------------------------------------------
+     *  user                             | tendaysago    | no                 | no                  | no
+     *  userdeleted                      | oneyearago    | no                 | yes                 | yes
+     *  originaluser                     | oneyearago    | no                 | yes                 | no
+     *  userneverloggedin                | -             | no                 | no                  | no
+     *  userduplicatedname               | -             | no                 | no                  | no
+     *  usersuspendedmanually            | -             | yes                | no                  | no
+     *  useroneyearnotloggedin           | oneyearago    | no                 | no                  | no
+     *  usersuspendedbyplugin            | oneyearago    | yes                | yes                 | no
+     *  userinconsistentsuspended        | oneyearago    | no                 | partly              | no
+     *  usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
+     * @return array
+     * @throws dml_exception
      */
     public function test_create_preparation () {
         global $DB;
@@ -44,65 +59,71 @@ class tool_cleanupusers_generator extends testing_data_generator {
 
         $mytimestamp = time();
 
-        // Creates several user:
-        // user is not suspended did sign in.
-        // listuser is equal to neutraluser
-        // suspendeduser is suspended never signed in.
-        // notsuspendeduser signed in one year ago
-        // suspendeduser2 is suspended
-        // deleteuser is suspended signed in one year ago
-        // archivedbyplugin has entry in tool_cleanupusers and tool_cleanupusers_archive was suspended one year ago.
-        // reactivatebyplugin wassuspended by plugin (has entry in both tables) however lastaccess is only few hours ago.
-
-        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
-        $data['user'] = $user;
-
-        $listuser = $generator->create_user(array('username' => 'n_merr03', 'lastaccess' => $mytimestamp, 'suspended' => '0'));
-        $data['listuser'] = $listuser;
-
-        $suspendeduser = $generator->create_user(array('username' => 'suspendeduser', 'suspended' => '1'));
-        $data['suspendeduser'] = $suspendeduser;
-
+        // Timestamps are created to set the last access so we can test later the cronjob with the timechecker plugin.
+        $tendaysago = $mytimestamp - 864000;
         $timestamponeyearago = $mytimestamp - 31622600;
-        $notsuspendeduser = $generator->create_user(array('username' => 'notsuspendeduser', 'suspended' => '0',
+
+        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0'));
+        $user->realusername = $user->username;
+        $userneverloggedin = $generator->create_user(array('username' => 'userneverloggedin', 'lastaccess' => '',
+            'suspended' => '0'));
+        $userneverloggedin->realusername = $userneverloggedin->username;
+        $useroneyearnotloggedin = $generator->create_user(array('username' => 'useroneyearnotloggedin',
+            'lastaccess' => $timestamponeyearago, 'suspended' => '0'));
+        $useroneyearnotloggedin->realusername = $userneverloggedin->username;
+        $usersuspendedbypluginandmanually = $generator->create_user(array('username' => 'Anonym-x', 'suspended' => '1'));
+        $usersuspendedbypluginandmanually->realusername = 'Somerealusername';
+        $DB->insert_record_raw('tool_cleanupusers', array('id' => $usersuspendedbypluginandmanually->id, 'archived' => 1,
+            'timestamp' => $tendaysago), true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $usersuspendedbypluginandmanually->id,
+            'username' => 'Somerealusername', 'suspended' => $usersuspendedbypluginandmanually->suspended,
+            'lastaccess' => $tendaysago), true, false, true);
+
+        $usersuspendedmanually = $generator->create_user(array('username' => 'usersuspendedmanually', 'suspended' => '1'));
+        $usersuspendedmanually->realusername = $usersuspendedmanually->username;
+
+        $userdeleted = $generator->create_user(array('username' => 'userdeleted', 'suspended' => '1', 'deleted' => '1',
             'lastaccess' => $timestamponeyearago));
-        $data['notsuspendeduser'] = $notsuspendeduser;
+        $userdeleted->realusername = $userdeleted->username;
 
-        $suspendeduser2 = $generator->create_user(array('username' => 'suspendeduser2', 'suspended' => '1'));
-        $data['suspendeduser2'] = $suspendeduser2;
-
-        $deleteduser = $generator->create_user(array('username' => 'deleteduser', 'suspended' => '1',
-            'lastaccess' => $timestamponeyearago));
-        $data['deleteduser'] = $deleteduser;
-
-        // User that was archived by the plugin and will be deleted in cron-job.
-        $suspendeduser3 = $generator->create_user(array('username' => 'anonym', 'suspended' => '1', 'firstname' => 'Anonym'));
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $suspendeduser3->id, 'archived' => true,
+        $usersuspendedbyplugin = $generator->create_user(array('username' => 'Anonym-y', 'suspended' => '1',
+            'firstname' => 'Anonym'));
+        $usersuspendedbyplugin->realusername = 'usersuspendedbyplugin';
+        $DB->insert_record_raw('tool_cleanupusers', array('id' => $usersuspendedbyplugin->id, 'archived' => true,
             'timestamp' => $timestamponeyearago), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $suspendeduser3->id,
-            'username' => 'archivedbyplugin', 'suspended' => 1, 'lastaccess' => $timestamponeyearago),
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $usersuspendedbyplugin->id,
+            'username' => 'usersuspendedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago),
             true, false, true);
-        $data['archivedbyplugin'] = $suspendeduser3;
 
-        $timestampshortago = $mytimestamp - 3456;
-        // User that was archived by the plugin and will be reactivated in cron-job.
-        $reactivatebyplugin = $generator->create_user(array('username' => 'anonym2', 'suspended' => '1', 'firstname' => 'Anonym'));
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebyplugin->id, 'archived' => true,
-            'timestamp' => $timestampshortago), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebyplugin->id,
-            'username' => 'reactivatebyplugin',
-            'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
-        $data['reactivatebyplugin'] = $reactivatebyplugin;
+        $userinconsistentsuspended = $generator->create_user(array('username' => 'userinconsistentarchivedbyplugin',
+            'suspended' => '1', 'firstname' => 'Anonym', 'lastaccess' => $timestamponeyearago));
+        $userinconsistentsuspended->realusername = $userinconsistentsuspended->username;
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $userinconsistentsuspended->id,
+            'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago),
+            true, false, true);
 
-        // User that was archived by the plugin and will be reactivated in cron-job has as firstname Anonym.
-        $reactivatebypluginexception = $generator->create_user(['username' => 'moreanonym', 'suspended' => '1',
-            'firstname' => 'Anonym']);
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivatebypluginexception->id, 'archived' => true,
-            'timestamp' => $timestampshortago), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivatebypluginexception->id,
-            'username' => 'reactivatebypluginexception', 'firstname' => 'Anonym',
-            'suspended' => 1, 'lastaccess' => $mytimestamp), true, false, true);
-        $data['reactivatebypluginexception'] = $reactivatebypluginexception;
+        $userduplicatedname = $generator->create_user(array('username' => 'duplicatedname',
+            'suspended' => '1', 'firstname' => 'Anonym'));
+        $userduplicatedname->realusername = $userduplicatedname->username;
+        $originaluser = $generator->create_user(array('username' => 'Anonym-z',
+            'suspended' => '1', 'firstname' => 'Anonym'));
+        $originaluser->realusername = $userduplicatedname->username;
+        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $originaluser->id,
+            'username' => $userduplicatedname->username, 'suspended' => 0, 'lastaccess' => $timestamponeyearago),
+            true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers', array('id' => $originaluser->id, 'archived' => true,
+            'timestamp' => $tendaysago), true, false, true);
+
+        $data['user'] = $user;
+        $data['userdeleted'] = $userdeleted;
+        $data['originaluser'] = $originaluser;
+        $data['userneverloggedin'] = $userneverloggedin;
+        $data['userduplicatedname'] = $userduplicatedname;
+        $data['useroneyearnotloggedin'] = $useroneyearnotloggedin;
+        $data['usersuspendedmanually'] = $usersuspendedmanually;
+        $data['usersuspendedbyplugin'] = $usersuspendedbyplugin;
+        $data['userinconsistentsuspended'] = $userinconsistentsuspended;
+        $data['usersuspendedbypluginandmanually'] = $usersuspendedbypluginandmanually;
 
         return $data; // Return the user, course and group objects.
     }
