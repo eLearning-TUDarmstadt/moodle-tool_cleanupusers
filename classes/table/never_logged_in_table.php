@@ -33,7 +33,6 @@ class never_logged_in_table extends \table_sql
      *      as a key when storing table properties like sort order in the session.
      */
     public function __construct($users, $sqlwhere, $param) {
-        global $DB;
         parent::__construct('tool_cleanupusers_never_logged_in_table');
         // Define the list of columns to show.
         $columns = array('id', 'username', 'fullname', 'suspended', 'deleted');

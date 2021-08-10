@@ -103,8 +103,7 @@ class archive_user_task extends scheduled_task {
         }
 
         // Email is send from the do not reply user.
-        $user = new \core_user();
-        $sender = $user->get_user(-10);
+        $sender = \core_user::get_noreply_user();
         email_to_user($admin, $sender, 'Update Infos Cron Job tool_cleanupusers', $messagetext);
 
         // Triggers deprovisionusercronjob_completed event.

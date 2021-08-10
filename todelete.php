@@ -39,6 +39,7 @@ $pagetitle = get_string('todelete', 'tool_cleanupusers');
 $PAGE->set_title(get_string('todelete', 'tool_cleanupusers'));
 $PAGE->set_heading(get_string('todelete', 'tool_cleanupusers'));
 $PAGE->set_pagelayout('standard');
+$PAGE->set_url(new moodle_url('/admin/tool/cleanupusers/todelete.php'));
 
 $renderer = $PAGE->get_renderer('tool_cleanupusers');
 
@@ -46,8 +47,9 @@ $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
 
-if (!empty(get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
-    $subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+$config = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
+if ($config) {
+    $subplugin = $config;
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {
@@ -65,7 +67,8 @@ if (empty($deletearray)) {
     $userfilter->display_add();
     $userfilter->display_active();
     list($sql, $param) = $userfilter->get_sql_filter();
-    $deletetable = new \tool_cleanupusers\table\users_table($deletearray, $sql, $param);
+    $deletetable = new \tool_cleanupusers\table\users_table('tool_cleanupusers_todelete_table', $deletearray, $sql, $param);
+    $deletetable->define_baseurl($PAGE->url);
     $deletetable->out(20, false);
 }
 
