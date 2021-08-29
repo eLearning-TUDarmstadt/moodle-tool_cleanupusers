@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/lib/moodlelib.php');
 
-use \core\session\manager;
 /**
  * The class collects the necessary information to suspend, delete and activate users.
  * It can be used in sub-plugins, since the constructor assures that all necessary information is transferred.

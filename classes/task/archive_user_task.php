@@ -29,12 +29,12 @@ namespace tool_cleanupusers\task;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\task\scheduled_task;
 use tool_cleanupusers\cleanupusers_exception;
+use tool_cleanupusers\event\deprovisionusercronjob_completed;
 use tool_cleanupusers\local\manager\subpluginmanager;
 use tool_cleanupusers\local\manager\usermanager;
 use tool_cleanupusers\useraction;
-use tool_cleanupusers\event\deprovisionusercronjob_completed;
-use core\task\scheduled_task;
 
 class archive_user_task extends scheduled_task {
 

@@ -23,7 +23,6 @@
  */
 namespace userstatus_timechecker;
 
-use tool_cleanupusers\archiveduser;
 use tool_cleanupusers\userstatusinterface;
 
 defined('MOODLE_INTERNAL') || die;

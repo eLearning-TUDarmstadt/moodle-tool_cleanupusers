@@ -22,7 +22,6 @@
  */
 
 namespace tool_cleanupusers\local\table;
-use core_user\fields;
 use tool_cleanupusers\useraction;
 
 defined('MOODLE_INTERNAL') || die();

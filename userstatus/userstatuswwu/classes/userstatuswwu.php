@@ -23,8 +23,8 @@
  */
 namespace userstatus_userstatuswwu;
 
-use tool_cleanupusers\userstatusinterface;
 use tool_cleanupusers\archiveduser;
+use tool_cleanupusers\userstatusinterface;
 
 defined('MOODLE_INTERNAL') || die;
 

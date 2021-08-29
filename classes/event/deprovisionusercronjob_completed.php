@@ -25,7 +25,8 @@
 namespace tool_cleanupusers\event;
 defined('MOODLE_INTERNAL') || die();
 
-use \core\event\base;
+use core\event\base;
+
 /**
  * The tool_cleanupusers event informs admin about outcome of cron-job.
  *

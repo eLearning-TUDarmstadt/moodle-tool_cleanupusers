@@ -29,17 +29,6 @@ namespace tool_cleanupusers\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-use tool_cleanupusers\cleanupusers_exception;
-// Needed for the default plugin.
-use tool_cleanupusers\local\manager\subpluginmanager;
-use tool_cleanupusers\transaction;
-use tool_cleanupusers\useraction;
-use tool_cleanupusers\usermanager;
-use userstatus_userstatuswwu\userstatuswwu;
-use tool_cleanupusers\archiveduser;
-use tool_cleanupusers\event\deprovisionusercronjob_completed;
-use core\task\scheduled_task;
-
 class testable_archive_user_task extends archive_user_task {
 
     public function calculate_useractions($actionits, $delayits, $globaldelayit) {
