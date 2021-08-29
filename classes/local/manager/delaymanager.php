@@ -55,7 +55,7 @@ class delaymanager {
     }
 
     public static function create_delays($action, $until, $userids) {
-        if ($action != 0 && !in_array($action, useraction::actions)) {
+        if ($action != 0 && !in_array($action, useraction::ACTIONS)) {
             throw new \coding_exception('$action not a valid action');
         }
         global $DB;

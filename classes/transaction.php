@@ -41,7 +41,10 @@ class transaction {
     public const DELAY_LOCAL_INDEF = 5;
     public const CANCEL_APPROVAL = 6;
 
-    public const actions = [self::APPROVE, self::DELAY_GLOBAL, self::DELAY_LOCAL, self::DELAY_GLOBAL_INDEF, self::DELAY_LOCAL_INDEF, self::CANCEL_APPROVAL];
+    public const ACTIONS = [
+            self::APPROVE, self::DELAY_GLOBAL, self::DELAY_LOCAL,
+            self::DELAY_GLOBAL_INDEF, self::DELAY_LOCAL_INDEF, self::CANCEL_APPROVAL
+    ];
 
     public static function is_rollback(int $transaction) {
         return in_array($transaction, [self::DELAY_GLOBAL, self::DELAY_LOCAL, self::DELAY_GLOBAL_INDEF, self::DELAY_LOCAL_INDEF]);

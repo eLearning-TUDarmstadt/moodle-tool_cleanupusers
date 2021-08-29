@@ -30,13 +30,9 @@ namespace tool_cleanupusers\task;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_cleanupusers\cleanupusers_exception;
-// Needed for the default plugin.
 use tool_cleanupusers\local\manager\subpluginmanager;
-use tool_cleanupusers\transaction;
+use tool_cleanupusers\local\manager\usermanager;
 use tool_cleanupusers\useraction;
-use tool_cleanupusers\usermanager;
-use userstatus_userstatuswwu\userstatuswwu;
-use tool_cleanupusers\archiveduser;
 use tool_cleanupusers\event\deprovisionusercronjob_completed;
 use core\task\scheduled_task;
 
@@ -140,7 +136,7 @@ class archive_user_task extends scheduled_task {
         $DB->delete_records_select('tool_cleanupusers_delay', 'delayuntil IS NOT NULL and delayuntil < :time',
                 ['time' => time()]);
 
-        // User the subplugins wants to do things to. Reactivate > Suspend > Delete is the priority, if the users is in
+        // User the subplugins wants to do things to. Reactivate > Suspend > Delete is the priority.
         $subpluginactions = [
                 useraction::REACTIVATE => $userstatuschecker->get_to_reactivate(),
                 useraction::SUSPEND => $userstatuschecker->get_to_suspend(),
@@ -171,10 +167,18 @@ class archive_user_task extends scheduled_task {
         $this->update_approve_db($selectedactions);
     }
 
+    /**
+     * Calculates the actual needed processingsteps by desired useractions, delays for the useractions and global delays.
+     *
+     * @param array $actionits Array (useraction => ArrayIterator of userids)
+     * @param array $delayits Array (useraction => ArrayIterator of userids)
+     * @param \ArrayIterator $globaldelayit ArrayIterator of userids
+     * @return array (useraction => array of userids)
+     */
     protected function calculate_useractions($actionits, $delayits, $globaldelayit) {
         $selectedactions = [];
 
-        foreach($actionits as $action => $iterator) {
+        foreach ($actionits as $action => $iterator) {
             $selectedactions[$action] = [];
         }
 
@@ -244,7 +248,7 @@ class archive_user_task extends scheduled_task {
             $record = new \stdClass();
             $record->action = $action;
             $record->approved = 0;
-            foreach($users as $user) {
+            foreach ($users as $user) {
                 self::forward_iterator_until($existingusers, $user);
                 if ($user === $existingusers->current()) {
                     continue;
@@ -273,7 +277,7 @@ class archive_user_task extends scheduled_task {
      */
     protected function change_user_deprovisionstatus($userarray, $intention) {
         // Checks whether the intention is valid.
-        if (!in_array($intention, useraction::actions)) {
+        if (!in_array($intention, useraction::ACTIONS)) {
             throw new \coding_exception('Invalid parameters in tool_cleanupusers.');
         }
 

@@ -38,10 +38,10 @@ class useraction {
     public const SUSPEND = 2;
     public const REACTIVATE = 3;
 
-    public const actions = [self::DELETE, self::SUSPEND, self::REACTIVATE];
+    public const ACTIONS = [self::DELETE, self::SUSPEND, self::REACTIVATE];
 
-    static function get_string_for_action_verb(int $action) {
-        switch($action) {
+    public static function get_string_for_action_verb(int $action) {
+        switch ($action) {
             case self::DELETE:
                 return get_string('delete', 'tool_cleanupusers');
             case self::SUSPEND:
@@ -53,8 +53,8 @@ class useraction {
         }
     }
 
-    static function get_string_for_action_noun(int $action) {
-        switch($action) {
+    public static function get_string_for_action_noun(int $action) {
+        switch ($action) {
             case self::DELETE:
                 return get_string('deletion', 'tool_cleanupusers');
             case self::SUSPEND:

@@ -28,7 +28,7 @@ use ArrayIterator;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__ . '/fixtures/testable_archive_user_task.php';
+require_once(__DIR__ . '/fixtures/testable_archive_user_task.php');
 
 /**
  * Testcase class for executing phpunit test for the moodle tool_cleanupusers plugin.
@@ -40,7 +40,7 @@ require_once __DIR__ . '/fixtures/testable_archive_user_task.php';
  */
 class calculateuseractions_test extends \advanced_testcase {
 
-    function test_calculateuseractions() {
+    public function test_calculateuseractions() {
         $task = new task\testable_archive_user_task();
 
         $actionits = [
@@ -63,12 +63,11 @@ class calculateuseractions_test extends \advanced_testcase {
         $this->assertEquals([3], $result[useraction::DELETE]);
     }
 
-    function test_updatedb() {
-        global $DB;
+    public function test_updatedb() {
         $this->resetAfterTest();
 
         $u = [];
-        for($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $u[] = $this->getDataGenerator()->create_user()->id;
         }
 
@@ -96,7 +95,7 @@ class calculateuseractions_test extends \advanced_testcase {
         $this->assert_desired_state_in_db($desiredstate);
     }
 
-    function assert_desired_state_in_db($desiredstate) {
+    private function assert_desired_state_in_db($desiredstate) {
         global $DB;
 
         $actualstate = [

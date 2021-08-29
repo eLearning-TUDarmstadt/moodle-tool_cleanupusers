@@ -58,7 +58,6 @@ $PAGE->navbar->add($pagetitle);
 $table = new delaytable();
 $table->define_baseurl($PAGE->url);
 
-/** @var tool_cleanupusers_renderer $renderer */
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 

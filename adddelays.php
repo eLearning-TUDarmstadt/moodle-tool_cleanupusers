@@ -71,7 +71,6 @@ $pagetitle = get_string('blocknewusers', 'tool_cleanupusers');
 $PAGE->set_title($pagetitle);
 $PAGE->navbar->add($pagetitle);
 
-/** @var tool_cleanupusers_renderer $renderer */
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 

@@ -58,7 +58,6 @@ class blockusersform extends \moodleform {
         $radioarray[] = $mform->createElement('radio', 'selectusersvia', '', get_string('inputfield', 'tool_cleanupusers'), 1);
         $mform->addGroup($radioarray, 'selectusersviaar', get_string('selectusersvia', 'tool_cleanupusers'), array(' '), false);
 
-
         $options = [
                 'ajax' => 'core_search/form-search-user-selector',
                 'multiple' => true,
@@ -82,7 +81,6 @@ class blockusersform extends \moodleform {
         $mform->hideIf('usersfile', 'selectusersvia', 'neq', 0);
 
         $this->add_action_buttons(true, get_string('add'));
-
 
     }
 }

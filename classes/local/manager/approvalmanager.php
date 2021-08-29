@@ -106,7 +106,6 @@ class approvalmanager {
         $deletewhere = 'approved = 0 ';
         $deleteparams = [];
 
-
         if ($users) {
             list($insql, $inparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
             $insertsql .= ' AND a.userid ' . $insql;

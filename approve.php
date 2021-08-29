@@ -32,7 +32,7 @@ global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->libdir.'/adminlib.php');
 
 $useraction = required_param('useraction', PARAM_INT);
-if (!in_array($useraction, useraction::actions)) {
+if (!in_array($useraction, useraction::ACTIONS)) {
     throw new coding_exception('queue param invalid');
 }
 $approved = optional_param('approved', false, PARAM_BOOL);
@@ -41,7 +41,7 @@ admin_externalpage_setup('tool_cleanupusers_overview');
 $PAGE->set_url(new moodle_url('/admin/tool/cleanupusers/approve.php', ['useraction' => $useraction, 'approved' => $approved]));
 
 $a = optional_param('a', null, PARAM_INT);
-if ($a && in_array($a, transaction::actions)) {
+if ($a && in_array($a, transaction::ACTIONS)) {
     require_sesskey();
 
     $users = null;
@@ -65,7 +65,6 @@ $PAGE->navbar->add($pagetitle);
 $table = new approvetable($useraction, $approved);
 $table->define_baseurl($PAGE->url);
 
-/** @var tool_cleanupusers_renderer $renderer */
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 
