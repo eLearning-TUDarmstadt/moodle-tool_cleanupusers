@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_cleanupusers\table;
+namespace tool_cleanupusers\local\table;
 defined('MOODLE_INTERNAL') || die();
 
 class never_logged_in_table extends \table_sql

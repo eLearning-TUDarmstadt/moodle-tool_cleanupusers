@@ -65,7 +65,7 @@ class timechecker implements userstatusinterface {
         $users = $this->get_users_not_suspended_by_plugin();
         $admins = get_admins();
         $tosuspend = array();
-        foreach ($users as $key => $user) {
+        foreach ($users as $user) {
             if (array_key_exists($user->id, $admins)) {
                 continue;
             }
@@ -73,9 +73,7 @@ class timechecker implements userstatusinterface {
             $mytimestamp = time();
             $timenotloggedin = $mytimestamp - $user->lastaccess;
             if ($timenotloggedin > $this->timesuspend) {
-                $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
-                    $user->deleted);
-                $tosuspend[$key] = $informationuser;
+                $tosuspend[] = $user->id;
             }
         }
         return $tosuspend;
@@ -93,11 +91,9 @@ class timechecker implements userstatusinterface {
         $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
         $arrayofuser = $DB->get_records_select('user', $select);
         $neverloggedin = array();
-        foreach ($arrayofuser as $key => $user) {
+        foreach ($arrayofuser as $user) {
             if (empty($user->lastaccess) && $user->deleted == 0) {
-                $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
-                    $user->deleted);
-                $neverloggedin[$key] = $informationuser;
+                $neverloggedin[] = $user->id;
             }
         }
         return $neverloggedin;
@@ -134,9 +130,7 @@ class timechecker implements userstatusinterface {
             if (array_key_exists($user->id, $admins)) {
                 continue;
             } else {
-                $informationuser = new archiveduser($user->id, $user->suspended,
-                $user->lastaccess, $user->username, $user->deleted);
-                $todeleteusers[$user->id] = $informationuser;
+                $todeleteusers[] = $user->id;
             }
         }
 
@@ -162,33 +156,31 @@ class timechecker implements userstatusinterface {
         $toactivate = array();
         $admins = get_admins();
 
-        foreach ($users as $key => $user) {
+        foreach ($users as $user) {
             if (array_key_exists($user->id, $admins)) {
                 continue;
             } else {
                 $mytimestamp = time();
-                // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
-                if (!array_key_exists($user->id, $archived)) {
-                    $timenotloggedin = $mytimestamp - $user->lastaccess;
-                    $activateuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
-                        $user->deleted);
-                } else {
-                    $shadowtableuser = $archived[$user->id];
-                    // There is an entry in the shadowtable, data from the shadowtable is used.
-                    if ($shadowtableuser->lastaccess !== 0) {
-                        $timenotloggedin = $mytimestamp - $shadowtableuser->lastaccess;
-                    } else {
-                        // In case lastaccess is 0 it can not decided whether the user should be reactivated.
-                        continue;
-                    }
-                    $activateuser = new archiveduser($shadowtableuser->id, $shadowtableuser->suspended,
-                        $shadowtableuser->lastaccess, $shadowtableuser->username, $shadowtableuser->deleted);
 
+                if (array_key_exists($user->id, $archived)) {
+                    // There is an entry in the shadowtable, data from the shadowtable is used.
+                    $shadowtableuser = $archived[$user->id];
+                    $lastaccess = $shadowtableuser->lastaccess;
+                } else {
+                    // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
+                    $lastaccess = $user->lastaccess;
                 }
+
+                if ($lastaccess === 0) {
+                    // In case lastaccess is 0 it can not decided whether the user should be reactivated.
+                    continue;
+                }
+
+                $timenotloggedin = $mytimestamp - $lastaccess;
 
                 // When the time not logged in is smaller than the timesuspend he/she should be activated again.
                 if ($timenotloggedin < $this->timesuspend && $user->suspended == 1) {
-                    $toactivate[$key] = $activateuser;
+                    $toactivate[] = $user->id;
                 }
             }
         }

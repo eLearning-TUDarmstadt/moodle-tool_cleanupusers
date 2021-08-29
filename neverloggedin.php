@@ -21,6 +21,9 @@
  * @copyright  2018 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use tool_cleanupusers\local\manager\subpluginmanager;
+
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
@@ -47,15 +50,7 @@ $content = '';
 echo $OUTPUT->header();
 echo $renderer->get_heading();
 
-$config = get_config('tool_cleanupusers', 'cleanupusers_subplugin');
-if ($config) {
-    $subplugin = $config;
-    $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
-    $userstatuschecker = new $mysubpluginname();
-} else {
-    $subplugin = 'userstatuswwu';
-    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
-}
+$userstatuschecker = subpluginmanager::get_userstatus_plugin();
 
 // Request arrays from the sub-plugin.
 $neverloggedinarray = $userstatuschecker->get_never_logged_in();
@@ -67,7 +62,7 @@ if (empty($neverloggedinarray)) {
     $userfilter->display_add();
     $userfilter->display_active();
     list($sql, $param) = $userfilter->get_sql_filter();
-    $neverloggedintable = new \tool_cleanupusers\table\never_logged_in_table($neverloggedinarray, $sql, $param);
+    $neverloggedintable = new \tool_cleanupusers\local\table\never_logged_in_table($neverloggedinarray, $sql, $param);
     $neverloggedintable->define_baseurl(new moodle_url('admin/tool/cleanupusers/neverloggedin.php'));
     $neverloggedintable->out(20, false);
 }

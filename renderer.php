@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_cleanupusers\useraction;
+
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/tablelib.php');
 /**
@@ -33,64 +35,36 @@ require_once($CFG->libdir.'/tablelib.php');
  */
 class tool_cleanupusers_renderer extends plugin_renderer_base {
 
-    /**
-     * Function expects three arrays and renders them to three separate tables.
-     *
-     * @param array $userstosuspend
-     * @param array $usertodelete
-     * @param array $usersneverloggedin
-     * @return string html
-     */
-    public function render_index_page($arrayreactivate, $userstosuspend, $usertodelete, $usersneverloggedin) {
-        global $DB;
-        // Checks if one of the given arrays is empty to prevent rendering empty arrays.
-        // If not empty renders the information needed.
 
-        if (empty($arrayreactivate)) {
-            $rendertoreactivate = array();
-        } else {
-            $rendertoreactivate= $this->information_user_reactivate($arrayreactivate);
-        }
-        if (empty($usertodelete)) {
-            $rendertodelete = array();
-        } else {
-            $rendertodelete = $this->information_user_delete($usertodelete, $cleanupusers);
-        }
-        if (empty($usersneverloggedin)) {
-            $renderneverloggedin = array();
-        } else {
-            $renderneverloggedin = $this->information_user_notloggedin($usersneverloggedin, $cleanupusers);
-        }
-        if (empty($userstosuspend)) {
-            $rendertosuspend = array();
-        } else {
-            $rendertosuspend = $this->information_user_suspend($userstosuspend, $cleanupusers);
-        }
+    public function print_approve_overview() {
+        global $DB, $PAGE;
 
-        // Renders the information for each array in a separate html table.
-        $output = '';
-        if (!empty($rendertoreactivate)) {
-            $output .= $this->render_table_of_users($rendertoreactivate, array(get_string('Neverloggedin', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
-                get_string('Willbe', 'tool_cleanupusers')));
+        $table = new flexible_table('tool_cleanupusers-overview');
+        $table->define_columns(['action', 'amountneedapprove', 'amountapproved']);
+        $table->define_headers([
+                get_string('action', 'tool_cleanupusers'),
+                get_string('usersneedingapproval', 'tool_cleanupusers'),
+                get_string('approvedusers', 'tool_cleanupusers'),
+        ]);
+        $table->define_baseurl($PAGE->url);
+        $table->setup();
+        foreach (useraction::actions as $action) {
+            $approve = new moodle_url('/admin/tool/cleanupusers/approve.php', ['useraction' => $action]);
+            $approvableusers = html_writer::link(
+                    $approve->out(false, ['approved' => 0]),
+                    get_string('xusersneedingapproval', 'tool_cleanupusers', $DB->count_records('tool_cleanupusers_approve', ['action' => $action, 'approved' => 0]))
+            );
+            $approvedusers = html_writer::link(
+                    $approve->out(false, ['approved' => 1]),
+                    get_string('xapprovedusers', 'tool_cleanupusers', $DB->count_records('tool_cleanupusers_approve', ['action' => $action, 'approved' => 1]))
+            );
+            $table->add_data([
+                    useraction::get_string_for_action_verb($action),
+                    $approvableusers,
+                    $approvedusers
+            ]);
         }
-        if (!empty($renderneverloggedin)) {
-            $output .= $this->render_table_of_users($renderneverloggedin, array(get_string('Neverloggedin', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
-                get_string('Willbe', 'tool_cleanupusers')));
-        }
-        if (!empty($rendertosuspend)) {
-            $output .= $this->render_table_of_users($rendertosuspend, array(get_string('oldusers', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'),
-                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
-        }
-        if (!empty($rendertodelete)) {
-            $output .= $this->render_table_of_users($rendertodelete, array(get_string('titletodelete', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'),
-                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
-        }
-
-        return $output;
+        $table->finish_output();
     }
 
     /**

@@ -45,5 +45,49 @@ function xmldb_tool_cleanupusers_upgrade($oldversion) {
         // Cleanupusers savepoint reached.
         upgrade_plugin_savepoint(true, 2018021401, 'tool', 'cleanupusers');
     }
+
+    if ($oldversion < 2021082400) {
+
+        // Define table tool_cleanupusers_approve to be created.
+        $table = new xmldb_table('tool_cleanupusers_approve');
+
+        // Adding fields to table tool_cleanupusers_approve.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('action', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('approved', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table tool_cleanupusers_approve.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('key_u_userid', XMLDB_KEY_FOREIGN_UNIQUE, ['userid'], 'user', ['id']);
+
+        // Conditionally launch create table for tool_cleanupusers_approve.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table tool_cleanupusers_delay to be created.
+        $table = new xmldb_table('tool_cleanupusers_delay');
+
+        // Adding fields to table tool_cleanupusers_delay.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('action', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('delayuntil', XMLDB_TYPE_INTEGER, '11', null, null, null, null);
+
+        // Adding keys to table tool_cleanupusers_delay.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('key_f_userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $table->add_key('key_u_user-action', XMLDB_KEY_UNIQUE, ['userid', 'action']);
+
+        // Conditionally launch create table for tool_cleanupusers_delay.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Cleanupusers savepoint reached.
+        upgrade_plugin_savepoint(true, 2021082400, 'tool', 'cleanupusers');
+    }
+
     return true;
 }

@@ -49,7 +49,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
     /**
      * Function to test the class timechecker.
      *
-     * @see timechecker
+     * @see test_userstatusinterface
      */
     public function test_locallib() {
         $data = $this->set_up();
@@ -78,7 +78,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
         // Userarchived is not in array since time is not right.
         set_config('suspendtime', 400 , 'userstatus_timechecker');
         set_config('deletetime', 730 , 'userstatus_timechecker');
-        $newstatuschecker = new timechecker();
+        $newstatuschecker = new test();
         $returnsuspend = $newstatuschecker->get_to_suspend();
         $returndelete = $newstatuschecker->get_to_delete();
         $returnneverloggedin = $newstatuschecker->get_never_logged_in();
@@ -99,7 +99,7 @@ class userstatus_timechecker_testcase extends advanced_testcase {
 
         set_config('suspendtime', 10 , 'userstatus_timechecker');
         set_config('deletetime', 20 , 'userstatus_timechecker');
-        $newstatuschecker = new timechecker();
+        $newstatuschecker = new test();
         $returnsuspend = $newstatuschecker->get_to_suspend();
         $returndelete = $newstatuschecker->get_to_delete();
         $returnneverloggedin = $newstatuschecker->get_never_logged_in();

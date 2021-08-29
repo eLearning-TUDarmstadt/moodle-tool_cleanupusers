@@ -25,31 +25,59 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    // Add own category for plugin's  and subplugins' settings.
-    $ADMIN->add('users', new admin_category('tool_cleanupusers', get_string('pluginname', 'tool_cleanupusers')));
-    // Add entry for own settings.
-    $ADMIN->add('tool_cleanupusers', new admin_externalpage('cleanupusers',
-        get_string('pluginsettingstitle', 'tool_cleanupusers'),
-        "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/index.php"
+    // Add own category for plugin's and subplugins' settings.
+    $category = new admin_category('tool_cleanupusers', get_string('pluginname', 'tool_cleanupusers'));
+    $ADMIN->add('users', $category);
+
+    // Add entry for overview
+    $ADMIN->add('tool_cleanupusers', new admin_externalpage('tool_cleanupusers_overview',
+        get_string('overview', 'tool_cleanupusers'),
+        new moodle_url("/admin/tool/cleanupusers/index.php")
     ));
+
+    // General settings
+    $settingpage = new admin_settingpage('tool_cleanupusers_settings', get_string('pluginsettingstitle', 'tool_cleanupusers'));
+
+    // List choosable subplugins.
+    $choices = [];
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('userstatus');
+    foreach ($plugins as $plugin) {
+        $choices[$plugin->name] = $plugin->displayname;
+    }
+    $settingpage->add(new admin_setting_configselect('tool_cleanupusers/cleanupusers_subplugin',
+            get_string('subplugin', 'tool_cleanupusers'),
+            null,
+            'userstatuswwu',
+            $choices));
+
+
+    $settingpage->add(new admin_setting_configduration('tool_cleanupusers/rollbackduration',
+            get_string('config_delay_duration', 'tool_cleanupusers'),
+            null,
+            183 * 24 * 60 * 60)); // Dafault value is 180 days.
+
+    $ADMIN->add('tool_cleanupusers', $settingpage);
+
     // Add entry for own settings.
     $ADMIN->add('tool_cleanupusers', new admin_externalpage('Manage never logged in',
         get_string('neverloggedin', 'tool_cleanupusers'),
-        "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/neverloggedin.php"
+        new moodle_url("/admin/tool/cleanupusers/neverloggedin.php")
     ));
     // Add entry for own settings.
     $ADMIN->add('tool_cleanupusers', new admin_externalpage('Manage to archive',
         get_string('toarchive', 'tool_cleanupusers'),
-        "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/toarchive.php"
+        new moodle_url("/admin/tool/cleanupusers/toarchive.php")
     ));
     // Add entry for own settings.
     $ADMIN->add('tool_cleanupusers', new admin_externalpage('Manage to delete',
         get_string('todelete', 'tool_cleanupusers'),
-        "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/todelete.php"
+        new moodle_url("/admin/tool/cleanupusers/todelete.php")
     ));
+
+    $ADMIN->add('tool_cleanupusers', new admin_category('tool_cleanupusers_subplugins', get_string('subplugins', 'tool_cleanupusers')));
     // Adds an entry for every sub-plugin with an settings.php.
     foreach (core_plugin_manager::instance()->get_plugins_of_type('userstatus') as $plugin) {
         global $CFG;
-        $plugin->load_settings($ADMIN, 'tool_cleanupusers', $hassiteconfig);
+        $plugin->load_settings($ADMIN, 'tool_cleanupusers_subplugins', $hassiteconfig);
     }
 }

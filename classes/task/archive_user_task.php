@@ -31,6 +31,10 @@ defined('MOODLE_INTERNAL') || die();
 
 use tool_cleanupusers\cleanupusers_exception;
 // Needed for the default plugin.
+use tool_cleanupusers\local\manager\subpluginmanager;
+use tool_cleanupusers\transaction;
+use tool_cleanupusers\useraction;
+use tool_cleanupusers\usermanager;
 use userstatus_userstatuswwu\userstatuswwu;
 use tool_cleanupusers\archiveduser;
 use tool_cleanupusers\event\deprovisionusercronjob_completed;
@@ -57,32 +61,45 @@ class archive_user_task extends scheduled_task {
      * @return true
      */
     public function execute() {
-        // In case the admin did not submit a sub-plugin, the default is used.
-        // This is very unlikely to happen since when installing the plugin a default is defined.
-        // It could happen when sub-plugin is deleted manually (Uninstalling sub-plugins that are active is not allowed).
+        $this->execute_user_actions();
+        $this->fill_approve_queue();
+        return true;
+    }
 
-        if (!empty($subplugin = get_config('tool_cleanupusers', 'cleanupusers_subplugin'))) {
-            $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
-            $userstatuschecker = new $mysubpluginname();
-        } else {
-            $userstatuschecker = new userstatuswwu();
-        }
+    public function execute_user_actions() {
+        global $DB;
+
+        $userstatuschecker = subpluginmanager::get_userstatus_plugin();
 
         // Private function is executed to suspend, delete and activate users.
-        $archivearray = $userstatuschecker->get_to_suspend();
-        $reactivatearray = $userstatuschecker->get_to_reactivate();
-        $arraytodelete = $userstatuschecker->get_to_delete();
+        $subpluginactions = [
+                useraction::SUSPEND => $userstatuschecker->get_to_suspend(),
+                useraction::REACTIVATE => $userstatuschecker->get_to_reactivate(),
+                useraction::DELETE => $userstatuschecker->get_to_delete()
+        ];
 
-        $suspendresult = $this->change_user_deprovisionstatus($archivearray, 'suspend');
-        $unabletoarchive = $suspendresult['failures'];
-        $userarchived = $suspendresult['countersuccess'];
+        $results = [];
 
-        $result = $this->change_user_deprovisionstatus($reactivatearray, 'reactivate');
-        $unabletoactivate = $result['failures'];
+        foreach ($subpluginactions as $useraction => $users) {
+            // Only get those users, that are actually approved for the desired action.
+            if (count($users) == 0) {
+                $approvedusers = [];
+            } else {
+                list($insql, $inparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
+                $inparams['action'] = $useraction;
+                $approvedusers = $DB->get_fieldset_select('tool_cleanupusers_approve',
+                        'userid',
+                        'approved = 1 AND action = :action AND userid ' . $insql);
+            }
 
-        $deleteresult = $this->change_user_deprovisionstatus($arraytodelete, 'delete');
-        $unabletodelete = $deleteresult['failures'];
-        $userdeleted = $deleteresult['countersuccess'];
+            $results[$useraction] = $this->change_user_deprovisionstatus($approvedusers, $useraction);
+        }
+
+        $unabletoactivate = $results[useraction::REACTIVATE]['failures'];
+        $unabletoarchive = $results[useraction::SUSPEND]['failures'];
+        $unabletodelete = $results[useraction::DELETE]['failures'];
+        $userarchived = $results[useraction::SUSPEND]['countersuccess'];
+        $userdeleted = $results[useraction::DELETE]['countersuccess'];
 
         // Admin is informed about the cron-job and the amount of users that are affected.
 
@@ -97,9 +114,9 @@ class archive_user_task extends scheduled_task {
         } else {
             // Extra information for problematic users.
             $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_cleanupusers',
-                    count($unabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_cleanupusers',
-                    count($unabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_cleanupusers',
-                    count($unabletoactivate));
+                            count($unabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_cleanupusers',
+                            count($unabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_cleanupusers',
+                            count($unabletoactivate));
         }
 
         // Email is send from the do not reply user.
@@ -114,17 +131,149 @@ class archive_user_task extends scheduled_task {
         return true;
     }
 
+    public function fill_approve_queue() {
+        global $DB;
+
+        $userstatuschecker = subpluginmanager::get_userstatus_plugin();
+
+        // Delete all delays that are expired.
+        $DB->delete_records_select('tool_cleanupusers_delay', 'delayuntil IS NOT NULL and delayuntil < :time',
+                ['time' => time()]);
+
+        // User the subplugins wants to do things to. Reactivate > Suspend > Delete is the priority, if the users is in
+        $subpluginactions = [
+                useraction::REACTIVATE => $userstatuschecker->get_to_reactivate(),
+                useraction::SUSPEND => $userstatuschecker->get_to_suspend(),
+                useraction::DELETE => $userstatuschecker->get_to_delete()
+        ];
+
+        $actionits = [];
+        $delayits = [];
+
+        $globaldelay = new \ArrayIterator(
+                $DB->get_fieldset_select('tool_cleanupusers_delay', 'id',
+                        'action IS NULL ' .
+                        'ORDER BY id ASC')
+        );
+
+        foreach ($subpluginactions as $action => $users) {
+            sort($subpluginactions[$action]);
+            $actionits[$action] = new \ArrayIterator($subpluginactions[$action]);
+
+            $delayits[$action] = new \ArrayIterator(
+                    $DB->get_fieldset_select('tool_cleanupusers_delay', 'id',
+                            'action = :action ' .
+                            'ORDER BY id ASC', ['action' => $action])
+            );
+        }
+
+        $selectedactions = $this->calculate_useractions($actionits, $delayits, $globaldelay);
+        $this->update_approve_db($selectedactions);
+    }
+
+    protected function calculate_useractions($actionits, $delayits, $globaldelayit) {
+        $selectedactions = [];
+
+        foreach($actionits as $action => $iterator) {
+            $selectedactions[$action] = [];
+        }
+
+        while (count($actionits) > 0) {
+            $minuser = null;
+            $chosenaction = null;
+
+            foreach ($actionits as $action => $iterator) {
+                if (!$iterator->valid()) {
+                    unset($actionits[$action]);
+                    continue;
+                }
+
+                self::forward_iterator_until($delayits[$action], $iterator->current());
+                if ($delayits[$action]->current() === $iterator->current()) {
+                    $iterator->next();
+                    continue;
+                }
+
+                if ($minuser === null) {
+                    $chosenaction = $action;
+                    $minuser = $iterator->current();
+                } else if ($minuser == $iterator->current()) {
+                    // Something with a higher priority has the same user as we do.
+                    $iterator->next();
+                } else if ($iterator->current() < $minuser) {
+                    $chosenaction = $action;
+                    $minuser = $iterator->current();
+                }
+            }
+
+            if ($chosenaction !== null) {
+                self::forward_iterator_until($globaldelayit, $minuser);
+                if ($globaldelayit->current() !== $minuser) {
+                    $selectedactions[$chosenaction][] = $minuser;
+                }
+                $actionits[$chosenaction]->next();
+            }
+        }
+        return $selectedactions;
+    }
+
+    protected function update_approve_db($selectedactions) {
+        global $DB;
+        $transaction = $DB->start_delegated_transaction();
+        foreach ($selectedactions as $action => $users) {
+            if (count($users) == 0) {
+                continue;
+            }
+
+            list($notinsql, $notinparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'param', false);
+            $notinparams['action'] = $action;
+
+            $DB->delete_records_select('tool_cleanupusers_approve', 'action = :action AND userid ' . $notinsql,
+                    $notinparams);
+        }
+
+        foreach ($selectedactions as $action => $users) {
+            /* TODO would like to replace this with something akin to INSERT INTO {approve} SELECT (u.id, :action, 0)
+                FROM (VALUES (23), (83), ...) as u (id) WHERE u.id IS NOT IN (SELECT userid FROM approve); */
+
+            $existingusers = new \ArrayIterator(
+                    $DB->get_fieldset_select('tool_cleanupusers_approve', 'userid', 'action = :action ORDER BY userid ASC',
+                            ['action' => $action])
+            );
+
+            $record = new \stdClass();
+            $record->action = $action;
+            $record->approved = 0;
+            foreach($users as $user) {
+                self::forward_iterator_until($existingusers, $user);
+                if ($user === $existingusers->current()) {
+                    continue;
+                }
+
+                $record->userid = $user;
+                $DB->insert_record_raw('tool_cleanupusers_approve', $record, false, true);
+            }
+        }
+        $transaction->allow_commit();
+    }
+
+    protected static function forward_iterator_until(\ArrayIterator $iterator, $until) {
+        while ($iterator->valid() && $iterator->current() < $until) {
+            $iterator->next();
+        }
+    }
+
     /**
      * Deletes, suspends or reactivates an array of users.
      *
      * @param  array $userarray of users
      * @param  string $intention of suspend, delete, reactivate
-     * @return array ['numbersuccess'] successfully changed users ['failures'] userids, who could not be changed.
+     * @return array ['countersuccess'] successfully changed users ['failures'] userids, who could not be changed.
      * @throws \coding_exception
      */
-    private function change_user_deprovisionstatus($userarray, $intention) {
+    protected function change_user_deprovisionstatus($userarray, $intention) {
         // Checks whether the intention is valid.
-        if (!in_array($intention, array('suspend', 'reactivate', 'delete'))) {
+        if (!in_array($intention, useraction::actions)) {
             throw new \coding_exception('Invalid parameters in tool_cleanupusers.');
         }
 
@@ -137,26 +286,24 @@ class archive_user_task extends scheduled_task {
         // Alternatively one could have wrote different function for each intention.
         // However this would have produced duplicated code.
         // Therefore checking the intention parameter repeatedly was preferred.
-        foreach ($userarray as $key => $user) {
-            if ($user->deleted == 0 && !is_siteadmin($user)) {
-                $changinguser = new archiveduser($user->id, $user->suspended, $user->lastaccess,
-                    $user->username, $user->deleted);
+        foreach ($userarray as $key => $userid) {
+            if (!is_siteadmin($userid)) {
                 try {
                     switch ($intention) {
-                        case 'suspend':
-                            $changinguser->archive_me();
+                        case useraction::SUSPEND:
+                            usermanager::suspend_user($userid);
                             break;
-                        case 'reactivate':
-                            $changinguser->activate_me();
+                        case useraction::REACTIVATE:
+                            usermanager::reactivate_user($userid);
                             break;
-                        case 'delete':
-                            $changinguser->delete_me();
+                        case useraction::DELETE:
+                            usermanager::delete_user($userid);
                             break;
                         // No default since if-clause checks the intention parameter.
                     }
                     $countersuccess++;
                 } catch (cleanupusers_exception $e) {
-                    $failures[$key] = $user->id;
+                    $failures[$key] = $userid;
                 }
             }
         }

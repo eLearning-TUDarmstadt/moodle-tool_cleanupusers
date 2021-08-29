@@ -101,21 +101,21 @@ class userstatuswwu implements userstatusinterface {
      * @return array of users who should be suspended in the next cron-job.
      */
     public function get_to_suspend() {
-        return $this->tosuspend;
+        return array_keys($this->tosuspend);
     }
 
     /**
      * @return array of users who never signed in.
      */
     public function get_never_logged_in() {
-        return $this->neverloggedin;
+        return array_keys($this->neverloggedin);
     }
 
     /**
      * @return array of users who should be deleted in the next cron-job.
      */
     public function get_to_delete() {
-        return $this->todelete;
+        return array_keys($this->todelete);
     }
 
     /**
@@ -123,7 +123,7 @@ class userstatuswwu implements userstatusinterface {
      * @return array of users who should be reactivated in the next cron-job.
      */
     public function get_to_reactivate() {
-        return $this->toreactivate;
+        return array_keys($this->toreactivate);
     }
     /**
      * Compares the user of the groups.txt file with the users currently suspended by the plugin and return the users
