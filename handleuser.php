@@ -22,6 +22,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_cleanupusers\local\manager\usermanager;
+
 require_once('../../../config.php');
 require_login();
 require_once($CFG->dirroot.'/user/lib.php');
@@ -46,7 +48,7 @@ switch($action){
             $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
-                $deprovisionuser->archive_me();
+                usermanager::suspend_user($userid);
             } catch (\tool_cleanupusers\cleanupusers_exception $e) {
                 // Notice user could not be suspended.
                 notice(get_string('errormessagenoaction', 'tool_cleanupusers'), $url);
@@ -64,7 +66,7 @@ switch($action){
             $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
-                $deprovisionuser->activate_me();
+                usermanager::reactivate_user($userid);
             } catch (\tool_cleanupusers\cleanupusers_exception $e) {
                 // Notice user could not be reactivated.
                 notice(get_string('errormessagenoaction', 'tool_cleanupusers'), $url);
@@ -82,7 +84,7 @@ switch($action){
             $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
-                $deprovisionuser->delete_me();
+                usermanager::delete_user($user);
             } catch (\tool_cleanupusers\cleanupusers_exception $e) {
                 $url = new moodle_url('/admin/tool/cleanupusers/index.php');
                 // Notice user could not be deleted.

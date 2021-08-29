@@ -36,7 +36,7 @@ $context = context_system::instance();
 require_login();
 require_capability('moodle/site:config', $context);
 
-admin_externalpage_setup('cleanupusers');
+admin_externalpage_setup('tool_cleanupusers_overview');
 
 $pagetitle = get_string('todelete', 'tool_cleanupusers');
 $PAGE->set_title(get_string('todelete', 'tool_cleanupusers'));

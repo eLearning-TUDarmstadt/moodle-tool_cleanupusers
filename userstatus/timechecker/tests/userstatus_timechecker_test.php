@@ -49,7 +49,7 @@ class userstatus_timechecker_test extends \advanced_testcase {
     /**
      * Function to test the class timechecker.
      *
-     * @see test_userstatusinterface
+     * @see test_userstatus
      */
     public function test_locallib() {
         $data = $this->set_up();

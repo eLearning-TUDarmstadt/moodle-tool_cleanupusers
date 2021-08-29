@@ -24,7 +24,7 @@
 namespace tool_cleanupusers\local\manager;
 
 use tool_cleanupusers\userstatusinterface;
-use userstatus_test\test_userstatusinterface;
+use tool_cleanupusers\test_userstatus;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -46,7 +46,7 @@ class subpluginmanager {
         }
 
         if ($subplugin === 'test') {
-            return new test_userstatusinterface();
+            return new test_userstatus();
         }
 
         $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;

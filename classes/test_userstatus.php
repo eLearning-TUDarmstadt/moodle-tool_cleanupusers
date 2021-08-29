@@ -32,26 +32,30 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright 2021 Justus Dieckmann WWU
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_userstatusinterface implements userstatusinterface {
+class test_userstatus implements userstatusinterface {
 
     public function get_to_suspend() {
-        $a = explode(',', get_config('tool_cleanupusers', 'test_tosuspend'));
-        return $a;
+        $c = get_config('tool_cleanupusers', 'test_tosuspend');
+        $a = explode(',', $c ? $c : '');
+        return array_map('intval', $a);
     }
 
     public function get_never_logged_in() {
-        $a = explode(',', get_config('tool_cleanupusers', 'test_neverloggedin'));
-        return $a;
+        $c = get_config('tool_cleanupusers', 'test_neverloggedin');
+        $a = explode(',', $c ? $c : '');
+        return array_map('intval', $a);
     }
 
     public function get_to_delete() {
-        $a = explode(',', get_config('tool_cleanupusers', 'test_todelete'));
-        return $a;
+        $c = get_config('tool_cleanupusers', 'test_todelete');
+        $a = explode(',', $c ? $c : '');
+        return array_map('intval', $a);
     }
 
     public function get_to_reactivate() {
-        $a = explode(',', get_config('tool_cleanupusers', 'test_toreactivate'));
-        return $a;
+        $c = get_config('tool_cleanupusers', 'test_toreactivate');
+        $a = explode(',', $c ? $c : '');
+        return array_map('intval', $a);
     }
 
     public static function set_to_suspend(array $users) {

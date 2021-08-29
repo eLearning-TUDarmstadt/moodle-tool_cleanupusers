@@ -83,9 +83,12 @@ class archive_user_task extends scheduled_task {
             } else {
                 list($insql, $inparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
                 $inparams['action'] = $useraction;
-                $approvedusers = $DB->get_fieldset_select('tool_cleanupusers_approve',
+                $approvedusers = array_map('intval', $DB->get_fieldset_select('tool_cleanupusers_approve',
                         'userid',
-                        'approved = 1 AND action = :action AND userid ' . $insql);
+                        'approved = 1 AND action = :action AND userid ' . $insql, $inparams));
+
+                $DB->delete_records_select('tool_cleanupusers_approve',
+                        'approved = 1 AND action = :action AND userid ' . $insql, $inparams);
             }
 
             $results[$useraction] = $this->change_user_deprovisionstatus($approvedusers, $useraction);
@@ -147,9 +150,9 @@ class archive_user_task extends scheduled_task {
         $delayits = [];
 
         $globaldelay = new \ArrayIterator(
-                $DB->get_fieldset_select('tool_cleanupusers_delay', 'id',
-                        'action IS NULL ' .
-                        'ORDER BY id ASC')
+                array_map('intval', $DB->get_fieldset_select('tool_cleanupusers_delay', 'userid',
+                        'action = 0 ' .
+                        'ORDER BY id ASC'))
         );
 
         foreach ($subpluginactions as $action => $users) {
@@ -157,9 +160,9 @@ class archive_user_task extends scheduled_task {
             $actionits[$action] = new \ArrayIterator($subpluginactions[$action]);
 
             $delayits[$action] = new \ArrayIterator(
-                    $DB->get_fieldset_select('tool_cleanupusers_delay', 'id',
+                    array_map('intval', $DB->get_fieldset_select('tool_cleanupusers_delay', 'userid',
                             'action = :action ' .
-                            'ORDER BY id ASC', ['action' => $action])
+                            'ORDER BY id ASC', ['action' => $action]))
             );
         }
 
@@ -241,8 +244,8 @@ class archive_user_task extends scheduled_task {
                 FROM (VALUES (23), (83), ...) as u (id) WHERE u.id IS NOT IN (SELECT userid FROM approve); */
 
             $existingusers = new \ArrayIterator(
-                    $DB->get_fieldset_select('tool_cleanupusers_approve', 'userid', 'action = :action ORDER BY userid ASC',
-                            ['action' => $action])
+                    array_map('intval', $DB->get_fieldset_select('tool_cleanupusers_approve', 'userid', 'action = :action ORDER BY userid ASC',
+                            ['action' => $action]))
             );
 
             $record = new \stdClass();
@@ -250,7 +253,7 @@ class archive_user_task extends scheduled_task {
             $record->approved = 0;
             foreach ($users as $user) {
                 self::forward_iterator_until($existingusers, $user);
-                if ($user === $existingusers->current()) {
+                if ($user == $existingusers->current()) {
                     continue;
                 }
 

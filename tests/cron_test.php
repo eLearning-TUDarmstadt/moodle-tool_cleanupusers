@@ -38,7 +38,7 @@ require_once(__DIR__ . '/fixtures/testable_archive_user_task.php');
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calculateuseractions_test extends \advanced_testcase {
+class cron_test extends \advanced_testcase {
 
     public function test_calculateuseractions() {
         $task = new task\testable_archive_user_task();
