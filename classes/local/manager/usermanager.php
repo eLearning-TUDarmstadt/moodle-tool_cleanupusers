@@ -104,15 +104,13 @@ class usermanager {
         // Deletes record of plugin table tool_cleanupusers.
         if (!$DB->record_exists('tool_cleanupusers', array('id' => $user->id))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
-        } else if (!$DB->record_exists('tool_cleanupusers_archive', array('id' => $user->id))) {
+        } else if (!($shadowuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id)))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
-        } else if ($DB->record_exists('user', array('id' => $userid))) {
+        } else if ($DB->record_exists('user', array('username' => $shadowuser->username))) {
             throw new cleanupusers_exception(get_string('errormessagenotactive', 'tool_cleanupusers'));
         } else {
             // Both record exist so we have a user which can be reactivated.
             $DB->delete_records('tool_cleanupusers', array('id' => $user->id));
-            // If the user is in table replace data.
-            $shadowuser = $DB->get_record('tool_cleanupusers_archive', array('id' => $user->id));
 
             $DB->update_record('user', $shadowuser);
             // Delete records from tool_cleanupusers_archive table.

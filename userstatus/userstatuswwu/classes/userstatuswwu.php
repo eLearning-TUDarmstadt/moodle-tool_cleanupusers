@@ -197,7 +197,7 @@ class userstatuswwu implements userstatusinterface {
                             $zivuserarray[$currentname] = true;
                             break;
                         default:
-                            continue;
+                            continue 2;
                     }
                 } else {
                     // In case other groups are used...
