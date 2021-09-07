@@ -31,7 +31,8 @@ class users_table extends \table_sql {
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      */
-    public function __construct($uniqueid, $users, $sqlwhere, $param) {
+    public function __construct($uniqueid, $userids, $sqlwhere, $param) {
+        global $DB;
         parent::__construct($uniqueid);
 
         // Define the list of columns to show.
@@ -43,13 +44,11 @@ class users_table extends \table_sql {
         get_string('fullname'), get_string('lastaccess', 'tool_cleanupusers'));
         $this->define_headers($headers);
 
-        $idsasstring = '';
-        foreach ($users as $user) {
-            $idsasstring .= $user->id . ',';
-        }
-        $idsasstring = rtrim( $idsasstring , ',');
-        $where = 'id IN (' . $idsasstring . ')';
-        if ($sqlwhere != null && $sqlwhere != '') {
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $where = "id $insql";
+        $param = array_merge($inparams, $param);
+
+        if ($sqlwhere) {
             $where .= ' AND ' . $sqlwhere;
         }
         $this->set_sql('id, username, lastaccess, ' . get_all_user_name_fields(true), '{user}', $where, $param);

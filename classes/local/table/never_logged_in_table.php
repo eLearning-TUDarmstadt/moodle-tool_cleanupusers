@@ -32,7 +32,8 @@ class never_logged_in_table extends \table_sql
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      */
-    public function __construct($users, $sqlwhere, $param) {
+    public function __construct($userids, $sqlwhere, $param) {
+        global $DB;
         parent::__construct('tool_cleanupusers_never_logged_in_table');
         // Define the list of columns to show.
         $columns = array('id', 'username', 'fullname', 'suspended', 'deleted');
@@ -43,14 +44,11 @@ class never_logged_in_table extends \table_sql
             get_string('fullname'), get_string('Archived', 'tool_cleanupusers'), 'Archive');
         $this->define_headers($headers);
 
-        $idsasstring = '';
-        foreach ($users as $user) {
-            $idsasstring .= $user->id . ',';
-        }
-        $idsasstring = rtrim($idsasstring, ',');
-        $where = 'id IN (' . $idsasstring . ')';
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $where = "id $insql";
+        $param = array_merge($inparams, $param);
 
-        if ($sqlwhere != null && $sqlwhere != '') {
+        if ($sqlwhere) {
             $where .= ' AND ' . $sqlwhere;
         }
 
