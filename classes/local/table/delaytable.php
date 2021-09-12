@@ -38,7 +38,7 @@ class delaytable extends \table_sql {
     public function __construct() {
         parent::__construct('tool_cleanupusers-approvetable');
 
-        global $PAGE;
+        global $PAGE, $CFG;
         $PAGE->requires->js_call_amd('tool_cleanupusers/checktable', 'init');
 
         // Define the list of columns to show.
@@ -59,8 +59,12 @@ class delaytable extends \table_sql {
         $this->define_headers($headers);
         $this->column_nosort = ['select', 'tools'];
 
-        $userfieldsapi = \core_user\fields::for_name();
-        $ufields = $userfieldsapi->get_sql('u', false, '', $this->useridfield, false)->selects;
+        if ($CFG->branch >= 311) {
+            $userfieldsapi = \core_user\fields::for_name();
+            $ufields = $userfieldsapi->get_sql('u', false, '', $this->useridfield, false)->selects;
+        } else {
+            $ufields = get_all_user_name_fields(true, 'u');
+        }
 
         $this->set_sql('a.id, a.userid, a.action, a.delayuntil, u.username, u.lastaccess, ' . $ufields,
                 '{tool_cleanupusers_delay} a ' .

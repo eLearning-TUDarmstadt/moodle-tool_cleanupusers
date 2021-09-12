@@ -43,7 +43,7 @@ class approvetable extends \table_sql {
         $this->useraction = $useraction;
         $this->approved = $approved;
 
-        global $PAGE;
+        global $PAGE, $CFG;
         $PAGE->requires->js_call_amd('tool_cleanupusers/checktable', 'init');
 
         // Define the list of columns to show.
@@ -53,7 +53,6 @@ class approvetable extends \table_sql {
         // Define the titles of columns to show in header.
         $headers = [
                 \html_writer::checkbox('tool_cleanupusers-checkall', '', false),
-                // get_string('id', 'tool_cleanupusers' ),
                 get_string('username'),
                 get_string('fullname'),
                 get_string('lastaccess', 'tool_cleanupusers'),
@@ -62,9 +61,12 @@ class approvetable extends \table_sql {
         $this->define_headers($headers);
         $this->column_nosort = ['select', 'tools'];
 
-        $userfieldsapi = \core_user\fields::for_name();
-        $ufields = $userfieldsapi->get_sql('u', false, '', $this->useridfield, false)->selects;
-
+        if ($CFG->branch >= 311) {
+            $userfieldsapi = \core_user\fields::for_name();
+            $ufields = $userfieldsapi->get_sql('u', false, '', $this->useridfield, false)->selects;
+        } else {
+            $ufields = get_all_user_name_fields(true, 'u');
+        }
         $this->set_sql('a.id, a.userid, u.username, u.lastaccess, ' . $ufields,
                 '{tool_cleanupusers_approve} a ' .
                 'LEFT JOIN {user} u ON u.id = a.userid',
