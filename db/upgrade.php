@@ -57,11 +57,29 @@ function xmldb_tool_cleanupusers_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
 
+        // Define field icq to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('skype');
+
+        // Conditionally launch drop field skype.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
         // Define field yahoo to be dropped from tool_cleanupusers_archive.
         $table = new xmldb_table('tool_cleanupusers_archive');
         $field = new xmldb_field('yahoo');
 
         // Conditionally launch drop field yahoo.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field icq to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('aim');
+
+        // Conditionally launch drop field aim.
         if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }
