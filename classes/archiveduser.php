@@ -228,11 +228,6 @@ class archiveduser {
         $cloneuser->lastname = '';
         $cloneuser->suspended = 1;
         $cloneuser->email = '';
-        $cloneuser->skype = '';
-        $cloneuser->icq = '';
-        $cloneuser->msn = '';
-        $cloneuser->yahoo = '';
-        $cloneuser->aim = '';
         $cloneuser->phone1 = '';
         $cloneuser->phone2 = '';
         $cloneuser->institution = '';
@@ -247,7 +242,6 @@ class archiveduser {
         $cloneuser->currentlogin = 0;
         $cloneuser->lastlogin = 0;
         $cloneuser->secret = '';
-        $cloneuser->url = '';
         $cloneuser->picture = 0;
         $cloneuser->description = '';
         $cloneuser->timemodified = '';
@@ -257,7 +251,7 @@ class archiveduser {
         $cloneuser->firstnamephonetic = '';
         $cloneuser->middlename = '';
         $cloneuser->alternatename = '';
-        $cloneuser->imagealt = '';
+        $cloneuser->moodlenetprofile = '';
 
         return $cloneuser;
     }

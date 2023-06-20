@@ -49,22 +49,22 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         if (empty($arrayreactivate)) {
             $rendertoreactivate = array();
         } else {
-            $rendertoreactivate= $this->information_user_reactivate($arrayreactivate);
+            $rendertoreactivate = $this->information_user_reactivate($arrayreactivate);
         }
         if (empty($usertodelete)) {
             $rendertodelete = array();
         } else {
-            $rendertodelete = $this->information_user_delete($usertodelete, $cleanupusers);
+            $rendertodelete = $this->information_user_delete($usertodelete);
         }
         if (empty($usersneverloggedin)) {
             $renderneverloggedin = array();
         } else {
-            $renderneverloggedin = $this->information_user_notloggedin($usersneverloggedin, $cleanupusers);
+            $renderneverloggedin = $this->information_user_notloggedin($usersneverloggedin);
         }
         if (empty($userstosuspend)) {
             $rendertosuspend = array();
         } else {
-            $rendertosuspend = $this->information_user_suspend($userstosuspend, $cleanupusers);
+            $rendertosuspend = $this->information_user_suspend($userstosuspend);
         }
 
         // Renders the information for each array in a separate html table.
@@ -161,11 +161,10 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     /**
      * Formats information for users that are identified by the sub-plugin for deletion.
      * @param array $users array of objects of the user std_class
-     * @param array $cleanupusers all users that are currently archived by the plugin.
      * @return array
      */
-    private function information_user_delete($users, $cleanupusers) {
-        global $OUTPUT;
+    private function information_user_delete($users) {
+        global $DB, $OUTPUT;
         $resultarray = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -174,7 +173,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
 
-                $isarchivid = array_key_exists($user->id, $cleanupusers);
+                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
                 if (empty($isarchivid)) {
                     $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
@@ -192,7 +191,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Formats information for users that are identified by the sub-plugin for deletion.
+     * Formats information for users that are identified by the sub-plugin for reactivation.
      * @param array $users array of objects of the user std_class
      * @return array
      */
@@ -224,13 +223,12 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Safes relevant information for users that are identified by the sub-plugin for suspending.
+     * Saves relevant information for users that are identified by the sub-plugin for suspending.
      * @param array $users array of objects of the user std_class
-     * @param array $cleanupusers all users that are currently archived by the plugin.
      * @return array
      */
-    private function information_user_suspend($users, $cleanupusers) {
-        global $OUTPUT;
+    private function information_user_suspend($users) {
+        global $DB, $OUTPUT;
 
         $result = array();
         foreach ($users as $key => $user) {
@@ -239,7 +237,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
 
-                $isarchivid = array_key_exists($user->id, $cleanupusers);
+                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
                 if (empty($isarchivid)) {
                     $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
@@ -260,20 +258,19 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Safes relevant information for users who never logged in.
+     * Saves relevant information for users who never logged in.
      * @param array $users array of objects of the user std_class
-     * @param array $cleanupusers all users that are currently archived by the plugin.
      * @return array userid as key for user information
      */
-    private function information_user_notloggedin($users, $cleanupusers) {
-        global $OUTPUT;
+    private function information_user_notloggedin($users) {
+        global $DB, $OUTPUT;
         $result = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = get_string('neverlogged', 'tool_cleanupusers');
-                $isarchivid = array_key_exists($user->id, $cleanupusers);
+                $isarchivid = $DB->get_records('tool_cleanupusers', array('id' => $user->id, 'archived' => 1));
                 if (empty($isarchivid)) {
                     $userinformation['archived'] = get_string('No', 'tool_cleanupusers');
                 } else {
