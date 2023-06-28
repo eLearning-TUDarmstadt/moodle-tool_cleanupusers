@@ -36,6 +36,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     /**
      * Function expects three arrays and renders them to three separate tables.
      *
+     * @param array $userstoreactivate
      * @param array $userstosuspend
      * @param array $usertodelete
      * @param array $usersneverloggedin
@@ -49,7 +50,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         // Checks if one of the given arrays is empty to prevent rendering empty arrays.
         // If not empty renders the information needed.
 
-        if (empty($arrayreactivate)) {
+        if (empty($userstoreactivate)) {
             $rendertoreactivate = array();
         } else {
             $rendertoreactivate = $this->information_user_reactivate($userstoreactivate, $cleanupusers);
