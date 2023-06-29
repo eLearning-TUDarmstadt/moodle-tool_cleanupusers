@@ -34,7 +34,7 @@ require_once($CFG->libdir.'/tablelib.php');
 class tool_cleanupusers_renderer extends plugin_renderer_base {
 
     /**
-     * Function expects three arrays and renders them to three separate tables.
+     * Function expects four arrays and renders them to separate tables.
      *
      * @param array $userstoreactivate
      * @param array $userstosuspend
@@ -74,7 +74,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         // Renders the information for each array in a separate html table.
         $output = '';
         if (!empty($rendertoreactivate)) {
-            $output .= $this->render_table_of_users($rendertoreactivate, array(get_string('Neverloggedin', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertoreactivate, array(get_string('willbereactivated', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
                 get_string('Willbe', 'tool_cleanupusers')));
         }
@@ -84,12 +84,12 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 get_string('Willbe', 'tool_cleanupusers')));
         }
         if (!empty($rendertosuspend)) {
-            $output .= $this->render_table_of_users($rendertosuspend, array(get_string('oldusers', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertosuspend, array(get_string('willbesuspended', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'),
                 get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
         }
         if (!empty($rendertodelete)) {
-            $output .= $this->render_table_of_users($rendertodelete, array(get_string('titletodelete', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertodelete, array(get_string('willbedeleted', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'),
                 get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
         }
