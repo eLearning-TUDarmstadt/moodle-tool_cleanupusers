@@ -63,7 +63,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
 
         $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0'));
         $user->realusername = $user->username;
-        $userneverloggedin = $generator->create_user(array('username' => 'userneverloggedin', 'lastaccess' => '',
+        $userneverloggedin = $generator->create_user(array('username' => 'userneverloggedin',
             'suspended' => '0'));
         $userneverloggedin->realusername = $userneverloggedin->username;
         $useroneyearnotloggedin = $generator->create_user(array('username' => 'useroneyearnotloggedin',
