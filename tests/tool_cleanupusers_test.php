@@ -34,7 +34,7 @@ use tool_cleanupusers\task;
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_cleanupusers_testcase extends advanced_testcase {
+class tool_cleanupusers_test extends advanced_testcase {
 
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
@@ -377,7 +377,6 @@ class tool_cleanupusers_testcase extends advanced_testcase {
         // Administrator should have received an email.
         $messages = $sink->get_messages();
         $this->assertEquals(1, count($messages));
-
 
         $msg = str_replace(array("\r\n", "\r", "\n", "<br>", "</br>"), '', $messages[0]->body);
 

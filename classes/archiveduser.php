@@ -82,7 +82,6 @@ class archiveduser {
         // Get the current user.
         $user = \core_user::get_user($this->id);
 
-
         // Only apply to users who are not yet suspended, not admins, and to users with correct name
         if ($user->suspended == 0 and !is_siteadmin($user) and $user->username == \core_user::clean_field($user->username, 'username')) {
             $transaction = $DB->start_delegated_transaction();

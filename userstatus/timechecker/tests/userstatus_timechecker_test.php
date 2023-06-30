@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userstatus_timechecker_testcase extends advanced_testcase {
+class userstatus_timechecker_test extends advanced_testcase {
 
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.

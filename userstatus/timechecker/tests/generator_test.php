@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userstatus_timechecker_generator_testcase extends advanced_testcase {
+class generator_test extends advanced_testcase {
     public function test_generator() {
         $this->resetAfterTest(true);
     }

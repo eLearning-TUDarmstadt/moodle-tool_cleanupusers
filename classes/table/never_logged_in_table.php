@@ -24,8 +24,8 @@
 namespace tool_cleanupusers\table;
 defined('MOODLE_INTERNAL') || die();
 
-class never_logged_in_table extends \table_sql
-{
+class never_logged_in_table extends \table_sql {
+
 
     /**
      * Constructor
