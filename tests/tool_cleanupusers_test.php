@@ -199,7 +199,7 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to suspend user');
         $suspendedmanually->archive_me();
-        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $USER->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['usersuspendedmanually']->id));
         $this->assertEmpty($recordtooltable);
 
         $this->resetAfterTest(true);
@@ -338,14 +338,16 @@ class tool_cleanupusers_test extends advanced_testcase {
      * Executes and tests the cron-job. The following table illustrates what will happen to the users:
      * Username                          |   signed in    | suspended manually | suspended by plugin | deleted | action
      * -----------------------------------------------------------------------------------------------------------------
-     *  user                             | tendaysago    | no                 | no                  | no       |  -
+     *  user                             | tendaysago    | no                 | no                  | no       | -
      *  userdeleted                      | oneyearago    | no                 | yes                 | yes      | -
      *  userneverloggedin                | -             | no                 | no                  | no       | -
      *  usersuspendedmanually            | -             | yes                | no                  | no       | -
      *  useroneyearnotloggedin           | oneyearago    | no                 | no                  | no       | suspend
      *  usersuspendedbyplugin            | oneyearago    | yes                | yes                 | no       | delete
-     *  userinconsistentsuspended        | oneyearago    | no                 | partly              | no       | suspended
+     *  userinconsistentsuspended        | oneyearago    | no                 | partly              | no       | -
      *  usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no       | activate
+     *  originaluser                     | tendaysago    | no                 | yes                 | no       | activate
+     *  userduplicatedname               | -             | no                 | no                  | no       | -
      * @throws dml_exception
      * @throws coding_exception
      */
@@ -378,13 +380,16 @@ class tool_cleanupusers_test extends advanced_testcase {
 
         $msg = str_replace(array("\r\n", "\r", "\n", "<br>", "</br>"), '', $messages[0]->body);
 
-        $this->assertStringContainsString('In the last cron-job 1 users were archived', $msg);
-        $this->assertStringContainsString('In the last cron-job 1 users were deleted', $msg);
+        $this->assertStringContainsString('In the last cron-job 1 users were archived',
+            $msg);  // useroneyearnotloggedin
+        $this->assertStringContainsString('In the last cron-job 1 users were deleted',
+            $msg);  // usersuspendedbyplugin
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be deleted',
-            $msg);  // should be 3, but cronjob itself filters deleted users and admins
+            $msg);  // 236465(from this function) and userdeleted, but deleted users are already filtered
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be suspended',
-            $msg);  // should be 2, but cronjob itself filters admins
-        $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be reactivated', $msg);
+            $msg);  // userinconsistentsuspended
+        $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be reactivated',
+            $msg);  // originaluser
 
         // Users not changed by the Cronjob.
         $recordusertable = $DB->get_record('user', array('id' => $data['user']->id));
@@ -419,12 +424,12 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(1, $recordusertable->deleted);
 
-        // User is suspended.
+        // User remains inconsistently suspended.
         $recordusertable = $DB->get_record('user', array('id' => $data['userinconsistentsuspended']->id));
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['userinconsistentsuspended']->id));
         $recordtooltable2 = $DB->get_record('tool_cleanupusers_archive', array('id' => $data['userinconsistentsuspended']->id));
         $this->assertNotEmpty($recordtooltable2);
-        $this->assertNotEmpty($recordtooltable);
+        $this->assertEmpty($recordtooltable);
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordusertable->deleted);
 

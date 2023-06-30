@@ -174,7 +174,7 @@ class archiveduser {
 
         $user = \core_user::get_user($this->id);
 
-        if ($user != false && $user->deleted == 0 && !is_siteadmin($user)) {
+        if ($user && $user->deleted == 0 && !is_siteadmin($user)) {
 
             $transaction = $DB->start_delegated_transaction();
 
