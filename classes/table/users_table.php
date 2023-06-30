@@ -22,14 +22,22 @@
  */
 
 namespace tool_cleanupusers\table;
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Create a class for an Custom sql_table for the tool_cleanupusers
+ *
+ * @package   tool_cleanupusers
+ * @copyright 2019 Justus Dieckmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class users_table extends \table_sql {
 
     /**
      * Constructor
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
+     * @param array $users
+     * @param String $sqlwhere
+     * @param array $param
      */
     public function __construct($uniqueid, $users, $sqlwhere, $param) {
         parent::__construct($uniqueid);

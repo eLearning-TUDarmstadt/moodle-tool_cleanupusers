@@ -26,8 +26,6 @@ namespace userstatus_userstatuswwu;
 use tool_cleanupusers\userstatusinterface;
 use tool_cleanupusers\archiveduser;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Class that checks the status of different users
  *
@@ -35,7 +33,6 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class userstatuswwu implements userstatusinterface {
 
     /** @var array of usernames from the university list. */
@@ -98,6 +95,7 @@ class userstatuswwu implements userstatusinterface {
     }
 
     /**
+     * Array of suspended users.
      * @return array of users who should be suspended in the next cron-job.
      */
     public function get_to_suspend() {
@@ -105,6 +103,7 @@ class userstatuswwu implements userstatusinterface {
     }
 
     /**
+     * Array of never logged in users.
      * @return array of users who never signed in.
      */
     public function get_never_logged_in() {
@@ -112,6 +111,7 @@ class userstatuswwu implements userstatusinterface {
     }
 
     /**
+     * Array of to delete users.
      * @return array of users who should be deleted in the next cron-job.
      */
     public function get_to_delete() {
@@ -169,7 +169,7 @@ class userstatuswwu implements userstatusinterface {
                 $currentstring = explode(' ', $buffer);
                 // When the next line begins with the current username, there is no need for additional checks,
                 // since the username was already saved as a valid user.
-                if (!empty($currentname) and $currentstring['0'] === $currentname) {
+                if (!empty($currentname) && $currentstring['0'] === $currentname) {
                     continue;
                 }
                 // In case the line does not have two words, it can not be handled.
@@ -196,8 +196,6 @@ class userstatuswwu implements userstatusinterface {
                             $currentname = $currentstring[0];
                             $zivuserarray[$currentname] = true;
                             break;
-                        default:
-                            continue;
                     }
                 } else {
                     // In case other groups are used...

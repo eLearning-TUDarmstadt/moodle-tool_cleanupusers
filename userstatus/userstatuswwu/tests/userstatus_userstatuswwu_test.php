@@ -37,6 +37,10 @@ use userstatus_userstatuswwu\userstatuswwu;
  */
 class userstatus_userstatuswwu_test extends advanced_testcase {
 
+    /**
+     * Generates the data from the generator.
+     * @return mixed
+     */
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;

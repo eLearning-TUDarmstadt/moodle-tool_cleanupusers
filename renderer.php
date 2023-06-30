@@ -99,7 +99,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
 
     /**
      * Renders the table for users to suspend.
-     * @param $userstosuspend
+     * @param array $userstosuspend
      * @return bool|string
      * @throws coding_exception
      */
@@ -129,7 +129,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
 
     /**
      * Renders the table for users who never logged in.
-     * @param $usersneverloggedin
+     * @param array $usersneverloggedin
      * @return bool|string
      * @throws coding_exception
      */
@@ -169,7 +169,6 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_delete($users, $cleanupusers) {
-        global $OUTPUT;
         $resultarray = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -187,7 +186,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['Willbe'] = get_string('shouldbedelted', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
                 $userinformation['link'] = \html_writer::link($url,
-                    $OUTPUT->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
+                    $this->output->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
                         ['class' => "imggroup-" . $user->id]));
             }
             $resultarray[$key] = $userinformation;
@@ -202,8 +201,6 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_reactivate($users, $cleanupusers) {
-        global $OUTPUT;
-
         $resultarray = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -220,7 +217,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['Willbe'] = 'Reactivated';
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'reactivate']);
                 $userinformation['link'] = \html_writer::link($url,
-                    $OUTPUT->pix_icon('t/show', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
+                    $this->output->pix_icon('t/show', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
                         ['class' => "imggroup-" . $user->id]));
             }
             $resultarray[$key] = $userinformation;
@@ -235,8 +232,6 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_suspend($users, $cleanupusers) {
-        global $OUTPUT;
-
         $result = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -256,7 +251,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'suspend']);
 
                 $userinformation['link'] = \html_writer::link($url,
-                    $OUTPUT->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
+                    $this->output->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
                         ['class' => "imggroup-" . $user->id]));
             }
             $result[$key] = $userinformation;
@@ -271,7 +266,6 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array userid as key for user information
      */
     private function information_user_notloggedin($users, $cleanupusers) {
-        global $OUTPUT;
         $result = array();
         foreach ($users as $key => $user) {
             $userinformation = array();
@@ -287,7 +281,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 $userinformation['Willbe'] = get_string('nothinghappens', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
                 $userinformation['link'] = \html_writer::link($url,
-                    $OUTPUT->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
+                    $this->output->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
                         ['class' => "imggroup-" . $user->id]));
             }
             $result[$key] = $userinformation;

@@ -21,10 +21,8 @@
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 use tool_cleanupusers\task;
-
 
 /**
  * Testcase class for executing phpunit test for the moodle tool_cleanupusers plugin.
@@ -36,6 +34,9 @@ use tool_cleanupusers\task;
  */
 class tool_cleanupusers_test extends advanced_testcase {
 
+    /** Get data from generator.
+     * @return mixed
+     */
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;
@@ -441,8 +442,14 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->resetAfterTest();
     }
 
+
     /**
+     *
      * Testing equality of userdata arrays disregarding the realusername field.
+     *
+     * @param stdClass $expected
+     * @param stdClass $actual
+     * @return void
      */
     public function assert_user_equals($expected, $actual) {
         $expected = (array) $expected;

@@ -30,6 +30,7 @@ require_once($CFG->dirroot.'/lib/moodlelib.php');
 use \core\session\manager;
 /**
  * The class collects the necessary information to suspend, delete and activate users.
+ *
  * It can be used in sub-plugins, since the constructor assures that all necessary information is transferred.
  *
  * @package   tool_cleanupusers
@@ -82,8 +83,9 @@ class archiveduser {
         // Get the current user.
         $user = \core_user::get_user($this->id);
 
-        // Only apply to users who are not yet suspended, not admins, and to users with correct name
-        if ($user->suspended == 0 and !is_siteadmin($user) and $user->username == \core_user::clean_field($user->username, 'username')) {
+        // Only apply to users who are not yet suspended, not admins, and to users with correct name.
+        if ($user->suspended == 0 && !is_siteadmin($user) && $user->username ==
+            \core_user::clean_field($user->username, 'username')) {
             $transaction = $DB->start_delegated_transaction();
             // We are already getting the shadowuser here to keep the original suspended status.
             $shadowuser = clone $user;
@@ -172,7 +174,7 @@ class archiveduser {
 
         $user = \core_user::get_user($this->id);
 
-        if ($user != false and $user->deleted == 0 and !is_siteadmin($user)) {
+        if ($user != false && $user->deleted == 0 && !is_siteadmin($user)) {
 
             $transaction = $DB->start_delegated_transaction();
 

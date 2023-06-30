@@ -16,15 +16,18 @@
 /**
  * Create an Exception Class for the userstatus_userstatuswwu
  *
- * @package   tool_cleanupusers
+ * @package   userstatus_userstatuswwu
  * @copyright 2017 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace userstatus_userstatuswwu;
-
-defined('MOODLE_INTERNAL') || die;
-
+/**
+ * Thow errors for the plugin.
+ * @package   userstatus_userstatuswwu
+ * @copyright 2017 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class userstatuswwu_exception extends \moodle_exception {
 
     /**

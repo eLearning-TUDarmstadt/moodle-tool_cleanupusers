@@ -21,12 +21,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Function to upgrade for the tool_cleanupusers.
+ * @package tool_cleanupusers
+ * @copyright 2023 my-curiosity
+ * @param int $oldversion
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 function xmldb_tool_cleanupusers_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();

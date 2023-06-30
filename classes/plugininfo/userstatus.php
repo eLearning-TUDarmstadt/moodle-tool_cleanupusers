@@ -16,6 +16,7 @@
 
 /**
  * The Plugins of the type userstatus must return values whether users should be deleted, archived or reactivated.
+ *
  * The sub-plugins will be used by the cron-job and manually by the admin to determine the appropriate actions for users.
  *
  * @package   tool_cleanupusers
@@ -28,10 +29,9 @@ namespace tool_cleanupusers\plugininfo;
 use admin_settingpage;
 use core\plugininfo\base;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The general settings for all sub-plugins of userstatus.
+ *
  * Defines the deinstallation settings and adds sub-plugins to the admin tree, if they have a settings.php.
  *
  * @package    tool_cleanupusers
@@ -77,7 +77,7 @@ class userstatus extends base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
 

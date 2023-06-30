@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Suspend, delete or reactivate user. This is called when sideadmin changes user from the cleanupusers
+ *
  * administration page.
  *
  * @package tool_cleanupusers
@@ -42,7 +43,7 @@ switch($action){
     // User should be suspended.
     case 'suspend':
         // Sideadmins, the current $USER and user who are already suspended can not be handeled.
-        if (!is_siteadmin($user) and $user->suspended != 1 and $USER->id != $userid) {
+        if (!is_siteadmin($user) && $user->suspended != 1 && $USER->id != $userid) {
             $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
@@ -60,7 +61,7 @@ switch($action){
         break;
     // User should be reactivated.
     case 'reactivate':
-        if (!is_siteadmin($user) and $user->suspended != 0 and $USER->id != $userid) {
+        if (!is_siteadmin($user) && $user->suspended != 0 && $USER->id != $userid) {
             $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {
@@ -78,7 +79,7 @@ switch($action){
         break;
     // User should be deleted.
     case 'delete':
-        if (!is_siteadmin($user) and $user->deleted != 1 and $USER->id != $userid) {
+        if (!is_siteadmin($user) && $user->deleted != 1 && $USER->id != $userid) {
             $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
                 $user->username, $user->deleted);
             try {

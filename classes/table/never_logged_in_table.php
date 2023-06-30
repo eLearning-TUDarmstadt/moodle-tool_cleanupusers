@@ -22,15 +22,22 @@
  */
 
 namespace tool_cleanupusers\table;
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Create a class for an Custom sql_table for the tool_cleanupusers
+ *
+ * @package   tool_cleanupusers
+ * @copyright 2018 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class never_logged_in_table extends \table_sql {
 
 
     /**
-     * Constructor
-     * @param int $uniqueid all tables have to have a unique id, this is used
-     *      as a key when storing table properties like sort order in the session.
+     * Constructor.
+     * @param array $users
+     * @param String $sqlwhere
+     * @param array $param
+     * @throws \coding_exception
      */
     public function __construct($users, $sqlwhere, $param) {
         parent::__construct('tool_cleanupusers_never_logged_in_table');
@@ -60,7 +67,7 @@ class never_logged_in_table extends \table_sql {
     /**
      * Renders the suspended column.
      *
-     * @param $row
+     * @param \stdClass $row
      * @return string
      * @throws \coding_exception
      */

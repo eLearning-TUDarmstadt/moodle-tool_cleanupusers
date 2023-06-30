@@ -18,19 +18,14 @@
  * The class contains a test script for the moodle userstatus_timechecker
  *
  * @package    userstatus_timechecker
- * @category   phpunit
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 use userstatus_timechecker\timechecker;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The class contains a test script for the moodle userstatus_timechecker
  *
  * @package    userstatus_timechecker
- * @category   phpunit
  * @group      tool_cleanupusers
  * @group      tool_cleanupusers_timechecker
  * @copyright  2016/17 N Herrmann
@@ -38,6 +33,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class userstatus_timechecker_test extends advanced_testcase {
 
+    /**
+     * Create the data from the generator.
+     * @return mixed
+     */
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;
