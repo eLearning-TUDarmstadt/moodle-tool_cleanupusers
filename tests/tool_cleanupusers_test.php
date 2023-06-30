@@ -381,9 +381,9 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->assertStringContainsString('In the last cron-job 1 users were archived', $msg);
         $this->assertStringContainsString('In the last cron-job 1 users were deleted', $msg);
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be deleted',
-            $msg);  //should be 3, but cronjob itself filters deleted users and admins
+            $msg);  // should be 3, but cronjob itself filters deleted users and admins
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be suspended',
-            $msg);  //should be 2, but cronjob itself filters admins
+            $msg);  // should be 2, but cronjob itself filters admins
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be reactivated', $msg);
 
         // Users not changed by the Cronjob.
