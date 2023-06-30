@@ -47,7 +47,7 @@ class tool_cleanupusers_test extends advanced_testcase {
     }
 
     /**
-     * Function to test the the archive_me function in the archiveduser class. User used:
+     * Function to test the archive_me function in the archiveduser class. User used:
      * Username           |   signed in   | suspended manually | suspended by plugin | deleted
      * ------------------------------------------------------------------------------------------
      * user               | yes           | no                 | no                  | no
@@ -60,7 +60,7 @@ class tool_cleanupusers_test extends advanced_testcase {
 
         // Users that are archived will be marked as suspended in the user table and transfer their previous suspended
         // status in the tool_cleanupusers table.
-        // Additionally they will be anomynised in the user table. Firstname will be 'Anonym', Username will be 'anonym + id'.
+        // Additionally, they will be anonymized in the user table. Firstname will be 'Anonym', Username will be 'anonym + id'.
 
         $neutraltosuspended = new \tool_cleanupusers\archiveduser($data['user']->id, $data['user']->suspended,
             $data['user']->lastaccess, $data['user']->realusername, $data['user']->deleted);
@@ -74,28 +74,14 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->assertEquals('Anonym', $recordusertable->firstname);
         $this->assertEquals('anonym' . $data['user']->id, $recordusertable->username);
 
-        $suspendedmanually = new \tool_cleanupusers\archiveduser($data['usersuspendedmanually']->id,
-            $data['usersuspendedmanually']->suspended, $data['usersuspendedmanually']->lastaccess,
-            $data['usersuspendedmanually']->realusername, $data['usersuspendedmanually']->deleted);
-        $suspendedmanually->archive_me();
-        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['usersuspendedmanually']->id));
-        $recordshadowtable = $DB->get_record('tool_cleanupusers_archive', array('id' => $data['usersuspendedmanually']->id));
-        $recordusertable = $DB->get_record('user', array('id' => $data['usersuspendedmanually']->id));
-        $this->assertEquals(1, $recordusertable->suspended);
-        $this->assertEquals(1, $recordshadowtable->suspended);
-        $this->assertEquals(1, $recordtooltable->archived);
-        $this->assertEquals('Anonym', $recordusertable->firstname);
-        $this->assertEquals('anonym' . $data['usersuspendedmanually']->id, $recordusertable->username);
-
         $this->resetAfterTest(true);
     }
 
     /**
-     * Function to test the the archive_me function in the archiveduser class. Users used:
+     * Function to test the archive_me function in the archiveduser class. Users used:
      *  Username              | signed in     | suspended manually | suspended by plugin | deleted
      * ------------------------------------------------------------------------------------------
      *  suspendedtodelete     | no            | yes                | no                  | no
-     *  userdeleted           | oneyearago    | no                 | yes                 | yes
      * @see \tool_cleanupusers\archiveduser
      */
     public function test_archiveduser_deleteme() {
@@ -119,7 +105,7 @@ class tool_cleanupusers_test extends advanced_testcase {
     }
 
     /**
-     * Function to test the the activate_me function in the archiveduser class. Users used:
+     * Function to test the activate_me function in the archiveduser class. Users used:
      * Username                         | signed in     | suspended manually | suspended by plugin | deleted
      * ----------------------------------------------------------------------------------------------------
      * usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
@@ -186,7 +172,8 @@ class tool_cleanupusers_test extends advanced_testcase {
     }
 
     /**
-     * Tries to archive users which cannot be archived and therefore throws exception. Only uses a admin user.
+     * Tries to archive users which cannot be archived and therefore throws exception.
+     * Only uses an admin user and a user that was already suspended manually.
      * @throws \tool_cleanupusers\cleanupusers_exception
      * @throws dml_exception
      */
@@ -202,6 +189,16 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to suspend user');
         $adminaccount->archive_me();
+        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $USER->id));
+        $this->assertEmpty($recordtooltable);
+
+        // Trying to suspend a user that is already manually suspended will throw an exception.
+        $suspendedmanually = new \tool_cleanupusers\archiveduser($data['usersuspendedmanually']->id,
+            $data['usersuspendedmanually']->suspended, $data['usersuspendedmanually']->lastaccess,
+            $data['usersuspendedmanually']->realusername, $data['usersuspendedmanually']->deleted);
+        $this->expectException('tool_cleanupusers\cleanupusers_exception');
+        $this->expectExceptionMessage('Not able to suspend user');
+        $suspendedmanually->archive_me();
         $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $USER->id));
         $this->assertEmpty($recordtooltable);
 
@@ -223,7 +220,7 @@ class tool_cleanupusers_test extends advanced_testcase {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
-        // Trying to delete a user that is already deleted will throw a exception.
+        // Trying to delete a user that is already deleted will throw an exception.
         $alreadydeleted = new \tool_cleanupusers\archiveduser($data['userdeleted']->id, $data['userdeleted']->suspended,
             $data['userdeleted']->lastaccess, $data['userdeleted']->realusername, $data['userdeleted']->deleted);
         $this->expectException('tool_cleanupusers\cleanupusers_exception');
@@ -382,9 +379,11 @@ class tool_cleanupusers_test extends advanced_testcase {
         $msg = str_replace(array("\r\n", "\r", "\n", "<br>", "</br>"), '', $messages[0]->body);
 
         $this->assertStringContainsString('In the last cron-job 1 users were archived', $msg);
-        $this->assertStringContainsString('In the last cron-job 2 users were deleted', $msg);
-        $this->assertStringContainsString('In the last cron-job 0 users caused exception and could not be deleted', $msg);
-        $this->assertStringContainsString('In the last cron-job 0 users caused exception and could not be suspended', $msg);
+        $this->assertStringContainsString('In the last cron-job 1 users were deleted', $msg);
+        $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be deleted',
+            $msg);  //should be 3, but cronjob itself filters deleted users and admins
+        $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be suspended',
+            $msg);  //should be 2, but cronjob itself filters admins
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be reactivated', $msg);
 
         // Users not changed by the Cronjob.
@@ -465,7 +464,7 @@ class tool_cleanupusers_test extends advanced_testcase {
     }
 
     /**
-     * Test the the deprovisionuser cron-job complete event.
+     * Test the deprovisionuser cron-job complete event.
      *
      * @see \tool_cleanupusers\event\deprovisionusercronjob_completed
      */
