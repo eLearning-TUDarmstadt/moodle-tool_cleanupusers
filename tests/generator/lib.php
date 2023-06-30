@@ -115,8 +115,8 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $data['user'] = $user;  // logged in recently, no action
         $data['userdeleted'] = $userdeleted;    // already deleted, filtered by cronjob
         $data['originaluser'] = $originaluser;  // cannot reactivate, username busy
-        $data['userneverloggedin'] = $userneverloggedin;    // never loggen in, no action
-        $data['userduplicatedname'] = $userduplicatedname;  // never loggen in, no action
+        $data['userneverloggedin'] = $userneverloggedin;    // never logged in, no action
+        $data['userduplicatedname'] = $userduplicatedname;  // never logged in, no action
         $data['useroneyearnotloggedin'] = $useroneyearnotloggedin;  // suspend
         $data['usersuspendedmanually'] = $usersuspendedmanually;    // not marked by timechecker?, no action
         $data['usersuspendedbyplugin'] = $usersuspendedbyplugin;    // delete

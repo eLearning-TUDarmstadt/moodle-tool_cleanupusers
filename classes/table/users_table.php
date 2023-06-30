@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Create an Custom sql_table for the tool_cleanupusers
+ * Create a custom sql_table for the tool_cleanupusers
  *
  * @package   tool_cleanupusers
  * @copyright 2019 Justus Dieckmann
@@ -22,8 +22,13 @@
  */
 
 namespace tool_cleanupusers\table;
+
+use core_user\fields;
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Create a class for an Custom sql_table for the tool_cleanupusers
+ * Create a class for a custom sql_table for the tool_cleanupusers
  *
  * @package   tool_cleanupusers
  * @copyright 2019 Justus Dieckmann
@@ -60,6 +65,6 @@ class users_table extends \table_sql {
         if ($sqlwhere != null && $sqlwhere != '') {
             $where .= ' AND ' . $sqlwhere;
         }
-        $this->set_sql('id, username, lastaccess, ' . get_all_user_name_fields(true), '{user}', $where, $param);
+        $this->set_sql('id, username, lastaccess, ' .implode(', ', fields::get_name_fields()), '{user}', $where, $param);
     }
 }
