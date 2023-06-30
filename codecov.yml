@@ -1,8 +1,0 @@
-fixes:
-  - "moodle/admin/tool/cleanupusers/::"
-
-ignore:
-  - "tests/"
-  - "db/"
-  - "index.php"
-  - "handleuser.php"
