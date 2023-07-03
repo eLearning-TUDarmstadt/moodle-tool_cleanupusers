@@ -35,8 +35,12 @@ use userstatus_userstatuswwu\userstatuswwu;
  * @copyright  2017 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userstatus_userstatuswwu_testcase extends advanced_testcase {
+class userstatus_userstatuswwu_test extends advanced_testcase {
 
+    /**
+     * Generates the data from the generator.
+     * @return mixed
+     */
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
         global $CFG;

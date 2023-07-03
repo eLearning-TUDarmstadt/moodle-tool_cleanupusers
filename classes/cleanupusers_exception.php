@@ -23,8 +23,6 @@
 
 namespace tool_cleanupusers;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Exception Class for the tool_cleanupusers.
  *

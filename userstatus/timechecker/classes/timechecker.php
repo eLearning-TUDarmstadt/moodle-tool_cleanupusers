@@ -26,8 +26,6 @@ namespace userstatus_timechecker;
 use tool_cleanupusers\archiveduser;
 use tool_cleanupusers\userstatusinterface;
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Class that checks the status of different users depending on the time they did not signed in.
  *
@@ -35,7 +33,6 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class timechecker implements userstatusinterface {
 
     /** @var int seconds until a user should be suspended */

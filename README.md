@@ -46,7 +46,7 @@ Moodle provides the following functionality when suspending a user:
 The plugin aims to make users that are suspended **anonymous**. Therefore, the following additional functionalities are provided:  
 - save necessary data in a shadow table to reactivate users when necessary (the table is called: `tool_cleanupusers_archive`),
 - hide all other references in the `user` table e.g. `username`, ` firstname`.
-    - The `username` is set to *Anonym* with the `userid` appended  
+    - The `username` is set to *anonym* with the `userid` appended  
       (usernames must be unique therefore the id is appended).
     - The field `firstname` is set to *Anonym*.
         - Consequently, references in e.g. the forum activity merely refer to a user called `Anonym`.

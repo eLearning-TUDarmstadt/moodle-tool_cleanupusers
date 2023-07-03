@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Create an Custom sql_table for the tool_cleanupusers
+ * Create a custom sql_table for the tool_cleanupusers
  *
  * @package   tool_cleanupusers
  * @copyright 2018 N. Herrmann
@@ -22,15 +22,27 @@
  */
 
 namespace tool_cleanupusers\table;
+
+use core_user\fields;
+
 defined('MOODLE_INTERNAL') || die();
 
-class never_logged_in_table extends \table_sql
-{
+/**
+ * Create a class for a custom sql_table for the tool_cleanupusers
+ *
+ * @package   tool_cleanupusers
+ * @copyright 2018 N. Herrmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class never_logged_in_table extends \table_sql {
+
 
     /**
-     * Constructor
-     * @param int $uniqueid all tables have to have a unique id, this is used
-     *      as a key when storing table properties like sort order in the session.
+     * Constructor.
+     * @param array $users
+     * @param String $sqlwhere
+     * @param array $param
+     * @throws \coding_exception
      */
     public function __construct($users, $sqlwhere, $param) {
         parent::__construct('tool_cleanupusers_never_logged_in_table');
@@ -54,13 +66,13 @@ class never_logged_in_table extends \table_sql
             $where .= ' AND ' . $sqlwhere;
         }
 
-        $this->set_sql('id, username, lastaccess, suspended, ' . get_all_user_name_fields(true), '{user}', $where, $param);
+        $this->set_sql('id, username, lastaccess, suspended, ' .implode(', ', fields::get_name_fields()), '{user}', $where, $param);
     }
 
     /**
      * Renders the suspended column.
      *
-     * @param $row
+     * @param \stdClass $row
      * @return string
      * @throws \coding_exception
      */

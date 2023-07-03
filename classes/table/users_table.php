@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Create an Custom sql_table for the tool_cleanupusers
+ * Create a custom sql_table for the tool_cleanupusers
  *
  * @package   tool_cleanupusers
  * @copyright 2019 Justus Dieckmann
@@ -22,14 +22,27 @@
  */
 
 namespace tool_cleanupusers\table;
+
+use core_user\fields;
+
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Create a class for a custom sql_table for the tool_cleanupusers
+ *
+ * @package   tool_cleanupusers
+ * @copyright 2019 Justus Dieckmann
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class users_table extends \table_sql {
 
     /**
      * Constructor
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
+     * @param array $users
+     * @param String $sqlwhere
+     * @param array $param
      */
     public function __construct($uniqueid, $users, $sqlwhere, $param) {
         parent::__construct($uniqueid);
@@ -52,6 +65,6 @@ class users_table extends \table_sql {
         if ($sqlwhere != null && $sqlwhere != '') {
             $where .= ' AND ' . $sqlwhere;
         }
-        $this->set_sql('id, username, lastaccess, ' . get_all_user_name_fields(true), '{user}', $where, $param);
+        $this->set_sql('id, username, lastaccess, ' .implode(', ', fields::get_name_fields()), '{user}', $where, $param);
     }
 }

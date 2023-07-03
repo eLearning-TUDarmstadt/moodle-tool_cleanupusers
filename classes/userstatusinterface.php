@@ -36,8 +36,6 @@
  */
 namespace tool_cleanupusers;
 
-defined('MOODLE_INTERNAL') || die();
-
 interface userstatusinterface {
     /**
      * Function which returns an array of all users to be suspended by the next cron-job.

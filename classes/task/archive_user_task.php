@@ -27,15 +27,19 @@
 
 namespace tool_cleanupusers\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 use tool_cleanupusers\cleanupusers_exception;
 // Needed for the default plugin.
 use userstatus_userstatuswwu\userstatuswwu;
 use tool_cleanupusers\archiveduser;
 use tool_cleanupusers\event\deprovisionusercronjob_completed;
 use core\task\scheduled_task;
-
+/**
+ * A class for a scheduled task for tool_cleanupusers cron.
+ *
+ * @package    tool_cleanupusers
+ * @copyright  2016 N Herrmann
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class archive_user_task extends scheduled_task {
 
     /**
@@ -92,7 +96,7 @@ class archive_user_task extends scheduled_task {
             "\r\n" .get_string('e-mail-deleted', 'tool_cleanupusers', $userdeleted);
 
         // No Problems occured during the cron-job.
-        if (empty($unabletoactivate) and empty($unabletoarchive) and empty($unabletodelete)) {
+        if (empty($unabletoactivate) && empty($unabletoarchive) && empty($unabletodelete)) {
             $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_cleanupusers');
         } else {
             // Extra information for problematic users.

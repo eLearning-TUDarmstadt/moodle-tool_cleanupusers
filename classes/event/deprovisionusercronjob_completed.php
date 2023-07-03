@@ -23,7 +23,6 @@
  */
 
 namespace tool_cleanupusers\event;
-defined('MOODLE_INTERNAL') || die();
 
 use \core\event\base;
 /**
@@ -38,7 +37,7 @@ class deprovisionusercronjob_completed extends base {
     /**
      * Creates a simple event with the number of users archives and deleted as additional information.
      *
-     * @param $context
+     * @param \stdClass $context
      * @param int $numbersuspended number of users suspended.
      * @param int $numberdeleted number of users deleted.
      * @return \core\event\base
@@ -48,6 +47,10 @@ class deprovisionusercronjob_completed extends base {
             'numberdeleted' => $numberdeleted)));
     }
 
+    /**
+     * Initialize data.
+     * @return void
+     */
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
@@ -75,7 +78,7 @@ class deprovisionusercronjob_completed extends base {
         $deleted = $this->data['other']['numberdeleted'];
 
         // If no user was affected...
-        if (empty($archived) and empty($deleted)) {
+        if (empty($archived) && empty($deleted)) {
             return get_string('cronjobwasrunning', 'tool_cleanupusers');
         } else {
             // Otherwise number of users affected.

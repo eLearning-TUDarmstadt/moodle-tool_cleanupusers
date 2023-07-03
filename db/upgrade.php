@@ -21,12 +21,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Function to upgrade for the tool_cleanupusers.
+ * @package tool_cleanupusers
+ * @copyright 2023 my-curiosity
+ * @param int $oldversion
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 function xmldb_tool_cleanupusers_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
@@ -45,5 +46,66 @@ function xmldb_tool_cleanupusers_upgrade($oldversion) {
         // Cleanupusers savepoint reached.
         upgrade_plugin_savepoint(true, 2018021401, 'tool', 'cleanupusers');
     }
+
+    if ($oldversion < 2023061300) {
+
+        // Define field icq to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('icq');
+
+        // Conditionally launch drop field icq.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field skype to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('skype');
+
+        // Conditionally launch drop field skype.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field yahoo to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('yahoo');
+
+        // Conditionally launch drop field yahoo.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field aim to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('aim');
+
+        // Conditionally launch drop field aim.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field msn to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('msn');
+
+        // Conditionally launch drop field msn.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field url to be dropped from tool_cleanupusers_archive.
+        $table = new xmldb_table('tool_cleanupusers_archive');
+        $field = new xmldb_field('url');
+
+        // Conditionally launch drop field url.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Cleanupusers savepoint reached.
+        upgrade_plugin_savepoint(true, 2023061300, 'tool', 'cleanupusers');
+    }
+
     return true;
 }
