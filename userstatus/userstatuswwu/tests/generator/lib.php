@@ -80,8 +80,8 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         $user = $generator->create_user(array('username' => 'adminuser', 'lastaccess' => $unixoneyearnintydays));
         $data['adminuser'] = $user;
 
-        $deleteme = $generator->create_user(array('username' => 'anonym', 'lastaccess' => $unixoneyearnintydays,
-            'suspended' => 1, 'firstname' => 'Anonym'));
+        $deleteme = $generator->create_user(array('username' => get_config('tool_cleanupusers_settings', 'suspendusername'), 'lastaccess' => $unixoneyearnintydays,
+            'suspended' => 1, 'firstname' => get_config('tool_cleanupusers_settings', 'suspendfirstname')));
         $DB->insert_record_raw('tool_cleanupusers', array('id' => $deleteme->id, 'archived' => true,
             'timestamp' => $unixoneyearnintydays), true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $deleteme->id, 'suspended' => 1,

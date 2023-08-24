@@ -32,6 +32,14 @@ if ($hassiteconfig) {
         get_string('pluginsettingstitle', 'tool_cleanupusers'),
         "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/index.php"
     ));
+    $settings = new admin_settingpage('tool_cleanupusers_settings', get_string('sett_title', 'tool_cleanupusers'));
+    $settings->add(new admin_setting_configtext('tool_cleanupusers_settings/suspendusername', get_string('sett_suspendusername', 'tool_cleanupusers'),
+        get_string('sett_suspendusername_description', 'tool_cleanupusers'),
+        get_string('suspendusername', 'tool_cleanupusers'), PARAM_TEXT));
+    $settings->add(new admin_setting_configtext('tool_cleanupusers_settings/suspendfirstname', get_string('sett_suspendfirstname', 'tool_cleanupusers'),
+        get_string('sett_suspendfirstname_description', 'tool_cleanupusers'),
+        get_string('suspendfirstname', 'tool_cleanupusers'), PARAM_TEXT));
+    $ADMIN->add('tool_cleanupusers', $settings);
     // Add entry for own settings.
     $ADMIN->add('tool_cleanupusers', new admin_externalpage('Manage never logged in',
         get_string('neverloggedin', 'tool_cleanupusers'),

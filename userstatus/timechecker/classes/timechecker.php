@@ -87,8 +87,9 @@ class timechecker implements userstatusinterface {
      */
     public function get_never_logged_in() {
         global $DB;
-        $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
-        $arrayofuser = $DB->get_records_select('user', $select);
+        $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\' AND firstname!=:suspendfirstname';
+        $arrayofuser = $DB->get_records_select('user', $select,
+            array("suspendfirstname" => get_config('tool_cleanupusers_settings', 'suspendfirstname')));
         $neverloggedin = array();
         foreach ($arrayofuser as $key => $user) {
             if (empty($user->lastaccess) && $user->deleted == 0) {

@@ -246,8 +246,9 @@ class userstatuswwu implements userstatusinterface {
         $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
         FROM {user} u
         LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
-        WHERE t_u.id IS NULL AND u.lastaccess=0 AND u.deleted=0 AND u.firstname!=\'Anonym\'';
-        $users = $DB->get_records_sql($sql);
+        WHERE t_u.id IS NULL AND u.lastaccess=0 AND u.deleted=0 AND u.firstname!=\'Anonym\' AND u.firstname!=:suspendfirstname';
+        $users = $DB->get_records_sql($sql,
+            array("suspendfirstname" => get_config('tool_cleanupusers_settings', 'suspendfirstname')));
         $admins = get_admins();
 
         foreach ($users as $moodleuser) {

@@ -214,7 +214,7 @@ class archiveduser {
     }
 
     /**
-     * Creates a empty user with 'anonym + id' as username and 'Anonym' as Firstname.
+     * Creates an empty user with ':suspendusername + id' as username and ':suspendfirstname' as Firstname.
      *
      * @param int $id
      * @param int $timestamp
@@ -224,8 +224,8 @@ class archiveduser {
         $cloneuser = new \stdClass();
         $cloneuser->id = $id;
         // Usernames have to be unique therefore the id is used.
-        $cloneuser->username = 'anonym' . $id;
-        $cloneuser->firstname = 'Anonym';
+        $cloneuser->username = get_config('tool_cleanupusers_settings', 'suspendusername') . $id;
+        $cloneuser->firstname = get_config('tool_cleanupusers_settings', 'suspendfirstname');
         $cloneuser->lastname = '';
         $cloneuser->suspended = 1;
         $cloneuser->email = '';

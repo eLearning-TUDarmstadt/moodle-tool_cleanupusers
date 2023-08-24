@@ -50,6 +50,7 @@ The plugin aims to make users that are suspended **anonymous**. Therefore, the f
       (usernames must be unique therefore the id is appended).
     - The field `firstname` is set to *Anonym*.
         - Consequently, references in e.g. the forum activity merely refer to a user called `Anonym`.
+    - `username` and `firstname` of suspended users can be customized
     - Replaces all other data in the `user` table with the appropriate null value.
         - When viewing the page of the user he/she cannot be identified.
 

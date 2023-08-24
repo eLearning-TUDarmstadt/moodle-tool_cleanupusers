@@ -60,7 +60,7 @@ class tool_cleanupusers_test extends advanced_testcase {
 
         // Users that are archived will be marked as suspended in the user table and transfer their previous suspended
         // status in the tool_cleanupusers table.
-        // Additionally, they will be anonymized in the user table. Firstname will be 'Anonym', Username will be 'anonym + id'.
+        // Additionally, they will be anonymized in the user table. Firstname will be :suspendfirstname, Username will be ':suspendusername + id'.
 
         $neutraltosuspended = new \tool_cleanupusers\archiveduser($data['user']->id, $data['user']->suspended,
             $data['user']->lastaccess, $data['user']->realusername, $data['user']->deleted);
@@ -71,8 +71,8 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordshadowtable->suspended);
         $this->assertEquals(1, $recordtooltable->archived);
-        $this->assertEquals('Anonym', $recordusertable->firstname);
-        $this->assertEquals('anonym' . $data['user']->id, $recordusertable->username);
+        $this->assertEquals(get_config('tool_cleanupusers_settings', 'suspendfirstname'), $recordusertable->firstname);
+        $this->assertEquals(get_config('tool_cleanupusers_settings', 'suspendusername') . $data['user']->id, $recordusertable->username);
 
         $this->resetAfterTest(true);
     }
@@ -412,7 +412,7 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->assert_user_equals($data['useroneyearnotloggedin'], $recordtooltable2);
         $this->assertEquals(1, $recordusertable->suspended);
         $this->assertEquals(0, $recordtooltable2->suspended);
-        $this->assertEquals('anonym' . $data['useroneyearnotloggedin']->id, $recordusertable->username);
+        $this->assertEquals(get_config('tool_cleanupusers_settings', 'suspendusername') . $data['useroneyearnotloggedin']->id, $recordusertable->username);
         $this->assertEquals(0, $recordusertable->deleted);
 
         // User is deleted.

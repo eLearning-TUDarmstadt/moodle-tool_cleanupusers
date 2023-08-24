@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023061300;     // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2023081800;     // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022041900;    // Requires Moodle version 4.0 or higher.
 $plugin->component = 'tool_cleanupusers'; // Full name of the plugin (used for diagnostics).
 $plugin->release = 'v1.0-r2';
