@@ -23,8 +23,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
+$tasks = [
+    [
         'classname' => 'tool_cleanupusers\task\archive_user_task',
         'blocking' => 0,
         'minute' => 'R',
@@ -33,5 +33,5 @@ $tasks = array(
         'month' => '*',
         'dayofweek' => '*',
         'faildelay' => 0,
-    )
-);
+    ],
+];

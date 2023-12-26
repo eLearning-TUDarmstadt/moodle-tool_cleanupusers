@@ -128,7 +128,7 @@ class archive_user_task extends scheduled_task {
      */
     private function change_user_deprovisionstatus($userarray, $intention) {
         // Checks whether the intention is valid.
-        if (!in_array($intention, array('suspend', 'reactivate', 'delete'))) {
+        if (!in_array($intention, ['suspend', 'reactivate', 'delete'])) {
             throw new \coding_exception('Invalid parameters in tool_cleanupusers.');
         }
 
@@ -136,7 +136,7 @@ class archive_user_task extends scheduled_task {
         $countersuccess = 0;
 
         // Array of users who could not be changed.
-        $failures = array();
+        $failures = [];
 
         // Alternatively one could have wrote different function for each intention.
         // However this would have produced duplicated code.
@@ -164,7 +164,7 @@ class archive_user_task extends scheduled_task {
                 }
             }
         }
-        $result = array();
+        $result = [];
         $result['countersuccess'] = $countersuccess;
         $result['failures'] = $failures;
         return $result;

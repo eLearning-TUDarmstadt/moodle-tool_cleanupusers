@@ -61,7 +61,7 @@ class timechecker implements userstatusinterface {
     public function get_to_suspend() {
         $users = $this->get_users_not_suspended_by_plugin();
         $admins = get_admins();
-        $tosuspend = array();
+        $tosuspend = [];
         foreach ($users as $key => $user) {
             if (array_key_exists($user->id, $admins)) {
                 continue;
@@ -89,7 +89,7 @@ class timechecker implements userstatusinterface {
         global $DB;
         $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
         $arrayofuser = $DB->get_records_select('user', $select);
-        $neverloggedin = array();
+        $neverloggedin = [];
         foreach ($arrayofuser as $key => $user) {
             if (empty($user->lastaccess) && $user->deleted == 0) {
                 $informationuser = new archiveduser($user->id, $user->suspended, $user->lastaccess, $user->username,
@@ -115,7 +115,7 @@ class timechecker implements userstatusinterface {
         // The last possible date users must have logged in before they get deleted.
         $datetodelete = $mytimestamp - $this->timedelete;
 
-        $todeleteusers = array();
+        $todeleteusers = [];
         $admins = get_admins();
 
         // 1. Get all users automatic suspended by the plugin.
@@ -124,7 +124,7 @@ class timechecker implements userstatusinterface {
           WHERE u.deleted=0
           AND u.lastaccess!=0
           AND tcu.timestamp < :dat";
-        $params = array('dat' => $datetodelete);
+        $params = ['dat' => $datetodelete];
         $usersautomaticsuspended = $DB->get_recordset_sql($sql, $params);
 
         foreach ($usersautomaticsuspended as $user) {
@@ -156,7 +156,7 @@ class timechecker implements userstatusinterface {
         $users = $DB->get_records_select('user', $select);
         $archived = $DB->get_records('tool_cleanupusers_archive', null, '',
             'id, username, lastaccess, suspended, deleted');
-        $toactivate = array();
+        $toactivate = [];
         $admins = get_admins();
 
         foreach ($users as $key => $user) {

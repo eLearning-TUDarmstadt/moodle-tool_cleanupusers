@@ -53,7 +53,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
     public function test_create_preparation () {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
-        $data = array();
+        $data = [];
 
         $mytimestamp = time();
 
@@ -61,56 +61,56 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $tendaysago = $mytimestamp - 864000;
         $timestamponeyearago = $mytimestamp - 31622600;
 
-        $user = $generator->create_user(array('username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0'));
+        $user = $generator->create_user(['username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0']);
         $user->realusername = $user->username;
-        $userneverloggedin = $generator->create_user(array('username' => 'userneverloggedin', 'lastaccess' => '',
-            'suspended' => '0'));
+        $userneverloggedin = $generator->create_user(['username' => 'userneverloggedin', 'lastaccess' => '',
+            'suspended' => '0', ]);
         $userneverloggedin->realusername = $userneverloggedin->username;
-        $useroneyearnotloggedin = $generator->create_user(array('username' => 'useroneyearnotloggedin',
-            'lastaccess' => $timestamponeyearago, 'suspended' => '0'));
+        $useroneyearnotloggedin = $generator->create_user(['username' => 'useroneyearnotloggedin',
+            'lastaccess' => $timestamponeyearago, 'suspended' => '0', ]);
         $useroneyearnotloggedin->realusername = $userneverloggedin->username;
-        $usersuspendedbypluginandmanually = $generator->create_user(array('username' => 'anonym-x', 'suspended' => '1'));
+        $usersuspendedbypluginandmanually = $generator->create_user(['username' => 'anonym-x', 'suspended' => '1']);
         $usersuspendedbypluginandmanually->realusername = 'Somerealusername';
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $usersuspendedbypluginandmanually->id, 'archived' => 1,
-            'timestamp' => $tendaysago), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $usersuspendedbypluginandmanually->id,
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $usersuspendedbypluginandmanually->id, 'archived' => 1,
+            'timestamp' => $tendaysago, ], true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $usersuspendedbypluginandmanually->id,
             'username' => 'Somerealusername', 'suspended' => $usersuspendedbypluginandmanually->suspended,
-            'lastaccess' => $tendaysago), true, false, true);
+            'lastaccess' => $tendaysago, ], true, false, true);
 
-        $usersuspendedmanually = $generator->create_user(array('username' => 'usersuspendedmanually', 'suspended' => '1'));
+        $usersuspendedmanually = $generator->create_user(['username' => 'usersuspendedmanually', 'suspended' => '1']);
         $usersuspendedmanually->realusername = $usersuspendedmanually->username;
 
-        $userdeleted = $generator->create_user(array('username' => 'userdeleted', 'suspended' => '1', 'deleted' => '1',
-            'lastaccess' => $timestamponeyearago));
+        $userdeleted = $generator->create_user(['username' => 'userdeleted', 'suspended' => '1', 'deleted' => '1',
+            'lastaccess' => $timestamponeyearago, ]);
         $userdeleted->realusername = $userdeleted->username;
 
-        $usersuspendedbyplugin = $generator->create_user(array('username' => 'anonym-y', 'suspended' => '1',
-            'firstname' => 'Anonym'));
+        $usersuspendedbyplugin = $generator->create_user(['username' => 'anonym-y', 'suspended' => '1',
+            'firstname' => 'Anonym', ]);
         $usersuspendedbyplugin->realusername = 'usersuspendedbyplugin';
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $usersuspendedbyplugin->id, 'archived' => true,
-            'timestamp' => $timestamponeyearago), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $usersuspendedbyplugin->id,
-            'username' => 'usersuspendedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago),
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $usersuspendedbyplugin->id, 'archived' => true,
+            'timestamp' => $timestamponeyearago, ], true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $usersuspendedbyplugin->id,
+            'username' => 'usersuspendedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago, ],
             true, false, true);
 
-        $userinconsistentsuspended = $generator->create_user(array('username' => 'userinconsistentarchivedbyplugin',
-            'suspended' => '1', 'firstname' => 'Anonym', 'lastaccess' => $timestamponeyearago));
+        $userinconsistentsuspended = $generator->create_user(['username' => 'userinconsistentarchivedbyplugin',
+            'suspended' => '1', 'firstname' => 'Anonym', 'lastaccess' => $timestamponeyearago, ]);
         $userinconsistentsuspended->realusername = $userinconsistentsuspended->username;
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $userinconsistentsuspended->id,
-            'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago),
+        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $userinconsistentsuspended->id,
+            'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago, ],
             true, false, true);
 
-        $userduplicatedname = $generator->create_user(array('username' => 'duplicatedname',
-            'suspended' => '1', 'firstname' => 'Anonym'));
+        $userduplicatedname = $generator->create_user(['username' => 'duplicatedname',
+            'suspended' => '1', 'firstname' => 'Anonym', ]);
         $userduplicatedname->realusername = $userduplicatedname->username;
-        $originaluser = $generator->create_user(array('username' => 'anonym-z',
-            'suspended' => '1', 'firstname' => 'Anonym'));
+        $originaluser = $generator->create_user(['username' => 'anonym-z',
+            'suspended' => '1', 'firstname' => 'Anonym', ]);
         $originaluser->realusername = $userduplicatedname->username;
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $originaluser->id,
-            'username' => $userduplicatedname->username, 'suspended' => 0, 'lastaccess' => $timestamponeyearago),
+        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $originaluser->id,
+            'username' => $userduplicatedname->username, 'suspended' => 0, 'lastaccess' => $timestamponeyearago, ],
             true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $originaluser->id, 'archived' => true,
-            'timestamp' => $tendaysago), true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $originaluser->id, 'archived' => true,
+            'timestamp' => $tendaysago, ], true, false, true);
 
         $data['user'] = $user;
         $data['userdeleted'] = $userdeleted;

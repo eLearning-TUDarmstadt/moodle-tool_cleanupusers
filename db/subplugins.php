@@ -23,4 +23,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array('userstatus' => 'admin/tool/cleanupusers/userstatus');
+$subplugins = ['userstatus' => 'admin/tool/cleanupusers/userstatus'];
