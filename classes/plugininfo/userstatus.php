@@ -42,15 +42,15 @@ class userstatus extends base {
 
     /**
      * Returns true when sub-plugin can be deleted false when not.
-     * Returns false for the userstatuswwu sub-plugin and for any plugin currently in usage, otherwise true.
+     * Returns false for the timechecker sub-plugin and for any plugin currently in usage, otherwise true.
      * @return bool
      */
     public function is_uninstall_allowed() {
         if ($this->is_standard()) {
             return false;
         }
-        // Userstatuswwu is the standard sub-plugin and can not be uninstalled.
-        if ($this->name == 'userstatuswwu') {
+        // Timechecker is the standard sub-plugin and can not be uninstalled.
+        if ($this->name == 'timechecker') {
             return false;
         }
         // In case the sub-plugin is in use, sub-plugin can not be uninstalled.

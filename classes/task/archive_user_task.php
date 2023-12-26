@@ -29,7 +29,7 @@ namespace tool_cleanupusers\task;
 
 use tool_cleanupusers\cleanupusers_exception;
 // Needed for the default plugin.
-use userstatus_userstatuswwu\userstatuswwu;
+use userstatus_timechecker\timechecker;
 use tool_cleanupusers\archiveduser;
 use tool_cleanupusers\event\deprovisionusercronjob_completed;
 use core\task\scheduled_task;
@@ -69,7 +69,7 @@ class archive_user_task extends scheduled_task {
             $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
             $userstatuschecker = new $mysubpluginname();
         } else {
-            $userstatuschecker = new userstatuswwu();
+            $userstatuschecker = new timechecker();
         }
 
         // Private function is executed to suspend, delete and activate users.

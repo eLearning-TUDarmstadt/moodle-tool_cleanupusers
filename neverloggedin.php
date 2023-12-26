@@ -53,8 +53,8 @@ if ($config) {
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {
-    $subplugin = 'userstatuswwu';
-    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
+    $subplugin = 'timechecker';
+    $userstatuschecker = new \userstatus_timechecker\timechecker();
 }
 
 // Request arrays from the sub-plugin.

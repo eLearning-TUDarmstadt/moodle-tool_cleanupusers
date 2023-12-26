@@ -18,7 +18,7 @@ Therefore, the plugin aims to automatically suspend and delete users to custom r
 This plugin should go into `admin/tool/cleanupusers`. 
 No supplementary settings are required in the **clean up users plugin**. 
 The sub-plugin can be selected in `Home ► Site administration ► Users ► Deprovision of Users`.   
-By default, the **userstatuswwu sub-plugin** is used. 
+By default, the **timechecker sub-plugin** is used. 
 However, it is likely that the sub-plugin requires additional settings, therefore, please read the information for the [sub-plugins](#sub-plugins) before using the plugin. 
 
 ## Manual Handling
@@ -118,10 +118,7 @@ least the following information for each user that should be handled:
 As the default, the sub-plugin of the University of Münster is installed and enabled and cannot be uninstalled.
 Moreover, sub-plugins that are currently in use cannot be uninstalled.
 If you implement your own subplugin it should be placed in `admin/tool/cleanupusers/userstatus`.
-### Userstatuswwu
-This plugin selects user depending on a .txt file. In the installation of the plugin the path to the file has to be defined.
-The .txt file list the usernames followed by an empty space and the group name. If you want to adjust the group names you will need to change the hardcoded names in the plugin.
-Manually suspended users are not considered.
+
 ### Timechecker
 The timechecker plugin suspends and deletes user depending on the last access of the user to the platform. 
 The site administrator can define custom time spans, as a default 90 days have to pass without a user logging in until the 
