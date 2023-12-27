@@ -25,8 +25,6 @@ namespace tool_cleanupusers\table;
 
 use core_user\fields;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Create a class for a custom sql_table for the tool_cleanupusers
  *

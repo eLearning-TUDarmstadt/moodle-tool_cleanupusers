@@ -117,7 +117,7 @@ class tool_cleanupusers_test extends \advanced_testcase {
      * usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
      * usersuspendedbyplugin            | oneyearago    | yes                | yes                 | no
      * @see archiveduser
-     * @covers archiveduser activate_me function.
+     * @covers \archiveduser activate_me function.
      */
     public function test_archiveduser_activateme() {
         global $DB;
@@ -183,7 +183,7 @@ class tool_cleanupusers_test extends \advanced_testcase {
      * Only uses an admin user and a user that was already suspended manually.
      * @throws \tool_cleanupusers\cleanupusers_exception
      * @throws dml_exception
-     * @covers archiveduser archive_me function.
+     * @covers \archiveduser archive_me function.
      */
     public function test_exception_archiveme () {
         global $DB, $USER;
@@ -207,7 +207,7 @@ class tool_cleanupusers_test extends \advanced_testcase {
         $this->expectException('tool_cleanupusers\cleanupusers_exception');
         $this->expectExceptionMessage('Not able to suspend user');
         $suspendedmanually->archive_me();
-        $recordtooltable = $DB->get_record('tool_cleanupusers', array('id' => $data['usersuspendedmanually']->id));
+        $recordtooltable = $DB->get_record('tool_cleanupusers', ['id' => $data['usersuspendedmanually']->id]);
         $this->assertEmpty($recordtooltable);
 
         $this->resetAfterTest(true);
@@ -222,7 +222,7 @@ class tool_cleanupusers_test extends \advanced_testcase {
      *  admin                            | -             | no                 | no                  | no
      * @throws \tool_cleanupusers\cleanupusers_exception
      * @throws dml_exception
-     * @covers archiveduser delete_me function.
+     * @covers \archiveduser delete_me function.
      */
     public function test_exception_deleteme () {
         global $DB, $USER;
@@ -281,7 +281,7 @@ class tool_cleanupusers_test extends \advanced_testcase {
      *  admin                            | -             | no                 | no                  | no
      * @throws \tool_cleanupusers\cleanupusers_exception
      * @throws dml_exception
-     * @covers archiveduser activate_me function.
+     * @covers \archiveduser activate_me function.
      */
     public function test_exception_activateme () {
         global $DB, $USER;
@@ -393,15 +393,15 @@ class tool_cleanupusers_test extends \advanced_testcase {
         $msg = str_replace(["\r\n", "\r", "\n", "<br>", "</br>"], '', $messages[0]->body);
 
         $this->assertStringContainsString('In the last cron-job 1 users were archived',
-            $msg);  // useroneyearnotloggedin
+            $msg);  // Useroneyearnotloggedin.
         $this->assertStringContainsString('In the last cron-job 1 users were deleted',
-            $msg);  // usersuspendedbyplugin
+            $msg);  // Usersuspendedbyplugin.
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be deleted',
-            $msg);  // 236465(from this function) and userdeleted, but deleted users are already filtered
+            $msg);  // 236465(from this function) and userdeleted, but deleted users are already filtered.
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be suspended',
-            $msg);  // userinconsistentsuspended
+            $msg);  // Userinconsistentsuspended.
         $this->assertStringContainsString('In the last cron-job 1 users caused exception and could not be reactivated',
-            $msg);  // originaluser
+            $msg);  // Originaluser.
 
         // Users not changed by the Cronjob.
         $recordusertable = $DB->get_record('user', ['id' => $data['user']->id]);
@@ -517,7 +517,7 @@ class tool_cleanupusers_test extends \advanced_testcase {
 
     /**
      * Methods recommended by moodle to assure database and dataroot is reset.
-     * @covers archiveduser actually a DB test.
+     * @covers \archiveduser actually a DB test.
      */
     public function test_deleting() {
         global $DB;
@@ -530,7 +530,7 @@ class tool_cleanupusers_test extends \advanced_testcase {
 
     /**
      * Methods recommended by moodle to assure database is reset.
-     * @covers archiveduser actually a DB test.
+     * @covers \archiveduser actually a DB test.
      */
     public function test_user_table_was_reset() {
         global $DB;
