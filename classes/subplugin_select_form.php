@@ -45,7 +45,7 @@ class subplugin_select_form extends moodleform {
         $mform = $this->_form;
         // Gets all available plugins of type userstatus.
         $plugins = core_plugin_manager::instance()->get_plugins_of_type('userstatus');
-        $types = array();
+        $types = [];
 
         foreach ($plugins as $value) {
             $types[$value->name] = $value->name;

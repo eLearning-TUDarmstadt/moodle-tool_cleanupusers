@@ -38,7 +38,7 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
     public function test_create_preparation() {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
-        $data = array();
+        $data = [];
         $mytimestamp = time();
 
         // Several users are generated
@@ -50,43 +50,53 @@ class userstatus_userstatuswwu_generator extends testing_data_generator {
         // r_theu9 never logged in and will not be handled, he is in a valid group.
         // n_loged4 never logged in and is not member of a valid group.
         // d_me09 was suspended one year ninety days ago by the plugin, is not in the .txt file.
-        $user = $generator->create_user(array('username' => 'e_user03', 'lastaccess' => $mytimestamp));
+        $user = $generator->create_user(['username' => 'e_user03', 'lastaccess' => $mytimestamp]);
         $data['e_user03'] = $user;
 
         $unixoneyearago = $mytimestamp - 31536000;
-        $userlongnotloggedin = $generator->create_user(array('username' => 'user', 'lastaccess' => $unixoneyearago));
+        $userlongnotloggedin = $generator->create_user(['username' => 'user', 'lastaccess' => $unixoneyearago]);
         $data['user'] = $userlongnotloggedin;
 
         $unixfifteendaysago = $mytimestamp - 1296000;
-        $userfifteendays = $generator->create_user(array('username' => 'userm', 'lastaccess' => $unixfifteendaysago));
+        $userfifteendays = $generator->create_user(['username' => 'userm', 'lastaccess' => $unixfifteendaysago]);
         $data['userm'] = $userfifteendays;
 
         $unixoneyearnintydays = $mytimestamp - 39528000;
 
-        $userarchived = $generator->create_user(array('username' => 's_other07', 'lastaccess' => $mytimestamp, 'suspended' => 1));
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $userarchived->id, 'archived' => true,
-            'timestamp' => $unixoneyearnintydays), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $userarchived->id, 'suspended' => 1,
-            'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 's_other07'), true,
-            false, true);
+        $userarchived = $generator->create_user(['username' => 's_other07', 'lastaccess' => $mytimestamp, 'suspended' => 1]);
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $userarchived->id, 'archived' => true,
+            'timestamp' => $unixoneyearnintydays], true, false, true);
+        $DB->insert_record_raw(
+            'tool_cleanupusers_archive',
+            ['id' => $userarchived->id, 'suspended' => 1,
+            'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 's_other07'],
+            true,
+            false,
+            true
+        );
         $data['s_other07'] = $userarchived;
 
-        $neverloggedin = $generator->create_user(array('username' => 'r_theu9'));
+        $neverloggedin = $generator->create_user(['username' => 'r_theu9']);
         $data['r_theu9'] = $neverloggedin;
 
-        $neverloggedinnotmember = $generator->create_user(array('username' => 'n_loged4'));
+        $neverloggedinnotmember = $generator->create_user(['username' => 'n_loged4']);
         $data['n_loged4'] = $neverloggedinnotmember;
 
-        $user = $generator->create_user(array('username' => 'adminuser', 'lastaccess' => $unixoneyearnintydays));
+        $user = $generator->create_user(['username' => 'adminuser', 'lastaccess' => $unixoneyearnintydays]);
         $data['adminuser'] = $user;
 
-        $deleteme = $generator->create_user(array('username' => 'anonym', 'lastaccess' => $unixoneyearnintydays,
-            'suspended' => 1, 'firstname' => 'Anonym'));
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $deleteme->id, 'archived' => true,
-            'timestamp' => $unixoneyearnintydays), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $deleteme->id, 'suspended' => 1,
-            'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 'd_me09'), true,
-            false, true);
+        $deleteme = $generator->create_user(['username' => 'anonym', 'lastaccess' => $unixoneyearnintydays,
+            'suspended' => 1, 'firstname' => 'Anonym']);
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $deleteme->id, 'archived' => true,
+            'timestamp' => $unixoneyearnintydays], true, false, true);
+        $DB->insert_record_raw(
+            'tool_cleanupusers_archive',
+            ['id' => $deleteme->id, 'suspended' => 1,
+            'deleted' => 0, 'lastaccess' => $unixoneyearnintydays, 'username' => 'd_me09'],
+            true,
+            false,
+            true
+        );
         $data['d_me09'] = $deleteme;
 
         return $data; // Return the user and course objects.

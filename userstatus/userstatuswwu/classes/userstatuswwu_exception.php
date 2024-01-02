@@ -29,7 +29,6 @@ namespace userstatus_userstatuswwu;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userstatuswwu_exception extends \moodle_exception {
-
     /**
      * Constructor
      * @param string $errorcode The name of the string from webservice.php to print

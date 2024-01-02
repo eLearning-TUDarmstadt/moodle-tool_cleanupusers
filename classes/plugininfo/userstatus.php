@@ -39,7 +39,6 @@ use core\plugininfo\base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userstatus extends base {
-
     /**
      * Returns true when sub-plugin can be deleted false when not.
      * Returns false for the userstatuswwu sub-plugin and for any plugin currently in usage, otherwise true.

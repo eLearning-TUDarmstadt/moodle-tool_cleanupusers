@@ -28,10 +28,15 @@ global $CFG, $PAGE;
 
 if ($hassiteconfig) {
     $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/userstatus/userstatuswwu/index.php';
-    $settings->add(new admin_setting_heading('userstatus_userstatuswwu/introduction',
+    $settings->add(new admin_setting_heading(
+        'userstatus_userstatuswwu/introduction',
         get_string('headingintroduction', 'userstatus_userstatuswwu'),
-        get_string('introduction', 'userstatus_userstatuswwu')));
-    $settings->add(new admin_setting_configfile('userstatus_userstatuswwu/pathtotxt',
+        get_string('introduction', 'userstatus_userstatuswwu')
+    ));
+    $settings->add(new admin_setting_configfile(
+        'userstatus_userstatuswwu/pathtotxt',
         get_string('path', 'userstatus_userstatuswwu'),
-        get_string('pathtotxt', 'userstatus_userstatuswwu'), ''));
+        get_string('pathtotxt', 'userstatus_userstatuswwu'),
+        ''
+    ));
 }

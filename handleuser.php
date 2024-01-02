@@ -25,7 +25,7 @@
 
 require_once('../../../config.php');
 require_login();
-require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 $userid         = required_param('userid', PARAM_INT);
 // One of: suspend, reactivate or delete.
@@ -34,18 +34,23 @@ $action         = required_param('action', PARAM_TEXT);
 $PAGE->set_url('/admin/tool/cleanupusers/handleuser.php');
 $PAGE->set_context(context_system::instance());
 
-$user = $DB->get_record('user', array('id' => $userid));
+$user = $DB->get_record('user', ['id' => $userid]);
 require_capability('moodle/user:update', $PAGE->context);
 
 $url = new moodle_url('/admin/tool/cleanupusers/index.php');
 
-switch($action){
+switch ($action) {
     // User should be suspended.
     case 'suspend':
         // Sideadmins, the current $USER and user who are already suspended can not be handeled.
         if (!is_siteadmin($user) && $user->suspended != 1 && $USER->id != $userid) {
-            $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
-                $user->username, $user->deleted);
+            $deprovisionuser = new \tool_cleanupusers\archiveduser(
+                $userid,
+                $user->suspended,
+                $user->lastaccess,
+                $user->username,
+                $user->deleted
+            );
             try {
                 $deprovisionuser->archive_me();
             } catch (\tool_cleanupusers\cleanupusers_exception $e) {
@@ -62,8 +67,13 @@ switch($action){
     // User should be reactivated.
     case 'reactivate':
         if (!is_siteadmin($user) && $user->suspended != 0 && $USER->id != $userid) {
-            $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
-                $user->username, $user->deleted);
+            $deprovisionuser = new \tool_cleanupusers\archiveduser(
+                $userid,
+                $user->suspended,
+                $user->lastaccess,
+                $user->username,
+                $user->deleted
+            );
             try {
                 $deprovisionuser->activate_me();
             } catch (\tool_cleanupusers\cleanupusers_exception $e) {
@@ -80,8 +90,13 @@ switch($action){
     // User should be deleted.
     case 'delete':
         if (!is_siteadmin($user) && $user->deleted != 1 && $USER->id != $userid) {
-            $deprovisionuser = new \tool_cleanupusers\archiveduser($userid, $user->suspended, $user->lastaccess,
-                $user->username, $user->deleted);
+            $deprovisionuser = new \tool_cleanupusers\archiveduser(
+                $userid,
+                $user->suspended,
+                $user->lastaccess,
+                $user->username,
+                $user->deleted
+            );
             try {
                 $deprovisionuser->delete_me();
             } catch (\tool_cleanupusers\cleanupusers_exception $e) {

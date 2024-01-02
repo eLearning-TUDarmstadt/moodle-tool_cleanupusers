@@ -35,48 +35,48 @@ class userstatus_timechecker_generator extends testing_data_generator {
     /**
      * Creates users to test the sub-plugin.
      */
-    public function test_create_preparation () {
+    public function test_create_preparation() {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
-        $data = array();
+        $data = [];
         $mytimestamp = time();
 
-        $user = $generator->create_user(array('username' => 'neutraluser', 'lastaccess' => $mytimestamp));
+        $user = $generator->create_user(['username' => 'neutraluser', 'lastaccess' => $mytimestamp]);
         $data['user'] = $user;
 
         $timestamponeyearago = $mytimestamp - 31536000;
-        $userlongnotloggedin = $generator->create_user(array('username' => 'userlongnotloggedin',
-            'lastaccess' => $timestamponeyearago));
+        $userlongnotloggedin = $generator->create_user(['username' => 'userlongnotloggedin',
+            'lastaccess' => $timestamponeyearago]);
         $data['useroneyearnotlogedin'] = $userlongnotloggedin;
 
         $timestampfifteendays = $mytimestamp - 1296000;
-        $userfifteendays = $generator->create_user(array('username' => 'userfifteendays', 'lastaccess' => $timestampfifteendays));
+        $userfifteendays = $generator->create_user(['username' => 'userfifteendays', 'lastaccess' => $timestampfifteendays]);
         $data['userfifteendays'] = $userfifteendays;
 
         // User manually suspended.
         $oneyearnintydays = $mytimestamp - 39313000;
-        $userarchived = $generator->create_user(array('username' => 'userarchivedmanually', 'lastaccess' => $oneyearnintydays,
-            'suspended' => 1));
+        $userarchived = $generator->create_user(['username' => 'userarchivedmanually', 'lastaccess' => $oneyearnintydays,
+            'suspended' => 1]);
         $data['userarchivedoneyearnintydaysmanually'] = $userarchived;
-        $userarchived2 = $generator->create_user(array('username' => 'userarchivedautomatically', 'lastaccess' => $oneyearnintydays,
-            'suspended' => 1));
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $userarchived2->id, 'archived' => true,
-            'timestamp' => $oneyearnintydays), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $userarchived2->id,
+        $userarchived2 = $generator->create_user(['username' => 'userarchivedautomatically', 'lastaccess' => $oneyearnintydays,
+            'suspended' => 1]);
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $userarchived2->id, 'archived' => true,
+            'timestamp' => $oneyearnintydays], true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $userarchived2->id,
             'username' => 'userarchivedautomatically',
-            'suspended' => 0, 'lastaccess' => $oneyearnintydays), true, false, true);
+            'suspended' => 0, 'lastaccess' => $oneyearnintydays], true, false, true);
         $data['userarchivedoneyearnintydaysautomatically'] = $userarchived2;
 
-        $neverloggedin = $generator->create_user(array('username' => 'neverloggedin'));
+        $neverloggedin = $generator->create_user(['username' => 'neverloggedin']);
         $data['neverloggedin'] = $neverloggedin;
 
         // User suspended by the plugin.
         $tendaysago = $mytimestamp - 864000;
-        $reactivate = $generator->create_user(array('username' => 'anonym', 'suspended' => 1));
-        $DB->insert_record_raw('tool_cleanupusers', array('id' => $reactivate->id, 'archived' => true,
-            'timestamp' => $tendaysago), true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', array('id' => $reactivate->id, 'username' => 'reactivate',
-            'suspended' => 1, 'lastaccess' => $tendaysago), true, false, true);
+        $reactivate = $generator->create_user(['username' => 'anonym', 'suspended' => 1]);
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $reactivate->id, 'archived' => true,
+            'timestamp' => $tendaysago], true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $reactivate->id, 'username' => 'reactivate',
+            'suspended' => 1, 'lastaccess' => $tendaysago], true, false, true);
         $data['reactivate'] = $reactivate;
 
         return $data; // Return the user, course and group objects.

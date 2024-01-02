@@ -34,28 +34,27 @@ use tool_cleanupusers\archiveduser;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userstatuswwu implements userstatusinterface {
-
     /** @var array of usernames from the university list. */
-    private $zivmemberlist = array();
+    private $zivmemberlist = [];
 
     /** @var array of users who never signed in. */
-    private $neverloggedin = array();
+    private $neverloggedin = [];
 
     /** @var array of users who should be suspended in the next cron-job. */
-    private $tosuspend = array();
+    private $tosuspend = [];
 
     /** @var array of users who should be deleted in the next cron-job. */
-    private $todelete = array();
+    private $todelete = [];
 
     /** @var array of users who should be reactivated in the next cron-job. */
-    private $toreactivate = array();
+    private $toreactivate = [];
 
     /**
      * @var array of strings
      * Each string represents a usergroup a user can belong to according to the zivmemberlist
      * and all users who belong to a group should have access to the moodle instance.
      */
-    private $groups = array();
+    private $groups = [];
 
     /** @var string path to the .txt file whcih identifies users and their groups. */
     private $txtpathtomemberlist = '';
@@ -135,8 +134,13 @@ class userstatuswwu implements userstatusinterface {
             // Adds Object of the user to the array if he/she is not a member.
             if (array_key_exists($moodleuser->username, $this->zivmemberlist)) {
                 // Only necessary information is saved in the object and transmitted.
-                $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
-                    $moodleuser->username, $moodleuser->deleted);
+                $informationuser = new archiveduser(
+                    $moodleuser->id,
+                    $moodleuser->suspended,
+                    $moodleuser->lastaccess,
+                    $moodleuser->username,
+                    $moodleuser->deleted
+                );
                 $this->toreactivate[$moodleuser->id] = $informationuser;
             }
         }
@@ -155,7 +159,7 @@ class userstatuswwu implements userstatusinterface {
      * @throws userstatuswwu_exception
      */
     private function get_all_ziv_users() {
-        $zivuserarray = array();
+        $zivuserarray = [];
         // Name of the currently identified user who is member of one of the groups.
         $currentname = '';
         // Error in case the given file does not exist.
@@ -209,7 +213,6 @@ class userstatuswwu implements userstatusinterface {
                 }
             }
             fclose($handle);
-
         }
         return $zivuserarray;
     }
@@ -229,8 +232,13 @@ class userstatuswwu implements userstatusinterface {
             // Adds Object of the user to the array if he/she is not a member.
             if (!array_key_exists($moodleuser->username, $this->zivmemberlist)) {
                 // Only necessary information is saved in the object and transmitted.
-                $informationuser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
-                    $moodleuser->username, $moodleuser->deleted);
+                $informationuser = new archiveduser(
+                    $moodleuser->id,
+                    $moodleuser->suspended,
+                    $moodleuser->lastaccess,
+                    $moodleuser->username,
+                    $moodleuser->deleted
+                );
                 $this->tosuspend[$moodleuser->id] = $informationuser;
             }
         }
@@ -259,8 +267,13 @@ class userstatuswwu implements userstatusinterface {
             // Additional check for properties.
             if ($moodleuser->lastaccess == 0 && $moodleuser->deleted == 0) {
                 // Add necessary data to the array.
-                $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
-                    $moodleuser->username, $moodleuser->deleted);
+                $datauser = new archiveduser(
+                    $moodleuser->id,
+                    $moodleuser->suspended,
+                    $moodleuser->lastaccess,
+                    $moodleuser->username,
+                    $moodleuser->deleted
+                );
                 $this->neverloggedin[$moodleuser->id] = $datauser;
             }
         }
@@ -286,8 +299,13 @@ class userstatuswwu implements userstatusinterface {
                 // In case the user is not in the zivmemberlist and was suspended for longer than one year he/she ...
                 // ... is supposed to be deleted.
                 if ($moodleuser->timestamp < $timestamp - 31622400) {
-                    $datauser = new archiveduser($moodleuser->id, $moodleuser->suspended, $moodleuser->lastaccess,
-                            $moodleuser->username, $moodleuser->deleted);
+                    $datauser = new archiveduser(
+                        $moodleuser->id,
+                        $moodleuser->suspended,
+                        $moodleuser->lastaccess,
+                        $moodleuser->username,
+                        $moodleuser->deleted
+                    );
                     $this->todelete[$moodleuser->id] = $datauser;
                 }
             }

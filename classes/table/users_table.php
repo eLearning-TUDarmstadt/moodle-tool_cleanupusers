@@ -25,8 +25,6 @@ namespace tool_cleanupusers\table;
 
 use core_user\fields;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Create a class for a custom sql_table for the tool_cleanupusers
  *
@@ -35,7 +33,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class users_table extends \table_sql {
-
     /**
      * Constructor
      * @param int $uniqueid all tables have to have a unique id, this is used
@@ -48,23 +45,23 @@ class users_table extends \table_sql {
         parent::__construct($uniqueid);
 
         // Define the list of columns to show.
-        $columns = array('id', 'username', 'fullname', 'lastaccess');
+        $columns = ['id', 'username', 'fullname', 'lastaccess'];
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array(get_string('id', 'tool_cleanupusers' ), get_string('Neverloggedin', 'tool_cleanupusers'),
-        get_string('fullname'), get_string('lastaccess', 'tool_cleanupusers'));
+        $headers = [get_string('id', 'tool_cleanupusers'), get_string('Neverloggedin', 'tool_cleanupusers'),
+        get_string('fullname'), get_string('lastaccess', 'tool_cleanupusers')];
         $this->define_headers($headers);
 
         $idsasstring = '';
         foreach ($users as $user) {
             $idsasstring .= $user->id . ',';
         }
-        $idsasstring = rtrim( $idsasstring , ',');
+        $idsasstring = rtrim($idsasstring, ',');
         $where = 'id IN (' . $idsasstring . ')';
         if ($sqlwhere != null && $sqlwhere != '') {
             $where .= ' AND ' . $sqlwhere;
         }
-        $this->set_sql('id, username, lastaccess, ' .implode(', ', fields::get_name_fields()), '{user}', $where, $param);
+        $this->set_sql('id, username, lastaccess, ' . implode(', ', fields::get_name_fields()), '{user}', $where, $param);
     }
 }

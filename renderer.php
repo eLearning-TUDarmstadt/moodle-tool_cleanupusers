@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/tablelib.php');
 /**
  * Class of the tool_cleanupusers renderer.
  *
@@ -32,7 +32,6 @@ require_once($CFG->libdir.'/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_cleanupusers_renderer extends plugin_renderer_base {
-
     /**
      * Function expects four arrays and renders them to separate tables.
      *
@@ -45,28 +44,28 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     public function render_index_page($userstoreactivate, $userstosuspend, $usertodelete, $usersneverloggedin) {
         global $DB;
 
-        $cleanupusers = $DB->get_records('tool_cleanupusers', array('archived' => 1));
+        $cleanupusers = $DB->get_records('tool_cleanupusers', ['archived' => 1]);
 
         // Checks if one of the given arrays is empty to prevent rendering empty arrays.
         // If not empty renders the information needed.
 
         if (empty($userstoreactivate)) {
-            $rendertoreactivate = array();
+            $rendertoreactivate = [];
         } else {
             $rendertoreactivate = $this->information_user_reactivate($userstoreactivate, $cleanupusers);
         }
         if (empty($usertodelete)) {
-            $rendertodelete = array();
+            $rendertodelete = [];
         } else {
             $rendertodelete = $this->information_user_delete($usertodelete, $cleanupusers);
         }
         if (empty($usersneverloggedin)) {
-            $renderneverloggedin = array();
+            $renderneverloggedin = [];
         } else {
             $renderneverloggedin = $this->information_user_notloggedin($usersneverloggedin, $cleanupusers);
         }
         if (empty($userstosuspend)) {
-            $rendertosuspend = array();
+            $rendertosuspend = [];
         } else {
             $rendertosuspend = $this->information_user_suspend($userstosuspend, $cleanupusers);
         }
@@ -74,24 +73,24 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         // Renders the information for each array in a separate html table.
         $output = '';
         if (!empty($rendertoreactivate)) {
-            $output .= $this->render_table_of_users($rendertoreactivate, array(get_string('willbereactivated', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertoreactivate, [get_string('willbereactivated', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
-                get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Willbe', 'tool_cleanupusers')]);
         }
         if (!empty($renderneverloggedin)) {
-            $output .= $this->render_table_of_users($renderneverloggedin, array(get_string('Neverloggedin', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($renderneverloggedin, [get_string('Neverloggedin', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
-                get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Willbe', 'tool_cleanupusers')]);
         }
         if (!empty($rendertosuspend)) {
-            $output .= $this->render_table_of_users($rendertosuspend, array(get_string('willbesuspended', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertosuspend, [get_string('willbesuspended', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'),
-                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')]);
         }
         if (!empty($rendertodelete)) {
-            $output .= $this->render_table_of_users($rendertodelete, array(get_string('willbedeleted', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertodelete, [get_string('willbedeleted', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'),
-                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')]);
         }
 
         return $output;
@@ -112,15 +111,18 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             foreach ($userstosuspend as $user) {
                 $idsasstring .= $user->id . ',';
             }
-            $idsasstring = rtrim( $idsasstring , ',');
+            $idsasstring = rtrim($idsasstring, ',');
             $table = new table_sql('tool_deprovisionuser_usertosuspend');
-            $table->define_columns(array('username', 'lastaccess', 'suspended'));
-            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/toarchive.php');
-            $table->define_headers(array(get_string('aresuspended', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
+            $table->define_columns(['username', 'lastaccess', 'suspended']);
+            $table->define_baseurl($CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/toarchive.php');
+            $table->define_headers([get_string('aresuspended', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')]);
             // TODO Customize the archived status.
-            $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'tool_cleanupusers_archive',
-                'id in (' . $idsasstring . ')');
+            $table->set_sql(
+                'username, lastaccess, suspended',
+                $DB->get_prefix() . 'tool_cleanupusers_archive',
+                'id in (' . $idsasstring . ')'
+            );
             $table->setup();
             $tableobject = $table->out(30, true);
             return $tableobject;
@@ -142,9 +144,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             foreach ($usersneverloggedin as $user) {
                 $idsasstring .= $user->id . ',';
             }
-            $idsasstring = rtrim( $idsasstring , ',');
+            $idsasstring = rtrim($idsasstring, ',');
             $table = new \tool_cleanupusers\neverloggedintable('tool_deprovisionuser_neverloggedin');
-            $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/neverloggedin.php');
+            $table->define_baseurl($CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/neverloggedin.php');
             $table->set_sql('id, username, lastaccess, suspended', $DB->get_prefix() . 'user', 'id in (' . $idsasstring . ')');
             $table->setup();
             $tableobject = $table->out(30, true);
@@ -169,9 +171,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_delete($users, $cleanupusers) {
-        $resultarray = array();
+        $resultarray = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
 
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
@@ -185,9 +187,15 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 }
                 $userinformation['Willbe'] = get_string('shouldbedelted', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
-                $userinformation['link'] = \html_writer::link($url,
-                    $this->output->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
-                        ['class' => "imggroup-" . $user->id]));
+                $userinformation['link'] = \html_writer::link(
+                    $url,
+                    $this->output->pix_icon(
+                        't/delete',
+                        get_string('deleteuser', 'tool_cleanupusers'),
+                        'moodle',
+                        ['class' => "imggroup-" . $user->id]
+                    )
+                );
             }
             $resultarray[$key] = $userinformation;
         }
@@ -201,9 +209,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_reactivate($users, $cleanupusers) {
-        $resultarray = array();
+        $resultarray = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
 
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
@@ -216,9 +224,15 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 }
                 $userinformation['Willbe'] = 'Reactivated';
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'reactivate']);
-                $userinformation['link'] = \html_writer::link($url,
-                    $this->output->pix_icon('t/show', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
-                        ['class' => "imggroup-" . $user->id]));
+                $userinformation['link'] = \html_writer::link(
+                    $url,
+                    $this->output->pix_icon(
+                        't/show',
+                        get_string('deleteuser', 'tool_cleanupusers'),
+                        'moodle',
+                        ['class' => "imggroup-" . $user->id]
+                    )
+                );
             }
             $resultarray[$key] = $userinformation;
         }
@@ -232,9 +246,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_suspend($users, $cleanupusers) {
-        $result = array();
+        $result = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
@@ -250,9 +264,15 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
 
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'suspend']);
 
-                $userinformation['link'] = \html_writer::link($url,
-                    $this->output->pix_icon('t/hide', get_string('hideuser', 'tool_cleanupusers'), 'moodle',
-                        ['class' => "imggroup-" . $user->id]));
+                $userinformation['link'] = \html_writer::link(
+                    $url,
+                    $this->output->pix_icon(
+                        't/hide',
+                        get_string('hideuser', 'tool_cleanupusers'),
+                        'moodle',
+                        ['class' => "imggroup-" . $user->id]
+                    )
+                );
             }
             $result[$key] = $userinformation;
         }
@@ -266,9 +286,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array userid as key for user information
      */
     private function information_user_notloggedin($users, $cleanupusers) {
-        $result = array();
+        $result = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = get_string('neverlogged', 'tool_cleanupusers');
@@ -280,9 +300,15 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 }
                 $userinformation['Willbe'] = get_string('nothinghappens', 'tool_cleanupusers');
                 $url = new moodle_url('/admin/tool/cleanupusers/handleuser.php', ['userid' => $user->id, 'action' => 'delete']);
-                $userinformation['link'] = \html_writer::link($url,
-                    $this->output->pix_icon('t/delete', get_string('deleteuser', 'tool_cleanupusers'), 'moodle',
-                        ['class' => "imggroup-" . $user->id]));
+                $userinformation['link'] = \html_writer::link(
+                    $url,
+                    $this->output->pix_icon(
+                        't/delete',
+                        get_string('deleteuser', 'tool_cleanupusers'),
+                        'moodle',
+                        ['class' => "imggroup-" . $user->id]
+                    )
+                );
             }
             $result[$key] = $userinformation;
         }
@@ -299,7 +325,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->head = $tableheadings;
         $table->attributes['class'] = 'generaltable admintable cleanupusers';
-        $table->data = array();
+        $table->data = [];
         foreach ($users as $key => $user) {
             $table->data[$key] = $user;
         }

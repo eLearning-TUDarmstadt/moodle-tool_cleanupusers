@@ -33,7 +33,6 @@ function xmldb_tool_cleanupusers_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2018021401) {
-
         // Define field moodlenetprofile to be added to tool_cleanupusers_archive.
         $table = new xmldb_table('tool_cleanupusers_archive');
         $field = new xmldb_field('moodlenetprofile', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'alternatename');
@@ -48,7 +47,6 @@ function xmldb_tool_cleanupusers_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023061300) {
-
         // Define field icq to be dropped from tool_cleanupusers_archive.
         $table = new xmldb_table('tool_cleanupusers_archive');
         $field = new xmldb_field('icq');

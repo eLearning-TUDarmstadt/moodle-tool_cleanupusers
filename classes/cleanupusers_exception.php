@@ -31,7 +31,6 @@ namespace tool_cleanupusers;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cleanupusers_exception extends \moodle_exception {
-
     /**
      * Constructor
      * @param string $errorcode The name of the string from webservice.php to print

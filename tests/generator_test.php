@@ -21,6 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_cleanupusers;
+use advanced_testcase;
+
 /**
  * PHPUnit data class generator testcase
  *

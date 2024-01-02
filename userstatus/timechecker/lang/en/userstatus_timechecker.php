@@ -29,4 +29,3 @@ $string['timechecker_time_to_archive'] = 'Number of days without log in until a 
 $string['timechecker_time_to_delete'] = 'Number of days a user is suspended until s/he is deleted.';
 $string['suspendtime'] = 'Time until suspension';
 $string['deletetime'] = 'Time until deletion';
-
