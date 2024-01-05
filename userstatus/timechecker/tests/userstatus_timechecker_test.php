@@ -21,7 +21,9 @@
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-use userstatus_timechecker\timechecker;
+namespace userstatus_timechecker;
+use advanced_testcase;
+
 /**
  * The class contains a test script for the moodle userstatus_timechecker
  *
@@ -47,7 +49,7 @@ class userstatus_timechecker_test extends advanced_testcase {
     }
     /**
      * Function to test the class timechecker.
-     *
+     * @covers \userstatus_timechecker\timechecker basics.
      * @see timechecker
      */
     public function test_locallib() {
@@ -116,6 +118,7 @@ class userstatus_timechecker_test extends advanced_testcase {
     }
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
+     * @covers \userstatus_timechecker\timechecker actually a DB Test.
      */
     public function test_deleting() {
         global $DB;
@@ -127,10 +130,11 @@ class userstatus_timechecker_test extends advanced_testcase {
     }
     /**
      * Methodes recommended by moodle to assure database is reset.
+     * @covers \userstatus_timechecker\timechecker actually a DB Test.
      */
     public function test_user_table_was_reset() {
         global $DB;
-        $this->assertEquals(2, $DB->count_records('user', array()));
-        $this->assertEquals(0, $DB->count_records('tool_cleanupusers', array()));
+        $this->assertEquals(2, $DB->count_records('user', []));
+        $this->assertEquals(0, $DB->count_records('tool_cleanupusers', []));
     }
 }

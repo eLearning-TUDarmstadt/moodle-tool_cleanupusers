@@ -25,8 +25,6 @@ namespace tool_cleanupusers\table;
 
 use core_user\fields;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Create a class for a custom sql_table for the tool_cleanupusers
  *
@@ -47,12 +45,12 @@ class never_logged_in_table extends \table_sql {
     public function __construct($users, $sqlwhere, $param) {
         parent::__construct('tool_cleanupusers_never_logged_in_table');
         // Define the list of columns to show.
-        $columns = array('id', 'username', 'fullname', 'suspended', 'deleted');
+        $columns = ['id', 'username', 'fullname', 'suspended', 'deleted'];
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = array(get_string('id', 'tool_cleanupusers'), get_string('Neverloggedin', 'tool_cleanupusers'),
-            get_string('fullname'), get_string('Archived', 'tool_cleanupusers'), 'Archive');
+        $headers = [get_string('id', 'tool_cleanupusers'), get_string('Neverloggedin', 'tool_cleanupusers'),
+            get_string('fullname'), get_string('Archived', 'tool_cleanupusers'), 'Archive', ];
         $this->define_headers($headers);
 
         $idsasstring = '';

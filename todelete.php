@@ -21,6 +21,9 @@
  * @copyright  2018 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use userstatus_timechecker\timechecker;
+
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
@@ -53,8 +56,8 @@ if ($config) {
     $mysubpluginname = "\\userstatus_" . $subplugin . "\\" . $subplugin;
     $userstatuschecker = new $mysubpluginname();
 } else {
-    $subplugin = 'userstatuswwu';
-    $userstatuschecker = new \userstatus_userstatuswwu\userstatuswwu();
+    $subplugin = 'timechecker';
+    $userstatuschecker = new timechecker();
 }
 
 // Request arrays from the sub-plugin.

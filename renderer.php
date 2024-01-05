@@ -45,28 +45,28 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
     public function render_index_page($userstoreactivate, $userstosuspend, $usertodelete, $usersneverloggedin) {
         global $DB;
 
-        $cleanupusers = $DB->get_records('tool_cleanupusers', array('archived' => 1));
+        $cleanupusers = $DB->get_records('tool_cleanupusers', ['archived' => 1]);
 
         // Checks if one of the given arrays is empty to prevent rendering empty arrays.
         // If not empty renders the information needed.
 
         if (empty($userstoreactivate)) {
-            $rendertoreactivate = array();
+            $rendertoreactivate = [];
         } else {
             $rendertoreactivate = $this->information_user_reactivate($userstoreactivate, $cleanupusers);
         }
         if (empty($usertodelete)) {
-            $rendertodelete = array();
+            $rendertodelete = [];
         } else {
             $rendertodelete = $this->information_user_delete($usertodelete, $cleanupusers);
         }
         if (empty($usersneverloggedin)) {
-            $renderneverloggedin = array();
+            $renderneverloggedin = [];
         } else {
             $renderneverloggedin = $this->information_user_notloggedin($usersneverloggedin, $cleanupusers);
         }
         if (empty($userstosuspend)) {
-            $rendertosuspend = array();
+            $rendertosuspend = [];
         } else {
             $rendertosuspend = $this->information_user_suspend($userstosuspend, $cleanupusers);
         }
@@ -74,24 +74,24 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         // Renders the information for each array in a separate html table.
         $output = '';
         if (!empty($rendertoreactivate)) {
-            $output .= $this->render_table_of_users($rendertoreactivate, array(get_string('willbereactivated', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertoreactivate, [get_string('willbereactivated', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
-                get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Willbe', 'tool_cleanupusers'), ]);
         }
         if (!empty($renderneverloggedin)) {
-            $output .= $this->render_table_of_users($renderneverloggedin, array(get_string('Neverloggedin', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($renderneverloggedin, [get_string('Neverloggedin', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
-                get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Willbe', 'tool_cleanupusers'), ]);
         }
         if (!empty($rendertosuspend)) {
-            $output .= $this->render_table_of_users($rendertosuspend, array(get_string('willbesuspended', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertosuspend, [get_string('willbesuspended', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'),
-                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers'), ]);
         }
         if (!empty($rendertodelete)) {
-            $output .= $this->render_table_of_users($rendertodelete, array(get_string('willbedeleted', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($rendertodelete, [get_string('willbedeleted', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'),
-                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers')));
+                get_string('Archived', 'tool_cleanupusers'), get_string('Willbe', 'tool_cleanupusers'), ]);
         }
 
         return $output;
@@ -114,10 +114,10 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             }
             $idsasstring = rtrim( $idsasstring , ',');
             $table = new table_sql('tool_deprovisionuser_usertosuspend');
-            $table->define_columns(array('username', 'lastaccess', 'suspended'));
+            $table->define_columns(['username', 'lastaccess', 'suspended']);
             $table->define_baseurl($CFG->wwwroot .'/'. $CFG->admin .'/tool/cleanupusers/toarchive.php');
-            $table->define_headers(array(get_string('aresuspended', 'tool_cleanupusers'),
-                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')));
+            $table->define_headers([get_string('aresuspended', 'tool_cleanupusers'),
+                get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'), ]);
             // TODO Customize the archived status.
             $table->set_sql('username, lastaccess, suspended', $DB->get_prefix() . 'tool_cleanupusers_archive',
                 'id in (' . $idsasstring . ')');
@@ -169,9 +169,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_delete($users, $cleanupusers) {
-        $resultarray = array();
+        $resultarray = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
 
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
@@ -201,9 +201,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_reactivate($users, $cleanupusers) {
-        $resultarray = array();
+        $resultarray = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
 
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
@@ -232,9 +232,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array
      */
     private function information_user_suspend($users, $cleanupusers) {
-        $result = array();
+        $result = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = date('d.m.Y h:i:s', $user->lastaccess);
@@ -266,9 +266,9 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
      * @return array userid as key for user information
      */
     private function information_user_notloggedin($users, $cleanupusers) {
-        $result = array();
+        $result = [];
         foreach ($users as $key => $user) {
-            $userinformation = array();
+            $userinformation = [];
             if (!empty($user)) {
                 $userinformation['username'] = $user->username;
                 $userinformation['lastaccess'] = get_string('neverlogged', 'tool_cleanupusers');
@@ -299,7 +299,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->head = $tableheadings;
         $table->attributes['class'] = 'generaltable admintable cleanupusers';
-        $table->data = array();
+        $table->data = [];
         foreach ($users as $key => $user) {
             $table->data[$key] = $user;
         }

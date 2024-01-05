@@ -34,7 +34,7 @@ $action         = required_param('action', PARAM_TEXT);
 $PAGE->set_url('/admin/tool/cleanupusers/handleuser.php');
 $PAGE->set_context(context_system::instance());
 
-$user = $DB->get_record('user', array('id' => $userid));
+$user = $DB->get_record('user', ['id' => $userid]);
 require_capability('moodle/user:update', $PAGE->context);
 
 $url = new moodle_url('/admin/tool/cleanupusers/index.php');

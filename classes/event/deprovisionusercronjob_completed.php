@@ -24,7 +24,7 @@
 
 namespace tool_cleanupusers\event;
 
-use \core\event\base;
+use core\event\base;
 /**
  * The tool_cleanupusers event informs admin about outcome of cron-job.
  *
@@ -43,8 +43,8 @@ class deprovisionusercronjob_completed extends base {
      * @return \core\event\base
      */
     public static function create_simple($context, $numbersuspended, $numberdeleted) {
-        return self::create(array('context' => $context, 'other' => array('numbersuspended' => $numbersuspended,
-            'numberdeleted' => $numberdeleted)));
+        return self::create(['context' => $context, 'other' => ['numbersuspended' => $numbersuspended,
+            'numberdeleted' => $numberdeleted, ], ]);
     }
 
     /**
