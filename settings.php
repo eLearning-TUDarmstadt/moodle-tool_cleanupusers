@@ -28,22 +28,26 @@ if ($hassiteconfig) {
     // Add own category for plugin's  and subplugins' settings.
     $ADMIN->add('users', new admin_category('tool_cleanupusers', get_string('pluginname', 'tool_cleanupusers')));
     // Add entry for own settings.
-    $ADMIN->add('tool_cleanupusers', new admin_externalpage('cleanupusers',
+    $ADMIN->add('tool_cleanupusers', new admin_externalpage(
+        'cleanupusers',
         get_string('pluginsettingstitle', 'tool_cleanupusers'),
         "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/index.php"
     ));
     // Add entry for own settings.
-    $ADMIN->add('tool_cleanupusers', new admin_externalpage('Manage never logged in',
+    $ADMIN->add('tool_cleanupusers', new admin_externalpage(
+        'Manage never logged in',
         get_string('neverloggedin', 'tool_cleanupusers'),
         "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/neverloggedin.php"
     ));
     // Add entry for own settings.
-    $ADMIN->add('tool_cleanupusers', new admin_externalpage('Manage to archive',
+    $ADMIN->add('tool_cleanupusers', new admin_externalpage(
+        'Manage to archive',
         get_string('toarchive', 'tool_cleanupusers'),
         "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/toarchive.php"
     ));
     // Add entry for own settings.
-    $ADMIN->add('tool_cleanupusers', new admin_externalpage('Manage to delete',
+    $ADMIN->add('tool_cleanupusers', new admin_externalpage(
+        'Manage to delete',
         get_string('todelete', 'tool_cleanupusers'),
         "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/todelete.php"
     ));

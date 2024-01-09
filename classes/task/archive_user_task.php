@@ -17,7 +17,7 @@
 /**
  * A scheduled task for tool_cleanupusers cron.
  *
- * The Class archive_user_task is supposed to show the admin a page of users which will be archived and expectes a submit or
+ * The Class archive_user_task is supposed to show the admin a page of users which will be archived and expects a submit or
  * cancel reaction.
  * @package    tool_cleanupusers
  * @copyright  2016 N Herrmann
@@ -41,7 +41,6 @@ use core\task\scheduled_task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class archive_user_task extends scheduled_task {
-
     /**
      * Get a descriptive name for this task (shown to admins).
      *
@@ -53,8 +52,8 @@ class archive_user_task extends scheduled_task {
 
     /**
      * Runs the cron job - Calls for the currently activated sub-plugin to return arrays of users.
-     * Distinguishes between users to reacticate, suspend and delete.
-     * Subsequently sends an e-mail to the admin containing information about the amount of successfully changed users
+     * Distinguishes between users to reactivate, suspend and delete.
+     * Subsequently, sends an e-mail to the admin containing information about the amount of successfully changed users
      * and the amount of failures.
      * Last but not least triggers an event with the same information.
      *
@@ -83,6 +82,7 @@ class archive_user_task extends scheduled_task {
 
         $result = $this->change_user_deprovisionstatus($reactivatearray, 'reactivate');
         $unabletoactivate = $result['failures'];
+        $useractivated = $result['countersuccess'];
 
         $deleteresult = $this->change_user_deprovisionstatus($arraytodelete, 'delete');
         $unabletodelete = $deleteresult['failures'];
@@ -93,17 +93,27 @@ class archive_user_task extends scheduled_task {
         $admin = get_admin();
         // Number of users suspended or deleted.
         $messagetext = get_string('e-mail-archived', 'tool_cleanupusers', $userarchived) .
-            "\r\n" .get_string('e-mail-deleted', 'tool_cleanupusers', $userdeleted);
+            "\r\n" . get_string('e-mail-deleted', 'tool_cleanupusers', $userdeleted) .
+            "\r\n" . get_string('e-mail-activated', 'tool_cleanupusers', $useractivated);
 
         // No Problems occured during the cron-job.
         if (empty($unabletoactivate) && empty($unabletoarchive) && empty($unabletodelete)) {
             $messagetext .= "\r\n\r\n" . get_string('e-mail-noproblem', 'tool_cleanupusers');
         } else {
             // Extra information for problematic users.
-            $messagetext .= "\r\n\r\n" . get_string('e-mail-problematic_delete', 'tool_cleanupusers',
-                    count($unabletodelete)) . "\r\n\r\n" . get_string('e-mail-problematic_suspend', 'tool_cleanupusers',
-                    count($unabletoarchive)) . "\r\n\r\n" . get_string('e-mail-problematic_reactivate', 'tool_cleanupusers',
-                    count($unabletoactivate));
+            $messagetext .= "\r\n\r\n" . get_string(
+                'e-mail-problematic_delete',
+                'tool_cleanupusers',
+                count($unabletodelete)
+            ) . "\r\n\r\n" . get_string(
+                'e-mail-problematic_suspend',
+                'tool_cleanupusers',
+                count($unabletoarchive)
+            ) . "\r\n\r\n" . get_string(
+                'e-mail-problematic_reactivate',
+                'tool_cleanupusers',
+                count($unabletoactivate)
+            );
         }
 
         // Email is send from the do not reply user.
@@ -138,13 +148,18 @@ class archive_user_task extends scheduled_task {
         // Array of users who could not be changed.
         $failures = [];
 
-        // Alternatively one could have wrote different function for each intention.
-        // However this would have produced duplicated code.
-        // Therefore checking the intention parameter repeatedly was preferred.
+        // Alternatively one could have written different function for each intention.
+        // However, this would have produced duplicated code.
+        // Therefore, checking the intention parameter repeatedly was preferred.
         foreach ($userarray as $key => $user) {
             if ($user->deleted == 0 && !is_siteadmin($user)) {
-                $changinguser = new archiveduser($user->id, $user->suspended, $user->lastaccess,
-                    $user->username, $user->deleted);
+                $changinguser = new archiveduser(
+                    $user->id,
+                    $user->suspended,
+                    $user->lastaccess,
+                    $user->username,
+                    $user->deleted
+                );
                 try {
                     switch ($intention) {
                         case 'suspend':
@@ -159,7 +174,7 @@ class archive_user_task extends scheduled_task {
                         // No default since if-clause checks the intention parameter.
                     }
                     $countersuccess++;
-                } catch (cleanupusers_exception $e) {
+                } catch (\Throwable $e) {
                     $failures[$key] = $user->id;
                 }
             }

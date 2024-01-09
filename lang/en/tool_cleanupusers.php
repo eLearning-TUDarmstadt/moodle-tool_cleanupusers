@@ -53,6 +53,7 @@ $string['nothinghappens'] = 'Not handled since the user never logged in';
 $string['waittodelete'] = 'The user is suspended and will not be deleted in the next cron-job.';
 $string['e-mail-archived'] = 'In the last cron-job {$a} users were archived.';
 $string['e-mail-deleted'] = 'In the last cron-job {$a} users were deleted.';
+$string['e-mail-activated'] = 'In the last cron-job {$a} users were reactivated.';
 $string['errormessagenotactive'] = 'Not able to activate user';
 $string['errormessagenotdelete'] = 'Not able to delete user';
 $string['errormessagenotsuspend'] = 'Not able to suspend user';

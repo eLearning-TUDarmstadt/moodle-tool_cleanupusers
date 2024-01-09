@@ -33,7 +33,6 @@ use core_user\fields;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class users_table extends \table_sql {
-
     /**
      * Constructor
      * @param int $uniqueid all tables have to have a unique id, this is used
@@ -50,19 +49,19 @@ class users_table extends \table_sql {
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = [get_string('id', 'tool_cleanupusers' ), get_string('Neverloggedin', 'tool_cleanupusers'),
-        get_string('fullname'), get_string('lastaccess', 'tool_cleanupusers'), ];
+        $headers = [get_string('id', 'tool_cleanupusers'), get_string('Neverloggedin', 'tool_cleanupusers'),
+        get_string('fullname'), get_string('lastaccess', 'tool_cleanupusers')];
         $this->define_headers($headers);
 
         $idsasstring = '';
         foreach ($users as $user) {
             $idsasstring .= $user->id . ',';
         }
-        $idsasstring = rtrim( $idsasstring , ',');
+        $idsasstring = rtrim($idsasstring, ',');
         $where = 'id IN (' . $idsasstring . ')';
         if ($sqlwhere != null && $sqlwhere != '') {
             $where .= ' AND ' . $sqlwhere;
         }
-        $this->set_sql('id, username, lastaccess, ' .implode(', ', fields::get_name_fields()), '{user}', $where, $param);
+        $this->set_sql('id, username, lastaccess, ' . implode(', ', fields::get_name_fields()), '{user}', $where, $param);
     }
 }

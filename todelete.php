@@ -25,8 +25,8 @@
 use userstatus_timechecker\timechecker;
 
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/user/filters/lib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/user/filters/lib.php');
 
 // Get URL parameters.
 
@@ -69,7 +69,7 @@ if (empty($deletearray)) {
     $userfilter = new user_filtering();
     $userfilter->display_add();
     $userfilter->display_active();
-    list($sql, $param) = $userfilter->get_sql_filter();
+    [$sql, $param] = $userfilter->get_sql_filter();
     $deletetable = new \tool_cleanupusers\table\users_table('tool_cleanupusers_todelete_table', $deletearray, $sql, $param);
     $deletetable->define_baseurl($PAGE->url);
     $deletetable->out(20, false);

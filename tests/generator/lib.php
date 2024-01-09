@@ -32,7 +32,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_cleanupusers_generator extends testing_data_generator {
-
     /**
      * Creates User to test the tool_cleanupusers plugin.
      * Username                          |   signed in    | suspended manually | suspended by plugin | deleted
@@ -50,7 +49,7 @@ class tool_cleanupusers_generator extends testing_data_generator {
      * @return array
      * @throws dml_exception
      */
-    public function test_create_preparation () {
+    public function test_create_preparation() {
         global $DB;
         $generator = advanced_testcase::getDataGenerator();
         $data = [];
@@ -63,62 +62,81 @@ class tool_cleanupusers_generator extends testing_data_generator {
 
         $user = $generator->create_user(['username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0']);
         $user->realusername = $user->username;
-        $userneverloggedin = $generator->create_user(['username' => 'userneverloggedin',
-            'suspended' => '0', ]);
-        $userneverloggedin->realusername = $userneverloggedin->username;
-        $useroneyearnotloggedin = $generator->create_user(['username' => 'useroneyearnotloggedin',
-            'lastaccess' => $timestamponeyearago, 'suspended' => '0', ]);
-        $useroneyearnotloggedin->realusername = $userneverloggedin->username;
-        $usersuspendedbypluginandmanually = $generator->create_user(['username' => 'anonym-x', 'suspended' => '1']);
-        $usersuspendedbypluginandmanually->realusername = 'Somerealusername';
-        $DB->insert_record_raw('tool_cleanupusers', ['id' => $usersuspendedbypluginandmanually->id, 'archived' => 1,
-            'timestamp' => $tendaysago, ], true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $usersuspendedbypluginandmanually->id,
-            'username' => 'Somerealusername', 'suspended' => $usersuspendedbypluginandmanually->suspended,
-            'lastaccess' => $tendaysago, ], true, false, true);
 
-        $usersuspendedmanually = $generator->create_user(['username' => 'usersuspendedmanually', 'suspended' => '0']);
+        $userneverloggedin = $generator->create_user(['username' => 'userneverloggedin',
+            'suspended' => '0']);
+        $userneverloggedin->realusername = $userneverloggedin->username;
+
+        $useroneyearnotloggedin = $generator->create_user(['username' => 'useroneyearnotloggedin',
+            'lastaccess' => $timestamponeyearago, 'suspended' => '0']);
+        $useroneyearnotloggedin->realusername = $userneverloggedin->username;
+
+        $usersuspendedbypluginandmanually = $generator->create_user(['username' => 'anonym-x', 'suspended' => '1']);
+        $usersuspendedbypluginandmanually->realusername = 'somerealusername';
+        $DB->insert_record_raw('tool_cleanupusers', ['id' => $usersuspendedbypluginandmanually->id, 'archived' => 1,
+            'timestamp' => $tendaysago], true, false, true);
+        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $usersuspendedbypluginandmanually->id,
+            'username' => 'somerealusername', 'suspended' => $usersuspendedbypluginandmanually->suspended,
+            'lastaccess' => $tendaysago], true, false, true);
+
+        $usersuspendedmanually = $generator->create_user(['username' => 'usersuspendedmanually', 'suspended' => '1']);
         $usersuspendedmanually->realusername = $usersuspendedmanually->username;
 
         $userdeleted = $generator->create_user(['username' => 'userdeleted', 'suspended' => '1', 'deleted' => '1',
-            'lastaccess' => $timestamponeyearago, ]);
+            'lastaccess' => $timestamponeyearago]);
         $userdeleted->realusername = $userdeleted->username;
 
         $usersuspendedbyplugin = $generator->create_user(['username' => 'anonym-y', 'suspended' => '1',
-            'firstname' => 'Anonym', ]);
+            'firstname' => 'Anonym']);
         $usersuspendedbyplugin->realusername = 'usersuspendedbyplugin';
         $DB->insert_record_raw('tool_cleanupusers', ['id' => $usersuspendedbyplugin->id, 'archived' => true,
-            'timestamp' => $timestamponeyearago, ], true, false, true);
-        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $usersuspendedbyplugin->id,
-            'username' => 'usersuspendedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago, ],
-            true, false, true);
+            'timestamp' => $timestamponeyearago], true, false, true);
+        $DB->insert_record_raw(
+            'tool_cleanupusers_archive',
+            ['id' => $usersuspendedbyplugin->id,
+            'username' => 'usersuspendedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago],
+            true,
+            false,
+            true
+        );
 
         $userinconsistentsuspended = $generator->create_user(['username' => 'userinconsistentarchivedbyplugin',
-            'suspended' => '1', 'firstname' => 'Anonym', 'lastaccess' => $timestamponeyearago, ]);
+            'suspended' => '1', 'firstname' => 'Anonym', 'lastaccess' => $timestamponeyearago]);
         $userinconsistentsuspended->realusername = $userinconsistentsuspended->username;
-        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $userinconsistentsuspended->id,
-            'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago, ],
-            true, false, true);
+        $DB->insert_record_raw(
+            'tool_cleanupusers_archive',
+            ['id' => $userinconsistentsuspended->id,
+            'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago],
+            true,
+            false,
+            true
+        );
 
         $userduplicatedname = $generator->create_user(['username' => 'duplicatedname',
-            'suspended' => '0', 'firstname' => 'Anonym', ]);
+            'suspended' => '0', 'firstname' => 'Anonym']);
         $userduplicatedname->realusername = $userduplicatedname->username;
+
         $originaluser = $generator->create_user(['username' => 'anonym-z',
-            'suspended' => '1', 'firstname' => 'Anonym', ]);
+            'suspended' => '1', 'firstname' => 'Anonym']);
         $originaluser->realusername = $userduplicatedname->username;
-        $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $originaluser->id,
-            'username' => $userduplicatedname->username, 'suspended' => 0, 'lastaccess' => $tendaysago, ],
-            true, false, true);
+        $DB->insert_record_raw(
+            'tool_cleanupusers_archive',
+            ['id' => $originaluser->id,
+            'username' => $userduplicatedname->username, 'suspended' => 0, 'lastaccess' => $tendaysago],
+            true,
+            false,
+            true
+        );
         $DB->insert_record_raw('tool_cleanupusers', ['id' => $originaluser->id, 'archived' => true,
-            'timestamp' => $tendaysago, ], true, false, true);
+            'timestamp' => $tendaysago], true, false, true);
 
         $data['user'] = $user;  // Logged in recently, no action.
         $data['userdeleted'] = $userdeleted;    // Already deleted, filtered by cronjob.
         $data['originaluser'] = $originaluser;  // Cannot reactivate, username busy.
         $data['userneverloggedin'] = $userneverloggedin;    // Never logged in, no action.
         $data['userduplicatedname'] = $userduplicatedname;  // Never logged in, no action.
-        $data['useroneyearnotloggedin'] = $useroneyearnotloggedin;  // Nuspend.
-        $data['usersuspendedmanually'] = $usersuspendedmanually;    // Only name and not suspended set.
+        $data['useroneyearnotloggedin'] = $useroneyearnotloggedin;  // Suspend.
+        $data['usersuspendedmanually'] = $usersuspendedmanually;    // Not marked by timechecker?, no action.
         $data['usersuspendedbyplugin'] = $usersuspendedbyplugin;    // Delete.
         $data['userinconsistentsuspended'] = $userinconsistentsuspended;    // Cannot suspend, suspended = 1 already.
         $data['usersuspendedbypluginandmanually'] = $usersuspendedbypluginandmanually;  // Reactivate.

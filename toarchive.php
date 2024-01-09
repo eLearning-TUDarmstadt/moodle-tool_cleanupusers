@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/user/filters/lib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/user/filters/lib.php');
 
 // Get URL parameters.
 
@@ -66,7 +66,7 @@ if (empty($archivearray)) {
     $userfilter = new user_filtering();
     $userfilter->display_add();
     $userfilter->display_active();
-    list($sql, $param) = $userfilter->get_sql_filter();
+    [$sql, $param] = $userfilter->get_sql_filter();
     $archivetable = new \tool_cleanupusers\table\users_table('tool_cleanupusers_toarchive_table', $archivearray, $sql, $param);
     $archivetable->define_baseurl($PAGE->url);
     $archivetable->out(20, false);

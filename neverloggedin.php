@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->dirroot.'/user/filters/lib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot . '/user/filters/lib.php');
 
 // Get URL parameters.
 
@@ -66,7 +66,7 @@ if (empty($neverloggedinarray)) {
     $userfilter = new user_filtering();
     $userfilter->display_add();
     $userfilter->display_active();
-    list($sql, $param) = $userfilter->get_sql_filter();
+    [$sql, $param] = $userfilter->get_sql_filter();
     $neverloggedintable = new \tool_cleanupusers\table\never_logged_in_table($neverloggedinarray, $sql, $param);
     $neverloggedintable->define_baseurl(new moodle_url('admin/tool/cleanupusers/neverloggedin.php'));
     $neverloggedintable->out(20, false);

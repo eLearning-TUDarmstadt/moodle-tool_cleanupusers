@@ -29,4 +29,4 @@ $plugin->component = 'userstatus_timechecker'; // Full name of the plugin (used 
 $plugin->release = 'v1.0-r0';
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->dependencies = [
-    'tool_cleanupusers' => ANY_VERSION, ];
+    'tool_cleanupusers' => ANY_VERSION];

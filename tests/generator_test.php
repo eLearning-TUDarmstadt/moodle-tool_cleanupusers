@@ -23,6 +23,9 @@
 namespace tool_cleanupusers;
 use advanced_testcase;
 
+namespace tool_cleanupusers;
+use advanced_testcase;
+
 /**
  * PHPUnit data class generator testcase
  *
