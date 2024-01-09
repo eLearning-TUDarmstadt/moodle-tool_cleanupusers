@@ -23,6 +23,7 @@
  */
 
 namespace tool_cleanupusers;
+
 use advanced_testcase;
 
 /**
