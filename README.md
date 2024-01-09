@@ -1,7 +1,4 @@
-# moodle-tool_cleanupusers *(Alpha_candidate)* WIP!
-
-[![Build Status](https://travis-ci.org/learnweb/moodle-tool_cleanupusers.svg?branch=master)](https://travis-ci.org/learnweb/moodle-tool_cleanupusers)
-
+# moodle-tool_cleanupusers
 
 The **clean up users plugin** enables the automatic and manual suspension and deletion of users.
 
@@ -123,6 +120,12 @@ If you implement your own subplugin it should be placed in `admin/tool/cleanupus
 The timechecker plugin suspends and deletes user depending on the last access of the user to the platform. 
 The site administrator can define custom time spans, as a default 90 days have to pass without a user logging in until the 
 user is suspended and 365 days until the user is deleted.
-Currently, users that are manually suspended and did not log in for the defined time are also deleted.  
+Currently, users that are manually suspended and did not log in for the defined time are also deleted.
+
+### Additional sub-plugins: ldapchecker
+A sub-plugin developed by TU Darmstadt; uses data from an external server connected with LDAP to mark users.
+Server can be chosen and configured in settings.
+Available at https://github.com/eLearning-TUDarmstadt/moodle-cleanupusers_ldapchecker
+
 ## Desirable Extension
 - prohibit sending messages to suspended users

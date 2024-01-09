@@ -27,4 +27,4 @@ $plugin->version   = 2023120800;     // The current plugin version (Date: YYYYMM
 $plugin->requires  = 2022041900;    // Requires Moodle version 4.0 or higher.
 $plugin->component = 'tool_cleanupusers'; // Full name of the plugin (used for diagnostics).
 $plugin->release = 'v1.0-r2';
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;
