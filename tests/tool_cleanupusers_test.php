@@ -21,13 +21,10 @@
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace tool_cleanupusers;
 use advanced_testcase;
-use coding_exception;
-use dml_exception;
-use stdClass;
-use tool_cleanupusers\event\deprovisionusercronjob_completed;
-use tool_cleanupusers\task;
+
 /**
  * Testcase class for executing phpunit test for the moodle tool_cleanupusers plugin.
  *
@@ -35,6 +32,13 @@ use tool_cleanupusers\task;
  * @group      tool_cleanupusers
  * @copyright  2016/17 N Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \tool_cleanupusers\archiveduser::archive_me()
+ * @covers \tool_cleanupusers\archiveduser::delete_me()
+ * @covers \tool_cleanupusers\archiveduser::activate_me()
+ * @covers \tool_cleanupusers\subplugin_select_form::validation()
+ * @covers \tool_cleanupusers\task\archive_user_task::execute()
+ *
  */
 class tool_cleanupusers_test extends advanced_testcase {
     /** Get data from generator.
@@ -55,7 +59,6 @@ class tool_cleanupusers_test extends advanced_testcase {
      * ------------------------------------------------------------------------------------------
      * user               | tendaysago           | no                 | no                  | no
      * @see archiveduser
-     * @covers \archiveduser archive_me function.
      */
     public function test_archiveduser_archiveme() {
         global $DB;
@@ -93,7 +96,6 @@ class tool_cleanupusers_test extends advanced_testcase {
      *  usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
      *  usersuspendedbyplugin            | oneyearago    | no                 | yes                 | no
      * @see archiveduser
-     * @covers \archiveduser delete_me function.
      */
     public function test_archiveduser_deleteme() {
         global $DB;
@@ -143,7 +145,6 @@ class tool_cleanupusers_test extends advanced_testcase {
      * usersuspendedbypluginandmanually | tendaysago    | yes                | yes                 | no
      * usersuspendedbyplugin            | oneyearago    | no                 | yes                 | no
      * @see archiveduser
-     * @covers \archiveduser activate_me function.
      */
     public function test_archiveduser_activateme() {
         global $DB;
@@ -202,7 +203,6 @@ class tool_cleanupusers_test extends advanced_testcase {
      *   usersuspendedmanually            | -             | yes                | no                  | no
      * @throws cleanupusers_exception
      * @throws dml_exception
-     * @covers \archiveduser archive_me function.
      */
     public function test_exception_archiveme() {
         global $DB;
@@ -235,7 +235,6 @@ class tool_cleanupusers_test extends advanced_testcase {
      *  usersuspendedmanually            | -             | yes                | no                  | no
      * @throws cleanupusers_exception
      * @throws dml_exception
-     * @covers \archiveduser delete_me function.
      */
     public function test_exception_deleteme() {
         global $DB;
@@ -308,7 +307,6 @@ class tool_cleanupusers_test extends advanced_testcase {
      *  usersuspendedmanually            | -             | yes                | no                  | no
      * @throws cleanupusers_exception
      * @throws dml_exception
-     * @covers \archiveduser activate_me function.
      */
     public function test_exception_activateme() {
         global $DB;
@@ -380,8 +378,7 @@ class tool_cleanupusers_test extends advanced_testcase {
     /**
      * Test the sub-plugin_select_form.
      *
-     * @covers \subplugin_select_form select a subplugin.
-     * @see \subplugin_select_form
+     * @see subplugin_select_form
      */
     public function test_subpluginform() {
         $data = $this->set_up();
@@ -417,7 +414,6 @@ class tool_cleanupusers_test extends advanced_testcase {
      *  userduplicatedname               | -             | no                 | no                  | no       | -
      * @throws dml_exception
      * @throws coding_exception
-     * @covers \task\archive_user_task delete_me function.
      */
     public function test_cronjob() {
         global $DB;
@@ -561,8 +557,7 @@ class tool_cleanupusers_test extends advanced_testcase {
     /**
      * Test the deprovisionuser cron-job complete event.
      *
-     * @see \event\deprovisionusercronjob_completed
-     * @covers \task\archive_user_task logging.
+     * @see event\deprovisionusercronjob_completed
      */
     public function test_logging() {
         $data = $this->set_up();
@@ -594,7 +589,6 @@ class tool_cleanupusers_test extends advanced_testcase {
 
     /**
      * Methods recommended by moodle to assure database and dataroot is reset.
-     * @covers \archiveduser actually a DB test.
      */
     public function test_deleting() {
         global $DB;
@@ -607,7 +601,6 @@ class tool_cleanupusers_test extends advanced_testcase {
 
     /**
      * Methods recommended by moodle to assure database is reset.
-     * @covers \archiveduser actually a DB test.
      */
     public function test_user_table_was_reset() {
         global $DB;
