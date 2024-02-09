@@ -27,6 +27,6 @@ $plugin->version   = 2017010500;     // The current plugin version (Date: YYYYMM
 $plugin->requires  = 2016052300;     // Requires 31 Moodle version.
 $plugin->component = 'userstatus_timechecker'; // Full name of the plugin (used for diagnostics).
 $plugin->release = 'v1.0-r0';
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = [
     'tool_cleanupusers' => ANY_VERSION];
