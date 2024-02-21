@@ -2,36 +2,36 @@
 
 The **clean up users plugin** enables the automatic and manual suspension and deletion of users.
 
-The plugin is written by [Jan Dageförde](https://github.com/Dagefoerde), [Tobias Reischmann](https://github.com/tobiasreischmann) and [Nina Herrmann](https://github.com/NinaHerrmann).
+The plugin is written at University of Münster by [Jan Dageförde](https://github.com/Dagefoerde), [Tobias Reischmann](https://github.com/tobiasreischmann) and [Nina Herrmann](https://github.com/NinaHerrmann). Since the end of 2023 it is further developed and maintained by Technical University of Darmstadt. 
 
 ## Motivation
-Hitherto users could be suspended and deleted manually in the `Home ► Site administration ► Users ► Accounts ► Browse list of users` menu.
+Hitherto users could be suspended and deleted manually in the `Site administration ► Users ► Accounts ► Browse list of users` menu.
 However, every user must be handled individually which becomes confusing and time consuming with a rising number of users.
-To handle user efficiently there is a need to determine rules which identify the suitable action for each user and handle the user accordingly.
+To handle users efficiently there is a need to determine rules which identify the suitable action for each user and handle the user accordingly.
 Therefore, the plugin aims to automatically suspend and delete users to custom rules.
 
 ## Installation
 
 This plugin should go into `admin/tool/cleanupusers`. 
 No supplementary settings are required in the **clean up users plugin**. 
-The sub-plugin can be selected in `Home ► Site administration ► Users ► Deprovision of Users`.   
+The sub-plugin can be selected in `Site administration ► Users ► Clean up users ► General settings`.   
 By default, the **timechecker sub-plugin** is used. 
 However, it is likely that the sub-plugin requires additional settings, therefore, please read the information for the [sub-plugins](#sub-plugins) before using the plugin. 
 
 ## Manual Handling
 
 Users can be changed manually by every person who has access to the admin menu.
-Beforehand users were handled in the `Home ► Site administration ► Users ► Accounts ► Browse list of users` menu.  
-The plugin provides an extra page which can be found in the `Home ► Site administration ► Users ► Deprovision of Users` menu.
+Beforehand users were handled in the `Site administration ► Users ► Accounts ► Browse list of users` menu.  
+The plugin provides an extra page which can be found in the `Site administration ► Users ► Clean up users ► General settings` menu.
 
 ## Automatic Processing
 A cronjob deletes, archives and reactivates users automatically. 
 By default, the cronjob runs every day at 4 am. 
-The admin can change the revision of the cronjob in `Home ► Site administration ► Server ► Scheduled task`.   
+The admin can change the revision of the cronjob in `Site administration ► Server ► Scheduled tasks`.   
 After the cronjob ran successfully, the admin receives a notification e-mail about the number of archived and deleted 
 users. In case problems occurred with single users, the number of users who could not be handled are listed. 
 This is for example the case when a sub-plugin tries to suspend/delete an admin user. 
-Additionally, information about the cronjob is logged and can be seen in the `Home ► Site administration ► Reports ► Logs` menu.
+Additionally, information about the cronjob is logged and can be seen in the `Site administration ► Server ► Task Logs` menu, Class name *Archive Users*.
 
 ## Suspend User
 
@@ -52,7 +52,7 @@ The plugin aims to make users that are suspended **anonymous**. Therefore, the f
 
 ## Delete User
 Moodle provides a `delete_user()` function, which is used by the plugin.
-In the plugin, firstly the username is hashed. In case the hashed value already exist the username and the hashed 
+In the plugin, firstly the username is hashed. In case the hashed value already exists, the username and the hashed 
 username are hashed again.  
 Afterwards the moodle `delete_user()` function is executed with the following functions:
 - the username is replaced with the e-mail address and a timestamp and the email address is replaced
@@ -112,13 +112,13 @@ least the following information for each user that should be handled:
   * `suspended`: integer 1 = suspended, 0 = not
   * `deleted`: integer 1 = deleted, 0 = not
   
-As the default, the sub-plugin of the University of Münster is installed and enabled and cannot be uninstalled.
+As the default, the timechecker sub-plugin is installed and enabled and cannot be uninstalled.
 Moreover, sub-plugins that are currently in use cannot be uninstalled.
 If you implement your own subplugin it should be placed in `admin/tool/cleanupusers/userstatus`.
 
 ### Timechecker
-The timechecker plugin suspends and deletes user depending on the last access of the user to the platform. 
-The site administrator can define custom time spans, as a default 90 days have to pass without a user logging in until the 
+The timechecker plugin suspends and deletes users depending on the last access of the user to the platform. 
+The site administrator can define custom time spans, as a default 90 days have to pass without a user logging in, until the 
 user is suspended and 365 days until the user is deleted.
 Currently, users that are manually suspended and did not log in for the defined time are also deleted.
 
@@ -126,6 +126,3 @@ Currently, users that are manually suspended and did not log in for the defined 
 A sub-plugin developed by TU Darmstadt; uses data from an external server connected with LDAP to mark users.
 Server can be chosen and configured in settings.
 Available at https://github.com/eLearning-TUDarmstadt/moodle-cleanupusers_ldapchecker
-
-## Desirable Extension
-- prohibit sending messages to suspended users
