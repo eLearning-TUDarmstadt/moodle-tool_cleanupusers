@@ -91,20 +91,20 @@ class timechecker implements userstatusinterface {
      */
     public function get_never_logged_in() {
         global $DB;
-        $select = 'lastaccess=0 AND deleted=0 AND firstname!=\'Anonym\'';
-        $arrayofuser = $DB->get_records_select('user', $select);
+        $arrayofuser = $DB->get_records_sql(
+            "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted
+                FROM {user} u
+                LEFT JOIN {tool_cleanupusers} tc ON u.id = tc.id
+                WHERE u.auth = 'shibboleth'
+                    AND u.lastaccess = 0
+                    AND u.deleted = 0
+                    AND tc.id IS NULL"
+        );
         $neverloggedin = [];
         foreach ($arrayofuser as $key => $user) {
-            if (empty($user->lastaccess) && $user->deleted == 0) {
-                $informationuser = new archiveduser(
-                    $user->id,
-                    $user->suspended,
-                    $user->lastaccess,
-                    $user->username,
-                    $user->deleted
-                );
-                $neverloggedin[$key] = $informationuser;
-            }
+            $informationuser = new archiveduser($user->id, $user->suspended,
+                $user->lastaccess, $user->username, $user->deleted);
+            $neverloggedin[$key] = $informationuser;
         }
         return $neverloggedin;
     }

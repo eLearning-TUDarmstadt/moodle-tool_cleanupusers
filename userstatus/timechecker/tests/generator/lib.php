@@ -72,7 +72,10 @@ class userstatus_timechecker_generator extends testing_data_generator {
 
         // User suspended by the plugin.
         $tendaysago = $mytimestamp - 864000;
-        $reactivate = $generator->create_user(['username' => 'anonym', 'suspended' => 1]);
+        $reactivate = $generator->create_user(['username' => get_config(
+            'tool_cleanupusers_settings',
+            'suspendusername'
+        ), 'suspended' => 1]);
         $DB->insert_record_raw('tool_cleanupusers', ['id' => $reactivate->id, 'archived' => true,
             'timestamp' => $tendaysago], true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $reactivate->id, 'username' => 'reactivate',
