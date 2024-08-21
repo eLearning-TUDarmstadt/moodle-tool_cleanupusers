@@ -60,39 +60,41 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $tendaysago = $mytimestamp - 864000;
         $timestamponeyearago = $mytimestamp - 31622600;
 
-        $user = $generator->create_user(['username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0']);
+        $user = $generator->create_user(['username' => 'user', 'lastaccess' => $tendaysago, 'suspended' => '0',
+        'auth' => 'shibboleth']);
         $user->realusername = $user->username;
 
         $userneverloggedin = $generator->create_user(['username' => 'userneverloggedin',
-            'suspended' => '0']);
+            'suspended' => '0', 'auth' => 'shibboleth']);
         $userneverloggedin->realusername = $userneverloggedin->username;
 
         $useroneyearnotloggedin = $generator->create_user(['username' => 'useroneyearnotloggedin',
-            'lastaccess' => $timestamponeyearago, 'suspended' => '0']);
+            'lastaccess' => $timestamponeyearago, 'suspended' => '0', 'auth' => 'shibboleth']);
         $useroneyearnotloggedin->realusername = $userneverloggedin->username;
 
         $usersuspendedbypluginandmanually = $generator->create_user(['username' => get_config(
             'tool_cleanupusers_settings',
             'suspendusername'
-        ) . '-x', 'suspended' => '1']);
+        ) . '-x', 'suspended' => '1', 'auth' => 'shibboleth']);
         $usersuspendedbypluginandmanually->realusername = 'somerealusername';
         $DB->insert_record_raw('tool_cleanupusers', ['id' => $usersuspendedbypluginandmanually->id, 'archived' => 1,
             'timestamp' => $tendaysago], true, false, true);
         $DB->insert_record_raw('tool_cleanupusers_archive', ['id' => $usersuspendedbypluginandmanually->id,
             'username' => 'somerealusername', 'suspended' => $usersuspendedbypluginandmanually->suspended,
-            'lastaccess' => $tendaysago], true, false, true);
+            'lastaccess' => $tendaysago, 'auth' => 'shibboleth'], true, false, true);
 
-        $usersuspendedmanually = $generator->create_user(['username' => 'usersuspendedmanually', 'suspended' => '1']);
+        $usersuspendedmanually = $generator->create_user(['username' => 'usersuspendedmanually', 'suspended' => '1',
+            'auth' => 'shibboleth']);
         $usersuspendedmanually->realusername = $usersuspendedmanually->username;
 
         $userdeleted = $generator->create_user(['username' => 'userdeleted', 'suspended' => '1', 'deleted' => '1',
-            'lastaccess' => $timestamponeyearago]);
+            'lastaccess' => $timestamponeyearago, 'auth' => 'shibboleth']);
         $userdeleted->realusername = $userdeleted->username;
 
         $usersuspendedbyplugin = $generator->create_user(['username' => get_config(
             'tool_cleanupusers_settings',
             'suspendusername'
-        ) . '-y', 'suspended' => '1',
+        ) . '-y', 'suspended' => '1', 'auth' => 'shibboleth',
             'firstname' => get_config('tool_cleanupusers_settings', 'suspendfirstname')]);
         $usersuspendedbyplugin->realusername = 'usersuspendedbyplugin';
         $DB->insert_record_raw('tool_cleanupusers', ['id' => $usersuspendedbyplugin->id, 'archived' => true,
@@ -100,7 +102,8 @@ class tool_cleanupusers_generator extends testing_data_generator {
         $DB->insert_record_raw(
             'tool_cleanupusers_archive',
             ['id' => $usersuspendedbyplugin->id,
-            'username' => 'usersuspendedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago],
+            'username' => 'usersuspendedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago,
+                'auth' => 'shibboleth'],
             true,
             false,
             true
@@ -110,28 +113,32 @@ class tool_cleanupusers_generator extends testing_data_generator {
             'suspended' => '1', 'firstname' => get_config(
                 'tool_cleanupusers_settings',
                 'suspendfirstname'
-            ), 'lastaccess' => $timestamponeyearago]);
+            ), 'lastaccess' => $timestamponeyearago, 'auth' => 'shibboleth']);
         $userinconsistentsuspended->realusername = $userinconsistentsuspended->username;
         $DB->insert_record_raw(
             'tool_cleanupusers_archive',
             ['id' => $userinconsistentsuspended->id,
-            'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago],
+            'username' => 'userinconsistentarchivedbyplugin', 'suspended' => 0, 'lastaccess' => $timestamponeyearago,
+                'auth' => 'shibboleth'],
             true,
             false,
             true
         );
 
         $userduplicatedname = $generator->create_user(['username' => 'duplicatedname',
-            'suspended' => '0', 'firstname' => get_config('tool_cleanupusers_settings', 'suspendfirstname')]);
+            'suspended' => '0', 'firstname' => get_config('tool_cleanupusers_settings', 'suspendfirstname'),
+            'auth' => 'shibboleth']);
         $userduplicatedname->realusername = $userduplicatedname->username;
 
         $originaluser = $generator->create_user(['username' => get_config('tool_cleanupusers_settings', 'suspendusername') . '-z',
-            'suspended' => '1', 'firstname' => get_config('tool_cleanupusers_settings', 'suspendfirstname')]);
+            'suspended' => '1', 'firstname' => get_config('tool_cleanupusers_settings', 'suspendfirstname'),
+            'auth' => 'shibboleth']);
         $originaluser->realusername = $userduplicatedname->username;
         $DB->insert_record_raw(
             'tool_cleanupusers_archive',
             ['id' => $originaluser->id,
-            'username' => $userduplicatedname->username, 'suspended' => 0, 'lastaccess' => $tendaysago],
+            'username' => $userduplicatedname->username, 'suspended' => 0, 'lastaccess' => $tendaysago,
+                'auth' => 'shibboleth'],
             true,
             false,
             true

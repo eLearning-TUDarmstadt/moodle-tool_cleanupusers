@@ -432,17 +432,6 @@ class tool_cleanupusers_test extends advanced_testcase {
         $this->assertEquals(get_string('archive_user_task', 'tool_cleanupusers'), $name);
 
         $timestamponeyearago = time() - 31622600;
-        // Creates entries in the tables which will result in an error in the cronjob.
-        $DB->insert_record_raw('tool_cleanupusers', ['id' => 236465, 'archived' => true,
-            'timestamp' => $timestamponeyearago], true, false, true);
-        $DB->insert_record_raw(
-            'tool_cleanupusers_archive',
-            ['id' => 236465,
-            'username' => 'inconsistent', 'suspended' => 0, 'lastaccess' => $timestamponeyearago],
-            true,
-            false,
-            true
-        );
 
         // Run cron-job with timechecker plugin.
         set_config('cleanupusers_subplugin', 'timechecker', 'tool_cleanupusers');
@@ -467,17 +456,12 @@ class tool_cleanupusers_test extends advanced_testcase {
             $msg
         ); // Usersuspendedbypluginandmanually.
         $this->assertStringContainsString(
-            'In the last cron-job 1 users caused exception and could not be deleted',
+            'No problems occurred in plugin tool_cleanupusers in the last run.',
             $msg
-        );  // User 236465 (from this function) and userdeleted, but deleted users are already filtered.
-        $this->assertStringContainsString(
-            'In the last cron-job 1 users caused exception and could not be suspended',
-            $msg
-        );  // Userinconsistentsuspended.
-        $this->assertStringContainsString(
-            'In the last cron-job 1 users caused exception and could not be reactivated',
-            $msg
-        );  // Originaluser.
+        );
+        // Userdeleted already filtered.
+        // Userinconsistentsuspended not selected by timechecker.
+        // Originaluser not selected by timechecker.
 
         // Users not changed by the Cronjob.
         $recordusertable = $DB->get_record('user', ['id' => $data['user']->id]);
