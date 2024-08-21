@@ -109,8 +109,13 @@ class timechecker implements userstatusinterface {
         );
         $neverloggedin = [];
         foreach ($users as $key => $user) {
-            $informationuser = new archiveduser($user->id, $user->suspended,
-                $user->lastaccess, $user->username, $user->deleted);
+            $informationuser = new archiveduser(
+                $user->id,
+                $user->suspended,
+                $user->lastaccess,
+                $user->username,
+                $user->deleted
+            );
             $neverloggedin[$key] = $informationuser;
         }
         return $neverloggedin;
@@ -203,5 +208,4 @@ class timechecker implements userstatusinterface {
 
         return $toactivate;
     }
-
 }

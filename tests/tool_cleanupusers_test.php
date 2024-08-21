@@ -41,9 +41,9 @@ use advanced_testcase;
  * @covers \tool_cleanupusers\task\archive_user_task::execute()
  *
  */
-class tool_cleanupusers_test extends advanced_testcase {
-    /** Get data from generator.
-     * @return mixed
+final class tool_cleanupusers_test extends advanced_testcase {
+    /**
+     * Get data from generator.
      */
     protected function set_up() {
         // Recommended in Moodle docs to always include CFG.
@@ -61,7 +61,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      * user               | tendaysago           | no                 | no                  | no
      * @see archiveduser
      */
-    public function test_archiveduser_archiveme() {
+    public function test_archiveduser_archiveme(): void {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
@@ -102,7 +102,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      *  usersuspendedbyplugin            | oneyearago    | no                 | yes                 | no
      * @see archiveduser
      */
-    public function test_archiveduser_deleteme() {
+    public function test_archiveduser_deleteme(): void {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
@@ -151,7 +151,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      * usersuspendedbyplugin            | oneyearago    | no                 | yes                 | no
      * @see archiveduser
      */
-    public function test_archiveduser_activateme() {
+    public function test_archiveduser_activateme(): void {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
@@ -209,7 +209,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      * @throws cleanupusers_exception
      * @throws dml_exception
      */
-    public function test_exception_archiveme() {
+    public function test_exception_archiveme(): void {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
@@ -241,7 +241,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      * @throws cleanupusers_exception
      * @throws dml_exception
      */
-    public function test_exception_deleteme() {
+    public function test_exception_deleteme(): void {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
@@ -313,7 +313,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      * @throws cleanupusers_exception
      * @throws dml_exception
      */
-    public function test_exception_activateme() {
+    public function test_exception_activateme(): void {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
@@ -385,7 +385,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      *
      * @see subplugin_select_form
      */
-    public function test_subpluginform() {
+    public function test_subpluginform(): void {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
 
@@ -420,7 +420,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      * @throws dml_exception
      * @throws coding_exception
      */
-    public function test_cronjob() {
+    public function test_cronjob(): void {
         global $DB;
         $data = $this->set_up();
         $this->assertNotEmpty($data);
@@ -551,7 +551,7 @@ class tool_cleanupusers_test extends advanced_testcase {
      *
      * @see event\deprovisionusercronjob_completed
      */
-    public function test_logging() {
+    public function test_logging(): void {
         $data = $this->set_up();
         $this->assertNotEmpty($data);
         $timestamp = time();
@@ -582,7 +582,7 @@ class tool_cleanupusers_test extends advanced_testcase {
     /**
      * Methods recommended by moodle to assure database and dataroot is reset.
      */
-    public function test_deleting() {
+    public function test_deleting(): void {
         global $DB;
         $this->resetAfterTest(true);
         $DB->delete_records('user');
@@ -594,7 +594,7 @@ class tool_cleanupusers_test extends advanced_testcase {
     /**
      * Methods recommended by moodle to assure database is reset.
      */
-    public function test_user_table_was_reset() {
+    public function test_user_table_was_reset(): void {
         global $DB;
         $this->assertEquals(2, $DB->count_records('user', []));
         $this->assertEquals(0, $DB->count_records('tool_cleanupusers', []));

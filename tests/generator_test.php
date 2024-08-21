@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * PHPUnit data generator tests
  *
@@ -32,13 +33,13 @@ use advanced_testcase;
  * @copyright  2016/17 Nina Herrmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends advanced_testcase {
+final class generator_test extends advanced_testcase {
     /**
      * In the future might relly test the generator...
      * @return void
      * @covers \tool_cleanupusers_generator::test_create_preparation
      */
-    public function test_generator() {
+    public function test_generator(): void {
         $this->resetAfterTest(true);
     }
 }

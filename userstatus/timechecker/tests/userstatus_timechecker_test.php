@@ -40,7 +40,7 @@ use advanced_testcase;
  * @covers \userstatus_timechecker\timechecker::get_to_reactivate()
  *
  */
-class userstatus_timechecker_test extends advanced_testcase {
+final class userstatus_timechecker_test extends advanced_testcase {
     /**
      * Create the data from the generator.
      * @return mixed
@@ -58,7 +58,7 @@ class userstatus_timechecker_test extends advanced_testcase {
      *
      * @see timechecker
      */
-    public function test_locallib() {
+    public function test_locallib(): void {
         $data = $this->set_up();
         $checker = new timechecker();
 
@@ -108,7 +108,7 @@ class userstatus_timechecker_test extends advanced_testcase {
     /**
      * Methodes recommended by moodle to assure database and dataroot is reset.
      */
-    public function test_deleting() {
+    public function test_deleting(): void {
         global $DB;
         $this->resetAfterTest(true);
         $DB->delete_records('user');
@@ -119,7 +119,7 @@ class userstatus_timechecker_test extends advanced_testcase {
     /**
      * Methodes recommended by moodle to assure database is reset.
      */
-    public function test_user_table_was_reset() {
+    public function test_user_table_was_reset(): void {
         global $DB;
         $this->assertEquals(2, $DB->count_records('user', []));
         $this->assertEquals(0, $DB->count_records('tool_cleanupusers', []));

@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Class archive user.
  *
@@ -100,14 +101,14 @@ class archiveduser {
             // Document time of editing user in Database.
             // In case there is no entry in the tool table make a new one.
             $timestamp = time();
-            if (!$DB->record_exists('tool_cleanupusers', ['id' => $user->id])) {
-                $DB->insert_record_raw('tool_cleanupusers', ['id' => $user->id, 'archived' => 1,
-                    'timestamp' => $timestamp], true, false, true);
-            }
+        if (!$DB->record_exists('tool_cleanupusers', ['id' => $user->id])) {
+            $DB->insert_record_raw('tool_cleanupusers', ['id' => $user->id, 'archived' => 1,
+                'timestamp' => $timestamp], true, false, true);
+        }
             // Insert copy of user in second DB and replace user in main table when entry was successful.
-            if ($DB->record_exists('tool_cleanupusers_archive', ['id' => $shadowuser->id])) {
-                $DB->delete_records('tool_cleanupusers_archive', ['id' => $shadowuser->id]);
-            }
+        if ($DB->record_exists('tool_cleanupusers_archive', ['id' => $shadowuser->id])) {
+            $DB->delete_records('tool_cleanupusers_archive', ['id' => $shadowuser->id]);
+        }
             $DB->insert_record_raw('tool_cleanupusers_archive', $shadowuser, true, false, true);
             // Replaces the current user with a pseudo_user that has no reference.
             $cloneuser = $this->give_suspended_pseudo_user($shadowuser->id, $timestamp);

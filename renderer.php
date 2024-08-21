@@ -117,7 +117,6 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
             $table->define_baseurl($CFG->wwwroot . '/' . $CFG->admin . '/tool/cleanupusers/toarchive.php');
             $table->define_headers([get_string('aresuspended', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers')]);
-            // TODO Customize the archived status.
             $table->set_sql(
                 'username, lastaccess, suspended',
                 $DB->get_prefix() . 'tool_cleanupusers_archive',

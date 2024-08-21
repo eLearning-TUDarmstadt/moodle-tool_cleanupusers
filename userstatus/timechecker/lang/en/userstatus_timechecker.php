@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * This file contains language strings used in the timechecker sub-plugin.
  *
@@ -21,11 +22,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Timechecker';
-$string['settingsinformation'] = 'Subplugin information';
+$string['deletetime'] = 'Time until deletion';
 $string['introsettingstext'] = 'In these settings, the time until suspension and the time until deletion can be defined.<br>
 The plugin does apply this to users who were changed by the plugin and users who are manually suspended or deleted.';
+$string['pluginname'] = 'Timechecker';
+$string['settingsinformation'] = 'Subplugin information';
+$string['suspendtime'] = 'Time until suspension';
 $string['timechecker_time_to_archive'] = 'Number of days without log in until a user is suspended.';
 $string['timechecker_time_to_delete'] = 'Number of days a user is suspended until s/he is deleted.';
-$string['suspendtime'] = 'Time until suspension';
-$string['deletetime'] = 'Time until deletion';

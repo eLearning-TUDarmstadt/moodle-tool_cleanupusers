@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_cleanupusers;
+
 /**
  * Interface for the sub-plugin userstatus.
  *
@@ -34,8 +36,6 @@
  * @copyright 2016/17 N. Herrmann
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_cleanupusers;
-
 interface userstatusinterface {
     /**
      * Function which returns an array of all users to be suspended by the next cron-job.

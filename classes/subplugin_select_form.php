@@ -13,8 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Create an Form Class for the tool_cleanupusers
+ * Create a Form Class for the tool_cleanupusers
  *
  * @package   tool_cleanupusers
  * @copyright 2017 N. Herrmann
