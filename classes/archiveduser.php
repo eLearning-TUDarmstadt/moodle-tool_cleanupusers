@@ -85,7 +85,10 @@ class archiveduser {
         } else if (!($user->username == \core_user::clean_field($user->username, 'username'))) {
             throw new cleanupusers_exception("Failed to suspend " . $user->username .
                 " : username is not cleaned");
-        } else {
+        } else if ($DB->record_exists('tool_cleanupusers_archive', ['username' => $user->username])) {
+            throw new cleanupusers_exception("Failed to suspend " . $user->username .
+                " : user already in archive table");
+        }{
             $transaction = $DB->start_delegated_transaction();
 
             // We are already getting the shadowuser here to keep the original suspended status.
@@ -238,7 +241,7 @@ class archiveduser {
         $cloneuser->secret = '';
         $cloneuser->picture = 0;
         $cloneuser->description = '';
-        $cloneuser->timemodified = '';
+        $cloneuser->timemodified = $timestamp;
         $cloneuser->timecreated = $timestamp;
         $cloneuser->imagealt = '';
         $cloneuser->lastnamephonetic = '';
