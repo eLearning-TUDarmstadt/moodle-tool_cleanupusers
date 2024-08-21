@@ -83,7 +83,6 @@ final class userstatus_timechecker_test extends advanced_testcase {
         $returndelete = $checker->get_to_delete();
         $this->assertEqualsCanonicalizing(array_map(fn($user) => $user->username, $returndelete), $delete);
 
-
         set_config('suspendtime', 0.5, 'userstatus_timechecker');
         set_config('deletetime', 0.5, 'userstatus_timechecker');
         $newchecker = new timechecker();
