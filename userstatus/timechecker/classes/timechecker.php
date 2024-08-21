@@ -58,25 +58,32 @@ class timechecker implements userstatusinterface {
      * @return array of users to suspend
      */
     public function get_to_suspend() {
-        $users = $this->get_users_not_suspended_by_plugin();
-        $admins = get_admins();
+        global $DB;
+
+        $users = $DB->get_records_sql(
+            "SELECT id, suspended, lastaccess, username, deleted
+                FROM {user}
+                WHERE auth = 'shibboleth'
+                    AND suspended = 0
+                    AND deleted = 0
+                    AND lastaccess != 0
+                    AND lastaccess < :timelimit",
+            [
+                'timelimit'  => time() - $this->timesuspend,
+            ]
+        );
+
         $tosuspend = [];
         foreach ($users as $key => $user) {
-            if (array_key_exists($user->id, $admins)) {
-                continue;
-            }
-
-            $mytimestamp = time();
-            $timenotloggedin = $mytimestamp - $user->lastaccess;
-            if ($timenotloggedin > $this->timesuspend) {
-                $informationuser = new archiveduser(
+            if (!is_siteadmin($user)) {
+                $suspenduser = new archiveduser(
                     $user->id,
                     $user->suspended,
                     $user->lastaccess,
                     $user->username,
                     $user->deleted
                 );
-                $tosuspend[$key] = $informationuser;
+                $tosuspend[$key] = $suspenduser;
             }
         }
         return $tosuspend;
@@ -91,7 +98,7 @@ class timechecker implements userstatusinterface {
      */
     public function get_never_logged_in() {
         global $DB;
-        $arrayofuser = $DB->get_records_sql(
+        $users = $DB->get_records_sql(
             "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted
                 FROM {user} u
                 LEFT JOIN {tool_cleanupusers} tc ON u.id = tc.id
@@ -101,7 +108,7 @@ class timechecker implements userstatusinterface {
                     AND tc.id IS NULL"
         );
         $neverloggedin = [];
-        foreach ($arrayofuser as $key => $user) {
+        foreach ($users as $key => $user) {
             $informationuser = new archiveduser($user->id, $user->suspended,
                 $user->lastaccess, $user->username, $user->deleted);
             $neverloggedin[$key] = $informationuser;
@@ -120,44 +127,42 @@ class timechecker implements userstatusinterface {
      */
     public function get_to_delete() {
         global $DB;
-        $mytimestamp = time();
-        // The last possible date users must have logged in before they get deleted.
-        $datetodelete = $mytimestamp - $this->timedelete;
 
-        $todeleteusers = [];
-        $admins = get_admins();
+        $users = $DB->get_records_sql(
+            "SELECT tca.id, tca.suspended, tca.lastaccess, tca.username, tca.deleted
+                FROM {user} u
+                JOIN {tool_cleanupusers} tc ON u.id = tc.id
+                JOIN {tool_cleanupusers_archive} tca ON u.id = tca.id
+                WHERE u.auth = 'shibboleth'
+                    AND u.suspended = 1
+                    AND u.deleted = 0
+                    AND tc.timestamp < :timelimit",
+            [
+                'timelimit'  => time() - $this->timedelete,
+            ]
+        );
 
-        // 1. Get all users automatic suspended by the plugin.
-        $sql = "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted FROM {tool_cleanupusers_archive} u
-          JOIN {tool_cleanupusers} tcu ON u.id = tcu.id
-          WHERE u.deleted=0
-          AND u.lastaccess!=0
-          AND tcu.timestamp < :dat";
-        $params = ['dat' => $datetodelete];
-        $usersautomaticsuspended = $DB->get_recordset_sql($sql, $params);
-
-        foreach ($usersautomaticsuspended as $user) {
-            if (array_key_exists($user->id, $admins)) {
-                continue;
-            } else {
-                $informationuser = new archiveduser(
+        $todelete = [];
+        foreach ($users as $key => $user) {
+            if (!is_siteadmin($user)) {
+                $deleteuser = new archiveduser(
                     $user->id,
                     $user->suspended,
                     $user->lastaccess,
                     $user->username,
                     $user->deleted
                 );
-                $todeleteusers[$user->id] = $informationuser;
+                $todelete[$key] = $deleteuser;
             }
         }
 
-        return $todeleteusers;
+        return $todelete;
     }
 
     /**
      * All user that should be reactivated will be returned.
      *
-     * User should be reactivated when their lastaccess is smaller then the timesuspend variable. Although users are
+     * User should be reactivated when their lastaccess is smaller than the timesuspend variable. Although users are
      * not able to sign in when they are flagged as suspended, this is necessary to react when the timesuspended setting
      * is changed.
      *
@@ -165,69 +170,38 @@ class timechecker implements userstatusinterface {
      */
     public function get_to_reactivate() {
         global $DB;
-        // Only users who are currently suspended are relevant.
-        $select = 'deleted=0 AND suspended=1';
-        $users = $DB->get_records_select('user', $select);
-        $archived = $DB->get_records(
-            'tool_cleanupusers_archive',
-            null,
-            '',
-            'id, username, lastaccess, suspended, deleted'
+
+        $users = $DB->get_records_sql(
+            "SELECT tca.id, tca.suspended, tca.lastaccess, tca.username, tca.deleted
+                FROM {user} u
+                JOIN {tool_cleanupusers} tc ON u.id = tc.id
+                JOIN {tool_cleanupusers_archive} tca ON u.id = tca.id
+                WHERE u.auth = 'shibboleth'
+                    AND u.suspended = 1
+                    AND u.deleted = 0
+                    AND tca.lastaccess >= :timelimit
+                    AND tca.username NOT IN
+                        (SELECT username FROM {user} WHERE username IS NOT NULL)",
+            [
+                'timelimit'  => time() - $this->timesuspend,
+            ]
         );
+
         $toactivate = [];
-        $admins = get_admins();
-
         foreach ($users as $key => $user) {
-            if (array_key_exists($user->id, $admins)) {
-                continue;
-            } else {
-                $mytimestamp = time();
-                // There is no entry in the shadow table, user that is supposed to be reactivated was archived manually.
-                if (!array_key_exists($user->id, $archived)) {
-                    $timenotloggedin = $mytimestamp - $user->lastaccess;
-                    $activateuser = new archiveduser(
-                        $user->id,
-                        $user->suspended,
-                        $user->lastaccess,
-                        $user->username,
-                        $user->deleted
-                    );
-                } else {
-                    $shadowtableuser = $archived[$user->id];
-                    // There is an entry in the shadowtable, data from the shadowtable is used.
-                    if ($shadowtableuser->lastaccess !== 0) {
-                        $timenotloggedin = $mytimestamp - $shadowtableuser->lastaccess;
-                    } else {
-                        // In case lastaccess is 0 it can not decided whether the user should be reactivated.
-                        continue;
-                    }
-                    $activateuser = new archiveduser(
-                        $shadowtableuser->id,
-                        $shadowtableuser->suspended,
-                        $shadowtableuser->lastaccess,
-                        $shadowtableuser->username,
-                        $shadowtableuser->deleted
-                    );
-                }
-
-                // When the time not logged in is smaller than the timesuspend he/she should be activated again.
-                if ($timenotloggedin < $this->timesuspend && $user->suspended == 1) {
-                    $toactivate[$key] = $activateuser;
-                }
+            if (!is_siteadmin($user)) {
+                $activateuser = new archiveduser(
+                    $user->id,
+                    $user->suspended,
+                    $user->lastaccess,
+                    $user->username,
+                    $user->deleted
+                );
+                $toactivate[$key] = $activateuser;
             }
         }
+
         return $toactivate;
     }
-    /**
-     * Executes a DB query and returns all users who are not suspended, not deleted and logged at least once in.
-     * @return array of users
-     */
-    private function get_users_not_suspended_by_plugin() {
-        global $DB;
-        $sql = 'SELECT u.id, u.lastaccess, u.deleted, u.suspended, u.username
-        FROM {user} u
-        LEFT JOIN {tool_cleanupusers} t_u ON u.id = t_u.id
-        WHERE t_u.id IS NULL AND u.lastaccess!=0 AND u.deleted=0';
-        return $DB->get_records_sql($sql);
-    }
+
 }
