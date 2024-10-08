@@ -78,14 +78,17 @@ class archive_user_task extends scheduled_task {
 
         $suspendresult = $this->change_user_deprovisionstatus($archivearray, 'suspend');
         $unabletoarchive = $suspendresult['failures'];
+        $unabletoarchivemessages = $suspendresult['messages'];
         $userarchived = $suspendresult['countersuccess'];
 
         $result = $this->change_user_deprovisionstatus($reactivatearray, 'reactivate');
         $unabletoactivate = $result['failures'];
+        $unabletoactivatemessages = $result['messages'];
         $useractivated = $result['countersuccess'];
 
         $deleteresult = $this->change_user_deprovisionstatus($arraytodelete, 'delete');
         $unabletodelete = $deleteresult['failures'];
+        $unabletodeletemessages = $deleteresult['messages'];
         $userdeleted = $deleteresult['countersuccess'];
 
         // Admin is informed about the cron-job and the amount of users that are affected.
@@ -102,18 +105,20 @@ class archive_user_task extends scheduled_task {
         } else {
             // Extra information for problematic users.
             $messagetext .= "\r\n\r\n" . get_string(
-                'e-mail-problematic_delete',
-                'tool_cleanupusers',
-                count($unabletodelete)
-            ) . "\r\n\r\n" . get_string(
-                'e-mail-problematic_suspend',
-                'tool_cleanupusers',
-                count($unabletoarchive)
-            ) . "\r\n\r\n" . get_string(
-                'e-mail-problematic_reactivate',
-                'tool_cleanupusers',
-                count($unabletoactivate)
-            );
+                    'e-mail-problematic_delete',
+                    'tool_cleanupusers',
+                    count($unabletodelete)
+                ) . "\n" . $unabletodeletemessages
+                . "\r\n\r\n" . get_string(
+                    'e-mail-problematic_suspend',
+                    'tool_cleanupusers',
+                    count($unabletoarchive)
+                ) . "\n" . $unabletoarchivemessages
+                . "\r\n\r\n" . get_string(
+                    'e-mail-problematic_reactivate',
+                    'tool_cleanupusers',
+                    count($unabletoactivate)
+                ) . "\n" . $unabletoactivatemessages;
         }
 
         // Email is send from the do not reply user.
@@ -148,6 +153,8 @@ class archive_user_task extends scheduled_task {
         // Array of users who could not be changed.
         $failures = [];
 
+        $messages = "";
+
         // Alternatively one could have written different function for each intention.
         // However, this would have produced duplicated code.
         // Therefore, checking the intention parameter repeatedly was preferred.
@@ -176,12 +183,14 @@ class archive_user_task extends scheduled_task {
                     $countersuccess++;
                 } catch (\Throwable $e) {
                     $failures[$key] = $user->id;
+                    $messages .= "\n Could not " . $intention . " " . $user->username;
                 }
             }
         }
         $result = [];
         $result['countersuccess'] = $countersuccess;
         $result['failures'] = $failures;
+        $result['messages'] = $messages;
         return $result;
     }
 }
