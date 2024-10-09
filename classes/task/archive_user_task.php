@@ -184,6 +184,7 @@ class archive_user_task extends scheduled_task {
                 } catch (\Throwable $e) {
                     $failures[$key] = $user->id;
                     $messages .= "\n Could not " . $intention . " " . $user->username;
+                    $messages .= "\n Caught throwable: " . $e->getMessage();
                 }
             }
         }
