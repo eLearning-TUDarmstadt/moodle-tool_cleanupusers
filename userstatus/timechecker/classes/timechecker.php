@@ -63,8 +63,7 @@ class timechecker implements userstatusinterface {
         $users = $DB->get_records_sql(
             "SELECT id, suspended, lastaccess, username, deleted
                 FROM {user}
-                WHERE auth = 'shibboleth'
-                    AND suspended = 0
+                WHERE suspended = 0
                     AND deleted = 0
                     AND lastaccess != 0
                     AND lastaccess < :timelimit",
@@ -102,8 +101,7 @@ class timechecker implements userstatusinterface {
             "SELECT u.id, u.suspended, u.lastaccess, u.username, u.deleted
                 FROM {user} u
                 LEFT JOIN {tool_cleanupusers} tc ON u.id = tc.id
-                WHERE u.auth = 'shibboleth'
-                    AND u.lastaccess = 0
+                WHERE u.lastaccess = 0
                     AND u.deleted = 0
                     AND tc.id IS NULL"
         );
@@ -138,8 +136,7 @@ class timechecker implements userstatusinterface {
                 FROM {user} u
                 JOIN {tool_cleanupusers} tc ON u.id = tc.id
                 JOIN {tool_cleanupusers_archive} tca ON u.id = tca.id
-                WHERE u.auth = 'shibboleth'
-                    AND u.suspended = 1
+                WHERE u.suspended = 1
                     AND u.deleted = 0
                     AND tc.timestamp < :timelimit",
             [
@@ -181,8 +178,7 @@ class timechecker implements userstatusinterface {
                 FROM {user} u
                 JOIN {tool_cleanupusers} tc ON u.id = tc.id
                 JOIN {tool_cleanupusers_archive} tca ON u.id = tca.id
-                WHERE u.auth = 'shibboleth'
-                    AND u.suspended = 1
+                WHERE u.suspended = 1
                     AND u.deleted = 0
                     AND tca.lastaccess >= :timelimit
                     AND tca.username NOT IN
