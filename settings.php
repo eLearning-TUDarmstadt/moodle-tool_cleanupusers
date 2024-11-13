@@ -48,6 +48,13 @@ if ($hassiteconfig) {
         get_string('suspendfirstname', 'tool_cleanupusers'),
         PARAM_TEXT
     ));
+    $settings->add(new admin_setting_configtext(
+        'tool_cleanupusers_settings/suspendlastname',
+        get_string('sett_suspendlastname', 'tool_cleanupusers'),
+        get_string('sett_suspendlastname_description', 'tool_cleanupusers'),
+        get_string('suspendlastname', 'tool_cleanupusers'),
+        PARAM_TEXT
+    ));
     $ADMIN->add('tool_cleanupusers', $settings);
     // Add entry for own settings.
     $ADMIN->add('tool_cleanupusers', new admin_externalpage(

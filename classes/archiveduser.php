@@ -223,7 +223,7 @@ class archiveduser {
         // Usernames have to be unique therefore the id is used.
         $cloneuser->username = get_config('tool_cleanupusers_settings', 'suspendusername') . $id;
         $cloneuser->firstname = get_config('tool_cleanupusers_settings', 'suspendfirstname');
-        $cloneuser->lastname = '';
+        $cloneuser->lastname = get_config('tool_cleanupusers_settings', 'suspendlastname');
         $cloneuser->suspended = 1;
         $cloneuser->email = '';
         $cloneuser->phone1 = '';
