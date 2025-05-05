@@ -211,7 +211,8 @@ class archiveduser {
     }
 
     /**
-     * Creates an empty user with ':suspendusername + id' as username and ':suspendfirstname' as Firstname.
+     * Creates an empty user with optional ':suspendusername + id' as username if set, ':suspendfirstname' as Firstname
+     * and ':suspendlastname' as Lastname.
      *
      * @param int $id
      * @param int $timestamp
@@ -220,8 +221,11 @@ class archiveduser {
     private function give_suspended_pseudo_user($id, $timestamp) {
         $cloneuser = new \stdClass();
         $cloneuser->id = $id;
-        // Usernames have to be unique therefore the id is used.
-        $cloneuser->username = get_config('tool_cleanupusers_settings', 'suspendusername') . $id;
+        $suspendusername = get_config('tool_cleanupusers_settings', 'suspendusername');
+        if (!$suspendusername  == '') {
+            // Usernames have to be unique therefore the id is used.
+            $cloneuser->username = $suspendusername . $id;
+        };
         $cloneuser->firstname = get_config('tool_cleanupusers_settings', 'suspendfirstname');
         $cloneuser->lastname = get_config('tool_cleanupusers_settings', 'suspendlastname');
         $cloneuser->suspended = 1;
