@@ -37,7 +37,7 @@ require_capability('moodle/site:config', $context);
 
 admin_externalpage_setup('cleanupusers');
 
-$pagetitle = get_string('neverloggedin', 'tool_cleanupusers');
+$pagetitle = get_string('neverloggedin_title', 'tool_cleanupusers');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
 $PAGE->set_pagelayout('standard');

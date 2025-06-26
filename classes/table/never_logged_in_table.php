@@ -48,7 +48,7 @@ class never_logged_in_table extends \table_sql {
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = [get_string('id', 'tool_cleanupusers'), get_string('Neverloggedin', 'tool_cleanupusers'),
+        $headers = [get_string('id', 'tool_cleanupusers'), get_string('neverloggedin_header', 'tool_cleanupusers'),
             get_string('fullname'), get_string('Archived', 'tool_cleanupusers'), 'Archive'];
         $this->define_headers($headers);
 
