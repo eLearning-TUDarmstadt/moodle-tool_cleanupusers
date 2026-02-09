@@ -10,6 +10,10 @@ However, every user must be handled individually which becomes confusing and tim
 To handle users efficiently there is a need to determine rules which identify the suitable action for each user and handle the user accordingly.
 Therefore, the plugin aims to automatically suspend and delete users to custom rules.
 
+## Supported Versions
+
+This version is tested on Moodle 4.0, 4.1, 4.2, 4.3, 4.4, 4.5
+
 ## Installation
 
 This plugin should go into `admin/tool/cleanupusers`. 
