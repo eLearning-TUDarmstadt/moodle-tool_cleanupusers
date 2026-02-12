@@ -182,7 +182,7 @@ class timechecker implements userstatusinterface {
                     AND u.deleted = 0
                     AND tca.lastaccess >= :timelimit
                     AND tca.username NOT IN
-                        (SELECT username FROM {user} WHERE username IS NOT NULL)",
+                        (SELECT username FROM {user} WHERE username IS NOT NULL AND suspended=0)",
             [
                 'timelimit'  => time() - $this->timesuspend,
             ]
