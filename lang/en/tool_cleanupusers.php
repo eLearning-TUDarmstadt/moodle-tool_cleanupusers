@@ -23,7 +23,7 @@
  */
 
 $string['Archived'] = 'Archived:';
-$string['Neverloggedin'] = 'Users that never logged in:';
+$string['neverloggedin_header'] = 'Users that never logged in:';
 $string['No'] = 'No';
 $string['Willbe'] = 'Will be:';
 $string['Yes'] = 'Yes';
@@ -48,7 +48,7 @@ $string['hideuser'] = 'Suspend User';
 $string['id'] = 'ID';
 $string['lastaccess'] = 'Last access:';
 $string['neverlogged'] = 'Never logged in';
-$string['neverloggedin'] = 'Manage users who never logged in';
+$string['neverloggedin_title'] = 'Manage users who never logged in';
 $string['nothinghappens'] = 'Not handled since the user never logged in';
 $string['pluginname'] = 'Clean up users';
 $string['pluginsettingstitle'] = 'General settings';

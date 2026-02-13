@@ -78,7 +78,7 @@ class tool_cleanupusers_renderer extends plugin_renderer_base {
                 get_string('Willbe', 'tool_cleanupusers')]);
         }
         if (!empty($renderneverloggedin)) {
-            $output .= $this->render_table_of_users($renderneverloggedin, [get_string('Neverloggedin', 'tool_cleanupusers'),
+            $output .= $this->render_table_of_users($renderneverloggedin, [get_string('neverloggedin_header', 'tool_cleanupusers'),
                 get_string('lastaccess', 'tool_cleanupusers'), get_string('Archived', 'tool_cleanupusers'),
                 get_string('Willbe', 'tool_cleanupusers')]);
         }

@@ -59,7 +59,7 @@ if ($hassiteconfig) {
     // Add entry for own settings.
     $ADMIN->add('tool_cleanupusers', new admin_externalpage(
         'Manage never logged in',
-        get_string('neverloggedin', 'tool_cleanupusers'),
+        get_string('neverloggedin_title', 'tool_cleanupusers'),
         "$CFG->wwwroot/$CFG->admin/tool/cleanupusers/neverloggedin.php"
     ));
     // Add entry for own settings.
