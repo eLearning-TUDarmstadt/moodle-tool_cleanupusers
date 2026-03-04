@@ -50,7 +50,7 @@ class users_table extends \table_sql {
         $this->define_columns($columns);
 
         // Define the titles of columns to show in header.
-        $headers = [get_string('id', 'tool_cleanupusers'), get_string('Neverloggedin', 'tool_cleanupusers'),
+        $headers = [get_string('id', 'tool_cleanupusers'), get_string('neverloggedin_header', 'tool_cleanupusers'),
         get_string('fullname'), get_string('lastaccess', 'tool_cleanupusers')];
         $this->define_headers($headers);
 
