@@ -225,6 +225,7 @@ class archiveduser {
         $cloneuser->firstname = get_config('tool_cleanupusers_settings', 'suspendfirstname');
         $cloneuser->lastname = get_config('tool_cleanupusers_settings', 'suspendlastname');
         $cloneuser->suspended = 1;
+        $cloneuser->idnumber = '';
         $cloneuser->email = '';
         $cloneuser->phone1 = '';
         $cloneuser->phone2 = '';
@@ -233,12 +234,13 @@ class archiveduser {
         $cloneuser->address = '';
         $cloneuser->city = '';
         $cloneuser->country = '';
-        $cloneuser->lang = '';
-        $cloneuser->calendartype = '';
+        $cloneuser->lang = 'en';
+        $cloneuser->calendartype = 'gregorian';
         $cloneuser->firstaccess = 0;
         $cloneuser->lastaccess = 0;
         $cloneuser->currentlogin = 0;
         $cloneuser->lastlogin = 0;
+        $cloneuser->lastip = '';
         $cloneuser->secret = '';
         $cloneuser->picture = 0;
         $cloneuser->description = '';
